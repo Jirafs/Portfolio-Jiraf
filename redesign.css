@@ -1,0 +1,56 @@
+:root{
+  --ink:#edf3f1;
+  --paper:#111b22;
+  --acid:#c8f36a;
+  --orange:#ff8068;
+  --line:rgba(237,243,241,.2);
+  --blue:#6d8cff;
+}
+body{background:var(--paper);color:var(--ink)}
+.topbar{height:72px;border-color:var(--line);background:rgba(17,27,34,.92);backdrop-filter:blur(14px)}
+.brand{border:0!important;padding:0!important;border-radius:0!important;font-size:18px;letter-spacing:.12em;color:var(--ink)}
+.brand span,.eyebrow span{color:var(--blue)}
+.desktop-nav a:hover,.socials a:hover{color:var(--blue)}
+.desktop-nav a::after{background:var(--blue)}
+.availability{color:var(--blue)}
+.pulse{background:var(--blue);box-shadow:0 0 0 5px rgba(49,89,232,.14)}
+.hero{min-height:calc(100vh - 72px);padding-top:6vw;gap:8vw}
+.hero h1{font-size:clamp(58px,8vw,124px);line-height:.9;letter-spacing:-.08em;font-weight:700}
+.hero h1 em,.about-statement em,.contact h2 em{color:var(--blue);font-style:italic}
+.hero-lead{color:rgba(237,243,241,.7)}
+.circle-link{background:var(--blue);color:var(--paper);width:128px;height:128px;transition:transform .3s,background .3s}
+.circle-link:hover{background:var(--acid);color:var(--ink);transform:translateY(-7px)}
+.hero-image-wrap{border-radius:2px}.hero-image-wrap:before{background:var(--acid)}
+.hero-image-wrap img{filter:saturate(.72) contrast(1.03)}
+.image-caption{background:var(--ink);color:var(--paper)}
+.hero-stamp{border-color:var(--blue);color:var(--blue)}
+.ticker{background:var(--ink);color:var(--acid);border-color:var(--ink);font-size:14px}
+.work{background:#1b2932;color:var(--ink);padding-top:9vw;padding-bottom:10vw}
+.work .eyebrow span{color:var(--blue)}
+.project-image{background:var(--acid);border-radius:2px}
+.project-image:after{background:rgba(49,89,232,.94);color:var(--paper)}
+.project-meta{border-color:var(--line);padding-top:16px}
+.project:hover .project-meta{border-color:var(--blue)}
+.project-meta h2{letter-spacing:-.06em}
+.project-meta i{color:var(--blue)}
+.about{background:#20343b;color:var(--ink)}
+.about .section-note{color:var(--blue)}
+.about .eyebrow span{color:var(--blue)}
+.signature{color:var(--blue)}
+.knowledge-grid span{border-color:var(--line);color:var(--ink);transition:background .25s,color .25s,transform .25s}
+.knowledge-grid span:hover{background:var(--blue);color:var(--paper);transform:translateY(-4px)}
+.contact{background:var(--blue);color:var(--paper)}
+.contact .eyebrow span{color:var(--acid)}
+.email-link{border-color:var(--paper)}
+.email-link span{color:var(--acid)}
+.contact-bottom{border-color:rgba(245,247,242,.75)}
+footer{background:#0b1217;border-color:var(--line);color:var(--ink)}
+@media(max-width:700px){
+  .topbar{height:66px;background:var(--paper)}
+  .hero{min-height:auto;padding-top:20vw}
+  .desktop-nav.nav-open{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+  .menu-toggle span{background:var(--ink)}
+  .work{padding-top:21vw}
+  .about{padding-top:21vw}
+  .contact{padding-top:21vw}
+}

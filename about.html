@@ -1,0 +1,120 @@
+  <!--
+    .cloud-access{padding:5vw 8vw;background:var(--blue);color:var(--paper)}.cloud-access-inner{display:flex;justify-content:space-between;align-items:end;gap:30px}.cloud-access h2{font-size:clamp(28px,4vw,58px);line-height:.9;letter-spacing:-.08em;margin:0}.cloud-access p{font-size:13px;max-width:360px}.cloud-panel{flex:1;max-width:460px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}.cloud-form{display:flex;flex-wrap:wrap;gap:8px}.cloud-form input{min-width:190px;flex:1;border:1px solid rgba(245,247,242,.5);background:transparent;color:var(--paper);padding:12px;font:13px var(--sans)}.cloud-form button{border:0;background:var(--acid);color:var(--ink);padding:12px 15px;font:11px var(--mono);text-transform:uppercase;cursor:pointer}.cloud-form button:hover{background:var(--orange)}.cloud-reset{align-self:flex-start;font:10px var(--mono);text-transform:uppercase;color:var(--paper);opacity:.65;text-decoration:underline;margin-top:2px}.cloud-reset:hover{color:var(--acid);opacity:1}.cloud-status{width:100%;font:10px var(--mono);text-transform:uppercase;color:var(--acid)}.cloud-authenticated .owner-only{display:block}.owner-only{display:none}.cloud-logout{background:transparent!important;border:1px solid var(--acid)!important;color:var(--acid)!important}.cloud-logout:hover{background:var(--acid)!important;color:var(--ink)!important}
+-->
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Даниил Михайлов (Jiraf) — веб-разработчик, программист и преподаватель." />
+  <title>Даниил Михайлов — Преподаватель</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="redesign.css" />
+  <style>
+    .teacher-page{background:var(--paper);min-height:100vh}.teacher-topbar{border-color:var(--line)}.teacher-topbar .desktop-nav a:nth-child(2){color:var(--acid)}.teacher-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:8vw;padding:9vw 8vw 8vw;min-height:72vh;align-items:end}.teacher-kicker{font:11px var(--mono);text-transform:uppercase;color:var(--orange);margin:0 0 35px}.teacher-hero h1{font-size:clamp(58px,9vw,140px);line-height:.86;letter-spacing:-.1em;margin:0 0 35px;font-weight:600}.teacher-hero h1 em{font-family:Georgia,serif;color:var(--orange);font-weight:400}.teacher-lead{font-size:18px;line-height:1.45;max-width:450px;margin:0}.teacher-mark{justify-self:end;align-self:center;width:280px;height:280px;border:1px solid var(--acid);border-radius:50%;display:grid;place-content:center;text-align:center;color:var(--acid);font:12px var(--mono);text-transform:uppercase;line-height:1.5;transform:rotate(8deg)}.teacher-mark strong{font:600 52px var(--sans);letter-spacing:-.1em;color:var(--orange)}.teacher-band{display:grid;grid-template-columns:1fr 2fr;gap:8vw;padding:7vw 8vw;background:var(--acid);color:var(--paper)}.teacher-band h2,.teacher-achievements h2{font-size:clamp(36px,5vw,76px);line-height:.9;letter-spacing:-.08em;margin:0}.teacher-band h2 em,.teacher-achievements h2 em{font-family:Georgia,serif;color:var(--orange);font-weight:400}.lesson-list{display:grid;grid-template-columns:1fr 1fr;gap:0 25px}.lesson{border-top:1px solid rgba(23,37,34,.4);padding:20px 0 28px}.lesson span{font:10px var(--mono);color:var(--orange)}.lesson h3{font-size:22px;margin:18px 0 8px}.lesson p{font-size:13px;line-height:1.5;margin:0;max-width:250px}.teacher-achievements{display:grid;grid-template-columns:1fr 2fr;gap:8vw;padding:8vw;color:var(--ink)}.achievement-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.achievement{border:1px solid var(--line);padding:25px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between}.achievement strong{font-size:clamp(42px,6vw,80px);line-height:.8;letter-spacing:-.08em;color:var(--orange)}.achievement span{font:11px var(--mono);text-transform:uppercase;line-height:1.4}.teacher-format{display:grid;grid-template-columns:1fr 1fr;gap:8vw;padding:7vw 8vw;background:#243b35;color:var(--ink)}.teacher-format h2{font-size:clamp(36px,5vw,70px);line-height:.9;letter-spacing:-.08em;margin:0}.format-copy p{font-size:17px;line-height:1.45;max-width:500px;margin:0 0 30px}.format-tags{display:flex;flex-wrap:wrap;gap:8px}.format-tags span{border:1px solid rgba(243,240,232,.45);padding:12px 14px;color:var(--acid);font:11px var(--mono)}.teacher-cta{padding:8vw;background:var(--orange);color:var(--paper);display:flex;justify-content:space-between;align-items:end;gap:30px}.teacher-cta h2{font-size:clamp(44px,8vw,120px);line-height:.85;letter-spacing:-.09em;margin:0}.teacher-cta h2 em{font-family:Georgia,serif;font-weight:400}.teacher-cta a{border-bottom:1px solid var(--paper);font:11px var(--mono);padding-bottom:8px}.teacher-cta a:hover{color:var(--acid)}.teacher-footer{display:flex;justify-content:space-between;padding:24px 8vw;border-top:1px solid var(--line);font:11px var(--mono);text-transform:uppercase}.teacher-footer a:hover{color:var(--orange)}
+    @media(max-width:700px){.teacher-topbar{padding:0 7vw}.teacher-topbar .desktop-nav,.teacher-topbar .availability{display:none}.teacher-hero{display:block;padding:22vw 7vw 20vw;min-height:auto}.teacher-hero h1{font-size:20vw}.teacher-lead{font-size:15px}.teacher-mark{width:190px;height:190px;margin:18vw auto 0}.teacher-mark strong{font-size:38px}.teacher-band,.teacher-achievements,.teacher-format{display:block;padding:18vw 7vw}.teacher-band h2,.teacher-achievements h2,.teacher-format h2{margin-bottom:15vw}.lesson-list,.achievement-grid{grid-template-columns:1fr}.achievement{min-height:145px}.teacher-format .format-copy p{font-size:15px}.teacher-cta{display:block;padding:18vw 7vw}.teacher-cta h2{font-size:19vw;margin-bottom:14vw}.teacher-footer{padding:22px 7vw;font-size:8px}.teacher-footer span{display:none}}
+  </style>
+  <style>
+    .documents{display:grid;grid-template-columns:1fr 1fr;gap:8vw;padding:7vw 8vw;background:var(--paper);color:var(--ink);animation:sectionFadeIn .6s ease}
+    .documents h2{font-size:clamp(36px,5vw,70px);line-height:.9;letter-spacing:-.08em;margin:0}
+    .documents h2 em{font-family:Georgia,serif;color:var(--orange);font-weight:400}@keyframes sectionFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .upload-panel{border-top:1px solid var(--line);padding-top:18px}
+    .upload-dropzone{border:2px dashed var(--line);padding:45px 30px;text-align:center;transition:all .3s ease;border-radius:8px;background:linear-gradient(135deg,rgba(237,243,241,.05) 0%,rgba(237,243,241,.02) 100%);position:relative;overflow:hidden}
+    .upload-dropzone::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at center,rgba(200,243,106,.1) 0%,transparent 70%);opacity:0;transition:opacity .3s ease}
+    .upload-dropzone.is-dragover{background:linear-gradient(135deg,rgba(200,243,106,.15) 0%,rgba(200,243,106,.05) 100%);border-color:var(--acid);transform:scale(1.02);box-shadow:0 8px 30px rgba(200,243,106,.2)}
+    .upload-dropzone.is-dragover::before{opacity:1}
+    .upload-dropzone p{margin:0 0 24px;font-size:15px;color:var(--ink);position:relative;z-index:1}
+    .upload-dropzone .upload-icon{font-size:48px;margin-bottom:16px;display:block;color:var(--orange);opacity:.6;transition:all .3s ease}
+    .upload-dropzone.is-dragover .upload-icon{transform:scale(1.2);opacity:1;color:var(--acid)}
+    .upload-button{display:inline-block;background:linear-gradient(135deg,var(--orange) 0%,var(--acid) 100%);color:var(--paper);padding:14px 24px;border:0;font:11px var(--mono);text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .3s ease;position:relative;z-index:1;font-weight:600;letter-spacing:.05em}
+    .upload-button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,61,.3);background:linear-gradient(135deg,var(--acid) 0%,var(--orange) 100%)}
+    .upload-list{list-style:none;margin:24px 0 0;padding:0}.upload-list:empty{display:none}
+    .upload-item{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-bottom:1px solid var(--line);padding:18px 0;font-size:14px;transition:all .3s ease;background:linear-gradient(90deg,transparent 0%,transparent 100%);border-radius:4px}.upload-item:hover{background:linear-gradient(90deg,rgba(200,243,106,.05) 0%,transparent 100%);padding-left:12px;padding-right:12px}.document-content{min-width:0;flex:1}.upload-item a{color:var(--orange);word-break:break-word;font-weight:500;transition:color .2s ease}.upload-item a:hover{color:var(--acid)}.document-download{display:inline-block;font:10px var(--mono);text-transform:uppercase;margin-top:8px;padding:6px 12px;background:var(--line);border-radius:3px;color:var(--ink);text-decoration:none;transition:all .2s ease}.document-download:hover{background:var(--orange);color:var(--paper)}.upload-remove{border:0;background:transparent;color:var(--ink);cursor:pointer;font-size:20px;padding:4px 8px;border-radius:4px;transition:all .2s ease;width:32px;height:32px;display:flex;align-items:center;justify-content:center}.upload-remove:hover{background:var(--orange);color:var(--paper);transform:rotate(90deg)}.document-preview{display:none;background:#fff;color:#181818;margin-top:16px;padding:24px;max-height:350px;overflow:auto;font-family:Georgia,serif;font-size:15px;line-height:1.6;box-shadow:0 8px 30px rgba(23,37,34,.15);border-radius:6px;border:1px solid var(--line)}.document-preview.is-visible{display:block;animation:slideIn .3s ease}@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}.document-preview h1,.document-preview h2,.document-preview h3{font-family:var(--sans);line-height:1.2;margin-bottom:12px;color:var(--ink)}.document-preview p{margin:0 0 12px}.document-preview ul,.document-preview ol{padding-left:24px;margin-bottom:12px}.document-preview-loading{color:var(--orange);font:11px var(--mono);text-transform:uppercase;padding:20px;text-align:center}
+    .upload-item img{display:none;width:100%;max-height:320px;object-fit:contain;margin-top:12px;background:#fff;border-radius:4px}.upload-item.is-expanded img{display:block;animation:fadeIn .3s ease}.certificate-preview{display:none;width:100%;height:320px;border:0;margin-top:12px;background:#fff;border-radius:4px}.upload-item.is-expanded .certificate-preview{display:block;animation:fadeIn .3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}.credentials{display:grid;grid-template-columns:1fr 1fr;gap:8vw;padding:7vw 8vw;background:#243b35;color:var(--ink);animation:sectionFadeIn .6s ease .2s backwards}.credentials h2{font-size:clamp(36px,5vw,70px);line-height:.9;letter-spacing:-.08em;margin:0}.credentials h2 em{font-family:Georgia,serif;color:var(--orange);font-weight:400}.credential-panel{border-top:1px solid rgba(243,240,232,.35);padding-top:24px}.credential-panel h3{font-size:22px;margin:0 0 20px;color:var(--ink)}.credential-form{display:grid;grid-template-columns:1fr 100px;gap:10px}.credential-form input,.credential-form textarea{border:1px solid rgba(243,240,232,.4);background:transparent;color:var(--ink);padding:14px;font:14px var(--sans);border-radius:4px;transition:border-color .2s ease}.credential-form input:focus,.credential-form textarea:focus{outline:none;border-color:var(--orange)}.credential-form textarea{grid-column:1/-1;min-height:80px;resize:vertical}.credential-form button{grid-column:1/-1;background:linear-gradient(135deg,var(--acid) 0%,var(--orange) 100%);color:var(--paper);border:0;padding:14px;font:11px var(--mono);text-transform:uppercase;cursor:pointer;border-radius:4px;font-weight:600;letter-spacing:.05em;transition:all .3s ease}.credential-form button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,243,106,.3)}.credential-list{list-style:none;padding:0;margin:28px 0 0}.credential-list:empty{display:none}.credential-list li{border-top:1px solid rgba(243,240,232,.35);padding:16px 0;display:flex;justify-content:space-between;gap:18px;transition:all .2s ease}.credential-list li:hover{background:rgba(243,240,232,.05);padding-left:8px;padding-right:8px;border-radius:4px}.credential-list strong{display:block;font-size:16px;font-weight:600}.credential-list small{display:none;color:rgba(243,240,232,.7);font-size:13px;line-height:1.5;margin-top:6px}.credential-list li.is-expanded small{display:block}.achievement-content{cursor:pointer;padding:8px;border-radius:4px;transition:background .2s ease}.achievement-content:hover{background:rgba(243,240,232,.1)}.achievement-content:focus-visible{outline:2px solid var(--acid);outline-offset:4px}.certificate-list{list-style:none;padding:0;margin:28px 0 0}.certificate-list:empty{display:none}.certificate-list li{border-top:1px solid rgba(243,240,232,.35);padding:16px 0;transition:all .2s ease}.certificate-list li:hover{background:rgba(243,240,232,.05);padding-left:8px;padding-right:8px;border-radius:4px}.certificate-list a{color:var(--acid);font-size:13px}.certificate-list button{float:right;border:0;background:transparent;color:var(--ink);cursor:pointer;font-size:18px}.certificate-list button:hover{color:var(--orange)}
+    @media(max-width:700px){.documents,.credentials{display:block;padding:18vw 7vw}.documents h2,.credentials h2{font-size:19vw;margin-bottom:15vw}.upload-item{font-size:12px}.upload-dropzone{padding:30px 20px}.upload-dropzone .upload-icon{font-size:36px}.credential-form{grid-template-columns:1fr}.credential-form textarea,.credential-form button{grid-column:1}.credential-list li{display:block}.cloud-access{padding:15vw 7vw}.cloud-access-inner{display:block}.cloud-access h2{font-size:18vw;margin-bottom:10vw}.cloud-form input{min-width:100%;}.cloud-form button{width:100%}.cloud-panel button{width:100%}.cloud-reset{margin-top:4px}}
+  </style>
+  <style>
+    .certificate-preview{display:block!important}.certificate-preview[hidden]{display:none!important}
+  </style>
+  <style>
+    .cloud-access{padding:5vw 8vw;background:var(--blue);color:var(--paper)}.cloud-access-inner{display:flex;justify-content:space-between;align-items:end;gap:30px}.cloud-access h2{font-size:clamp(28px,4vw,58px);line-height:.9;letter-spacing:-.08em;margin:0}.cloud-access p{font-size:13px;max-width:360px}.cloud-panel{flex:1;max-width:460px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}.cloud-form{display:flex;flex-wrap:wrap;gap:8px}.cloud-form input{min-width:190px;flex:1;border:1px solid rgba(245,247,242,.5);background:transparent;color:var(--paper);padding:12px;font:13px var(--sans)}.cloud-form button{border:0;background:var(--acid);color:var(--ink);padding:12px 15px;font:11px var(--mono);text-transform:uppercase;cursor:pointer}.cloud-form button:hover{background:var(--orange)}.cloud-reset{align-self:flex-start;font:10px var(--mono);text-transform:uppercase;color:var(--paper);opacity:.65;text-decoration:underline;margin-top:2px}.cloud-reset:hover{color:var(--acid);opacity:1}.cloud-status{width:100%;font:10px var(--mono);text-transform:uppercase;color:var(--acid)}.cloud-authenticated .owner-only{display:block}.owner-only{display:none}.cloud-logout{background:transparent!important;border:1px solid var(--acid)!important;color:var(--acid)!important}.cloud-logout:hover{background:var(--acid)!important;color:var(--ink)!important}
+  </style>
+</head>
+<body>
+  <div class="site-shell teacher-page">
+    <header class="topbar teacher-topbar">
+      <a class="brand" href="index.html#top" aria-label="На главную">JIRAF<span>.</span></a>
+      <nav class="desktop-nav" aria-label="Основная навигация">
+        <a href="index.html#work">Работы</a>
+        <a href="about.html" aria-current="page">Обо мне</a>
+        <a href="index.html#contact">Контакты</a>
+      </nav>
+      <a class="availability" href="index.html#contact"><span class="pulse"></span> Открыт к проектам</a>
+      <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span></button>
+    </header>
+    <main>
+      <section class="teacher-hero">
+        <div>
+          <p class="teacher-kicker">03 / Преподаватель и практик</p>
+          <h1>Даниил<br><em>Михайлов.</em></h1>
+          <p class="teacher-lead">Помогаю начинающим разработчикам превращать знания в работающие сайты, сервисы и уверенную практику.</p>
+        </div>
+        <div class="teacher-mark"><strong>J</strong><br>Code / Design<br>Teach with intent</div>
+      </section>
+      <section class="teacher-band">
+        <h2>Чему я <em>учу.</em></h2>
+        <div class="lesson-list">
+          <article class="lesson"><span>01 / Frontend</span><h3>Сайты и интерфейсы</h3><p>HTML, CSS, JavaScript, адаптивная верстка и доступные интерфейсы.</p></article>
+          <article class="lesson"><span>02 / React</span><h3>Продуктовая разработка</h3><p>Компоненты, состояние, архитектура и путь от макета до готового продукта.</p></article>
+          <article class="lesson"><span>03 / Backend</span><h3>Серверная логика</h3><p>PHP, Python, API, базы данных и надежная связь между интерфейсом и сервером.</p></article>
+          <article class="lesson"><span>04 / Engineering</span><h3>Мышление инженера</h3><p>Git, отладка, рефакторинг, код-ревью и привычка доводить задачи до результата.</p></article>
+        </div>
+      </section>
+      <section class="teacher-achievements">
+        <h2>Что уже <em>сделано.</em></h2>
+        <div class="achievement-grid">
+          <article class="achievement"><strong>18</strong><span>готовых проектов<br>в портфолио</span></article>
+          <article class="achievement"><strong>8+</strong><span>лет практики<br>в разработке и дизайне</span></article>
+          <article class="achievement"><strong>6</strong><span>технологических<br>направлений</span></article>
+          <article class="achievement"><strong>1:1</strong><span>разборы, ревью<br>и персональный план</span></article>
+        </div>
+      </section>
+      <section class="teacher-format">
+        <h2>Практика<br>вместо <em>теории.</em></h2>
+        <div class="format-copy"><p>Каждое занятие заканчивается конкретным результатом: сверстанным экраном, работающим компонентом, API или улучшенной версией проекта ученика.</p><div class="format-tags"><span>Воркшопы</span><span>Менторство</span><span>Code review</span><span>Разбор портфолио</span></div></div>
+      </section>
+      <section class="cloud-access" id="cloud-access">
+        <div class="cloud-access-inner"><div><h2>Вход<br><em>владельца.</em></h2><p>Войдите, чтобы загружать материалы. Посетители смогут только просматривать опубликованные файлы.</p></div><div class="cloud-panel"><form class="cloud-form" id="cloud-form"><input id="cloud-email" type="email" placeholder="Email" required /><input id="cloud-password" type="password" placeholder="Пароль" required /><button type="submit">Войти</button><a class="cloud-reset" id="cloud-password-reset" href="#">Забыли пароль?</a></form><span class="cloud-status" id="cloud-status" role="status"></span><button class="cloud-logout" id="cloud-logout" type="button" hidden>Выйти</button></div></div>
+      </section>
+      <section class="documents">
+        <h2>Загрузить<br><em>документы.</em></h2>
+        <div class="upload-panel">
+          <div class="upload-dropzone owner-only" id="upload-dropzone">
+            <span class="upload-icon">📁</span>
+            <p>Перетащите файлы сюда или выберите их на устройстве.</p>
+            <label class="upload-button" for="document-input">Выбрать файлы</label>
+            <input id="document-input" type="file" multiple hidden />
+          </div>
+          <ul class="upload-list" id="upload-list" aria-live="polite"></ul>
+        </div>
+      </section>
+      <section class="credentials">
+        <h2>Сертификаты<br>и <em>достижения.</em></h2>
+        <div>
+          <div class="credential-panel"><h3 class="owner-only">Добавить сертификат</h3><div class="upload-dropzone owner-only" style="margin-top:16px;padding:28px 20px;border-width:1px"><span class="upload-icon" style="font-size:32px;margin-bottom:8px">🎓</span><p style="font-size:13px;margin-bottom:12px">Перетащите сертификаты или выберите файлы</p><label class="upload-button owner-only" for="certificate-input">Выбрать файлы</label><input id="certificate-input" class="owner-only" type="file" accept="image/*,.pdf" multiple hidden /></div><ul class="certificate-list" id="certificate-list" aria-live="polite"></ul></div>
+          <div class="credential-panel owner-only" style="margin-top:45px"><h3>Добавить достижение</h3><form class="credential-form" id="achievement-form"><input id="achievement-title" type="text" placeholder="Название достижения" required /><input id="achievement-year" type="text" placeholder="Год" maxlength="4" /><textarea id="achievement-description" placeholder="Короткое описание"></textarea><button type="submit">Добавить достижение</button></form><ul class="credential-list" id="achievement-list" aria-live="polite"></ul></div>
+        </div>
+      </section>
+      <section class="teacher-cta"><h2>Готов<br><em>разобраться?</em></h2><a href="index.html#contact">Связаться со мной ↗</a></section>
+    </main>
+    <footer class="teacher-footer"><a href="index.html#work">← Смотреть проекты</a><span>© <span id="year"></span> Jiraf</span><a href="index.html#top">Наверх ↑</a></footer>
+  </div>
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

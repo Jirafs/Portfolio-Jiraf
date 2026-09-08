@@ -101,6 +101,7 @@ function renderCloudState(session, isLoading = false) {
 
 cloudForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
+  event.stopPropagation();
   if (!cloudClient) {
     if (cloudStatus) cloudStatus.textContent = 'Сервис входа недоступен.';
     return;
@@ -137,6 +138,7 @@ cloudLogout?.addEventListener('click', async () => {
 
 cloudReset?.addEventListener('click', async (event) => {
   event.preventDefault();
+  event.stopPropagation();
   if (!cloudClient) {
     if (cloudStatus) cloudStatus.textContent = 'Сервис входа недоступен.';
     return;

@@ -279,7 +279,7 @@ function renderDocuments(files, shouldSave = true) {
     }
     documentContent.append(link, preview);
     const removeButton = document.createElement('button');
-    removeButton.className = 'upload-remove';
+    removeButton.className = 'upload-remove owner-only';
     removeButton.type = 'button';
     removeButton.setAttribute('aria-label', `Удалить ${file.name}`);
     removeButton.textContent = '×';
@@ -353,6 +353,7 @@ function renderCertificates(files, shouldSave = true) {
       item.append(pdfPreview);
     }
     const removeButton = document.createElement('button');
+    removeButton.className = 'upload-remove owner-only';
     removeButton.type = 'button';
     removeButton.setAttribute('aria-label', `Удалить сертификат ${file.name}`);
     removeButton.textContent = '×';
@@ -413,6 +414,7 @@ function addAchievement(title, year, description, shouldSave = true) {
   });
   content.append(heading, details);
   const removeButton = document.createElement('button');
+  removeButton.className = 'upload-remove owner-only';
   removeButton.type = 'button';
   removeButton.setAttribute('aria-label', `Удалить достижение ${title}`);
   removeButton.textContent = '×';

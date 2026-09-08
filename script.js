@@ -136,6 +136,33 @@ cloudLogout?.addEventListener('click', async () => {
   await cloudClient.auth.signOut();
 });
 
+const githubLoginButton = document.querySelector('#github-login');
+const googleLoginButton = document.querySelector('#google-login');
+
+githubLoginButton?.addEventListener('click', async () => {
+  if (!cloudClient) {
+    if (cloudStatus) cloudStatus.textContent = 'Сервис входа недоступен.';
+    return;
+  }
+  renderCloudState(undefined, true);
+  const { data, error } = await cloudClient.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: window.location.href } });
+  if (error) {
+    if (cloudStatus) cloudStatus.textContent = 'Не удалось войти через GitHub.';
+  }
+});
+
+googleLoginButton?.addEventListener('click', async () => {
+  if (!cloudClient) {
+    if (cloudStatus) cloudStatus.textContent = 'Сервис входа недоступен.';
+    return;
+  }
+  renderCloudState(undefined, true);
+  const { data, error } = await cloudClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  if (error) {
+    if (cloudStatus) cloudStatus.textContent = 'Не удалось войти через Google.';
+  }
+});
+
 cloudReset?.addEventListener('click', async (event) => {
   event.preventDefault();
   event.stopPropagation();

@@ -69,7 +69,9 @@ const cloudContent = document.querySelector('#cloud-content');
 cloudToggle?.addEventListener('click', () => {
   const isExpanded = cloudToggle.getAttribute('aria-expanded') === 'true';
   cloudToggle.setAttribute('aria-expanded', String(!isExpanded));
-  cloudContent.hidden = isExpanded;
+  if (cloudContent) {
+    cloudContent.hidden = isExpanded;
+  }
 });
 
 const ownerEmails = (window.supabaseConfig?.ownerEmails || []).map((email) => String(email).toLowerCase());

@@ -63,6 +63,15 @@ const cloudClient = window.supabase && window.supabaseConfig?.url && window.supa
   ? window.supabase.createClient(window.supabaseConfig.url, window.supabaseConfig.key)
   : null;
 
+const cloudToggle = document.querySelector('#cloud-toggle');
+const cloudContent = document.querySelector('#cloud-content');
+
+cloudToggle?.addEventListener('click', () => {
+  const isExpanded = cloudToggle.getAttribute('aria-expanded') === 'true';
+  cloudToggle.setAttribute('aria-expanded', String(!isExpanded));
+  cloudContent.hidden = isExpanded;
+});
+
 const ownerEmails = (window.supabaseConfig?.ownerEmails || []).map((email) => String(email).toLowerCase());
 const cloudForm = document.querySelector('#cloud-form');
 const cloudStatus = document.querySelector('#cloud-status');
@@ -145,7 +154,8 @@ githubLoginButton?.addEventListener('click', async () => {
     return;
   }
   renderCloudState(undefined, true);
-  const { data, error } = await cloudClient.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: window.location.href } });
+  const redirectUrl = `${window.location.origin}${window.location.pathname}`;
+  const { data, error } = await cloudClient.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: redirectUrl } });
   if (error) {
     if (cloudStatus) cloudStatus.textContent = 'Не удалось войти через GitHub.';
   }
@@ -157,7 +167,8 @@ googleLoginButton?.addEventListener('click', async () => {
     return;
   }
   renderCloudState(undefined, true);
-  const { data, error } = await cloudClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  const redirectUrl = `${window.location.origin}${window.location.pathname}`;
+  const { data, error } = await cloudClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectUrl } });
   if (error) {
     if (cloudStatus) cloudStatus.textContent = 'Не удалось войти через Google.';
   }

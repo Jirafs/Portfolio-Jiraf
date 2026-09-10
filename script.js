@@ -3,9 +3,9 @@ const nav = document.querySelector('.desktop-nav');
 const revealItems = document.querySelectorAll('.reveal');
 
 const projectData = {
-  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=85', intro: 'Система управления фитнес-клубом с записью на тренировки и подписками.', task: 'Создать платформу для онлайн-записи, управления абонементами и отслеживания прогресса клиентов.', result: '+25% продаж абонементов, автоматизация работы администраторов, интеграция с CRM.', year: '2025', role: 'PHP, MySQL, Bootstrap, Stripe' },
-  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'https://images.unsplash.com/photo-1560066984-138dadb154c7?auto=format&fit=crop&w=1600&q=85', intro: 'Современный сайт для косметического салона с онлайн-записью.', task: 'Разработать систему бронирования услуг, управления клиентами и портфолио работ.', result: '+30% новых клиентов через онлайн-запись, удобное управление расписанием.', year: '2025', role: 'PHP, Laravel, REST API' },
-  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=85', intro: 'Интернет-магазин мерча с каталогом товаров и корзиной покупок.', task: 'Создать полноценный e-commerce с каталогом, корзиной и интеграцией оплаты.', result: '+25% продаж через онлайн-канал, удобный интерфейс для клиентов.', year: '2025', role: 'PHP, JavaScript, MySQL, Payment Integration' }
+  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85', intro: 'Система управления фитнес-клубом с записью на тренировки и подписками.', task: 'Создать платформу для онлайн-записи, управления абонементами и отслеживания прогресса клиентов.', result: '+25% продаж абонементов, автоматизация работы администраторов, интеграция с CRM.', year: '2025', role: 'PHP, MySQL, Bootstrap, Stripe' },
+  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1600&q=85', intro: 'Современный сайт для косметического салона с онлайн-записью.', task: 'Разработать систему бронирования услуг, управления клиентами и портфолио работ.', result: '+30% новых клиентов через онлайн-запись, удобное управление расписанием.', year: '2025', role: 'PHP, Laravel, REST API' },
+  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=85', intro: 'Интернет-магазин мерча с каталогом товаров и корзиной покупок.', task: 'Создать полноценный e-commerce с каталогом, корзиной и интеграцией оплаты.', result: '+25% продаж через онлайн-канал, удобный интерфейс для клиентов.', year: '2025', role: 'PHP, JavaScript, MySQL, Payment Integration' }
 };
 
 const casePage = document.querySelector('.case-page');
@@ -193,6 +193,26 @@ const storageReady = new Promise((resolve, reject) => {
 });
 
 function saveUpload(record) {
+  // Сохранение в GitHub API если доступен
+  if (window.githubStorage && window.githubConfig.getToken()) {
+    const timestamp = Date.now();
+    const filename = `${timestamp}-${record.file.name}`;
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      const content = e.target.result;
+      const result = await window.githubStorage.uploadFile(filename, content, record.kind);
+      if (result.success) {
+        console.log('File uploaded to GitHub:', result.url);
+      } else {
+        console.error('Failed to upload to GitHub:', result.error);
+      }
+    };
+
+    reader.readAsDataURL(record.file);
+  }
+
+  // Сохранение в IndexedDB как резерв
   return storageReady.then((database) => new Promise((resolve, reject) => {
     const transaction = database.transaction('uploads', 'readwrite');
     transaction.objectStore('uploads').put(record);
@@ -271,6 +291,19 @@ function renderDocuments(files, shouldSave = true) {
       URL.revokeObjectURL(documentUrl);
       uploadedDocuments.delete(documentId);
       deleteUpload(`document-${documentId}`).catch(() => {});
+
+      // Удаление из GitHub если доступен
+      if (window.githubStorage && window.githubConfig.getToken()) {
+        const filename = `${record.file.name}`; // Need to extract the actual filename from the record
+        window.githubStorage.deleteFile(filename, record.kind).then((result) => {
+          if (result.success) {
+            console.log('File deleted from GitHub');
+          } else {
+            console.error('Failed to delete from GitHub:', result.error);
+          }
+        });
+      }
+
       item.remove();
     });
     item.append(documentContent, removeButton);
@@ -345,6 +378,19 @@ function renderCertificates(files, shouldSave = true) {
       URL.revokeObjectURL(certificateUrl);
       certificateUrls.delete(certificateId);
       deleteUpload(`certificate-${certificateId}`).catch(() => {});
+
+      // Удаление из GitHub если доступен
+      if (window.githubStorage && window.githubConfig.getToken()) {
+        const filename = `${file.name}`;
+        window.githubStorage.deleteFile(filename, 'certificate').then((result) => {
+          if (result.success) {
+            console.log('Certificate deleted from GitHub');
+          } else {
+            console.error('Failed to delete certificate from GitHub:', result.error);
+          }
+        });
+      }
+
       item.remove();
     });
     item.append(removeButton);
@@ -415,6 +461,47 @@ getUploads().then((uploads) => {
   uploads.filter((upload) => upload.kind === 'document').forEach((upload) => renderDocuments([upload.file], false));
   uploads.filter((upload) => upload.kind === 'certificate').forEach((upload) => renderCertificates([upload.file], false));
 }).catch(() => {});
+
+// Загрузка файлов из GitHub если токен настроен
+if (window.githubStorage && window.githubConfig.getToken()) {
+  window.githubStorage.listFiles().then((files) => {
+    console.log('Files from GitHub:', files);
+    // Здесь можно добавить логику для отображения файлов из GitHub
+  }).catch((error) => {
+    console.error('Error loading files from GitHub:', error);
+  });
+}
+
+// GitHub token form handling
+const githubToggle = document.querySelector('#github-toggle');
+const githubContent = document.querySelector('#github-content');
+const githubForm = document.querySelector('#github-form');
+const githubTokenInput = document.querySelector('#github-token');
+const githubStatus = document.querySelector('#github-status');
+const githubClear = document.querySelector('#github-clear');
+
+githubToggle?.addEventListener('click', () => {
+  const isExpanded = githubToggle.getAttribute('aria-expanded') === 'true';
+  githubToggle.setAttribute('aria-expanded', String(!isExpanded));
+  githubContent.hidden = isExpanded;
+});
+
+githubForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const token = githubTokenInput.value.trim();
+  if (token) {
+    window.githubConfig.setToken(token);
+    githubStatus.textContent = 'Токен сохранён ✓';
+    githubTokenInput.value = '';
+    console.log('GitHub token saved to localStorage');
+  }
+});
+
+githubClear?.addEventListener('click', () => {
+  window.githubConfig.clearToken();
+  githubStatus.textContent = 'Токен удалён';
+  console.log('GitHub token removed from localStorage');
+});
 
 try {
   JSON.parse(localStorage.getItem('jiraf-achievements') || '[]').forEach((achievement) => {

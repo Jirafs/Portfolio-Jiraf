@@ -115,12 +115,23 @@
           <div class="cloud-access-inner"><div><h2>Вход<br><em>владельца.</em></h2><p>Войдите, чтобы загружать материалы. Посетители смогут только просматривать опубликованные файлы.</p></div><div class="cloud-panel"><form class="cloud-form" id="cloud-form"><input id="cloud-email" type="email" placeholder="Email" required /><input id="cloud-password" type="password" placeholder="Пароль" required /><button type="submit">Войти</button><a class="cloud-reset" id="cloud-password-reset" href="javascript:void(0)">Забыли пароль?</a></form><div class="oauth-buttons"><button class="oauth-button google-button" id="google-login"><span>Войти через Google</span></button></div><span class="cloud-status" id="cloud-status" role="status"></span><button class="cloud-logout" id="cloud-logout" type="button" hidden>Выйти</button></div></div>
         </div>
       </section>
+      <section class="cloud-access" id="github-setup" style="margin-top: 20px;">
+        <button class="cloud-toggle" id="github-toggle" type="button" aria-expanded="false" aria-controls="github-content">
+          <span>⚙️ Настройка GitHub</span>
+          <span class="cloud-toggle-icon">+</span>
+        </button>
+        <div class="cloud-content" id="github-content" hidden>
+          <div class="cloud-access-inner"><div><h2>GitHub<br><em>токен.</em></h2><p>Введите ваш GitHub Personal Access Token для сохранения файлов в репозитории. Токен сохраняется только в вашем браузере.</p></div><div class="cloud-panel"><form class="cloud-form" id="github-form"><input id="github-token" type="password" placeholder="ghp_xxxxxxxxxxxx" required /><button type="submit">Сохранить токен</button></form><span class="cloud-status" id="github-status" role="status"></span><button class="cloud-logout" id="github-clear" type="button">Удалить токен</button></div></div>
+        </div>
+      </section>
     </main>
     <footer class="teacher-footer"><a href="index.html#work">← Смотреть проекты</a><span>© <span id="year"></span> Jiraf</span><a href="index.html#top">Наверх ↑</a></footer>
   </div>
   <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="github-config.js"></script>
+  <script src="github-storage.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

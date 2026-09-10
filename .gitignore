@@ -1,0 +1,4 @@
+# Temporary files
+firebase-config.js
+firebase-storage.js
+supabase-storage.js

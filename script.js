@@ -291,19 +291,6 @@ function renderDocuments(files, shouldSave = true) {
       URL.revokeObjectURL(documentUrl);
       uploadedDocuments.delete(documentId);
       deleteUpload(`document-${documentId}`).catch(() => {});
-
-      // Удаление из GitHub если доступен
-      if (window.githubStorage && window.githubConfig.getToken()) {
-        const filename = `${record.file.name}`; // Need to extract the actual filename from the record
-        window.githubStorage.deleteFile(filename, record.kind).then((result) => {
-          if (result.success) {
-            console.log('File deleted from GitHub');
-          } else {
-            console.error('Failed to delete from GitHub:', result.error);
-          }
-        });
-      }
-
       item.remove();
     });
     item.append(documentContent, removeButton);
@@ -378,19 +365,6 @@ function renderCertificates(files, shouldSave = true) {
       URL.revokeObjectURL(certificateUrl);
       certificateUrls.delete(certificateId);
       deleteUpload(`certificate-${certificateId}`).catch(() => {});
-
-      // Удаление из GitHub если доступен
-      if (window.githubStorage && window.githubConfig.getToken()) {
-        const filename = `${file.name}`;
-        window.githubStorage.deleteFile(filename, 'certificate').then((result) => {
-          if (result.success) {
-            console.log('Certificate deleted from GitHub');
-          } else {
-            console.error('Failed to delete certificate from GitHub:', result.error);
-          }
-        });
-      }
-
       item.remove();
     });
     item.append(removeButton);

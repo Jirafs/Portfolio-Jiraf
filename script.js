@@ -11,7 +11,8 @@ const projectData = {
 const casePage = document.querySelector('.case-page');
 if (casePage) {
   const requestedProject = new URLSearchParams(window.location.search).get('project');
-  const projectKey = projectData[requestedProject] ? requestedProject : 'sostav';
+  const defaultProject = Object.keys(projectData)[0];
+  const projectKey = projectData[requestedProject] ? requestedProject : defaultProject;
   const project = projectData[projectKey];
   const projectOrder = Object.keys(projectData);
   const projectPosition = projectOrder.indexOf(projectKey);

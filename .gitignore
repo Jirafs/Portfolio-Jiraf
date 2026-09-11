@@ -1,0 +1,18 @@
+# Локальные и системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы и IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Логи и временные файлы
+*.log
+npm-debug.log*
+*.tmp
+
+# Зависимости Node (если понадобится сборка)
+node_modules/

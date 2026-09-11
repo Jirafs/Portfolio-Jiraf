@@ -193,24 +193,6 @@ const storageReady = new Promise((resolve, reject) => {
 });
 
 function saveUpload(record) {
-  // Сохранение в GitHub API если доступен
-  if (window.githubStorage && window.githubConfig.getToken()) {
-    const timestamp = Date.now();
-    const filename = `${timestamp}-${record.file.name}`;
-    const reader = new FileReader();
-
-    reader.onload = async (e) => {
-      const content = e.target.result;
-      const result = await window.githubStorage.uploadFile(filename, content, record.kind);
-      if (result.success) {
-        console.log('File uploaded to GitHub:', result.url);
-      } else {
-        console.error('Failed to upload to GitHub:', result.error);
-      }
-    };
-
-    reader.readAsDataURL(record.file);
-  }
 
   // Сохранение в IndexedDB как резерв
   return storageReady.then((database) => new Promise((resolve, reject) => {
@@ -435,47 +417,6 @@ getUploads().then((uploads) => {
   uploads.filter((upload) => upload.kind === 'document').forEach((upload) => renderDocuments([upload.file], false));
   uploads.filter((upload) => upload.kind === 'certificate').forEach((upload) => renderCertificates([upload.file], false));
 }).catch(() => {});
-
-// Загрузка файлов из GitHub если токен настроен
-if (window.githubStorage && window.githubConfig.getToken()) {
-  window.githubStorage.listFiles().then((files) => {
-    console.log('Files from GitHub:', files);
-    // Здесь можно добавить логику для отображения файлов из GitHub
-  }).catch((error) => {
-    console.error('Error loading files from GitHub:', error);
-  });
-}
-
-// GitHub token form handling
-const githubToggle = document.querySelector('#github-toggle');
-const githubContent = document.querySelector('#github-content');
-const githubForm = document.querySelector('#github-form');
-const githubTokenInput = document.querySelector('#github-token');
-const githubStatus = document.querySelector('#github-status');
-const githubClear = document.querySelector('#github-clear');
-
-githubToggle?.addEventListener('click', () => {
-  const isExpanded = githubToggle.getAttribute('aria-expanded') === 'true';
-  githubToggle.setAttribute('aria-expanded', String(!isExpanded));
-  githubContent.hidden = isExpanded;
-});
-
-githubForm?.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const token = githubTokenInput.value.trim();
-  if (token) {
-    window.githubConfig.setToken(token);
-    githubStatus.textContent = 'Токен сохранён ✓';
-    githubTokenInput.value = '';
-    console.log('GitHub token saved to localStorage');
-  }
-});
-
-githubClear?.addEventListener('click', () => {
-  window.githubConfig.clearToken();
-  githubStatus.textContent = 'Токен удалён';
-  console.log('GitHub token removed from localStorage');
-});
 
 try {
   JSON.parse(localStorage.getItem('jiraf-achievements') || '[]').forEach((achievement) => {

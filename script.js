@@ -49,6 +49,76 @@ const cloudClient = window.supabase && window.supabaseConfig?.url && window.supa
   ? window.supabase.createClient(window.supabaseConfig.url, window.supabaseConfig.key)
   : null;
 
+// --- Облачное хранилище файлов (Supabase Storage + таблица метаданных) ---
+const storageBuckets = window.supabaseConfig?.buckets || {};
+const filesTable = window.supabaseConfig?.filesTable || 'portfolio_files';
+
+// Делает имя файла безопасным для ключа в бакете: уникальный префикс + имя без опасных символов.
+function buildStoragePath(file) {
+  const safeName = file.name
+    .normalize('NFKD')
+    .replace(/[^a-zA-Z0-9._-]+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(-80) || 'file';
+  const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return `${unique}-${safeName}`;
+}
+
+// Загружает файл в бакет и возвращает публичную ссылку.
+async function uploadFileToCloud(bucket, file) {
+  if (!cloudClient || !bucket) throw new Error('storage-unavailable');
+  const path = buildStoragePath(file);
+  const { error } = await cloudClient.storage.from(bucket).upload(path, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type || undefined
+  });
+  if (error) throw error;
+  const { data } = cloudClient.storage.from(bucket).getPublicUrl(path);
+  return { path, publicUrl: data.publicUrl };
+}
+
+// Сохраняет метаданные файла в таблицу, чтобы его видели все посетители.
+async function saveFileRecord(record) {
+  if (!cloudClient) throw new Error('storage-unavailable');
+  const { error } = await cloudClient.from(filesTable).insert(record);
+  if (error) throw error;
+}
+
+// Удаляет файл из бакета и его запись из таблицы (только владелец).
+async function deleteFileFromCloud(bucket, path) {
+  if (!cloudClient) return;
+  if (path) await cloudClient.storage.from(bucket).remove([path]);
+}
+
+async function deleteFileRecord(id) {
+  if (!cloudClient) return;
+  await cloudClient.from(filesTable).delete().eq('id', id);
+}
+
+// Полное удаление: сначала метаданные в таблице, потом файл в бакете.
+async function removeCloudRecord(id, bucket, path) {
+  if (!cloudClient || !id) return;
+  try {
+    await deleteFileRecord(id);
+    await deleteFileFromCloud(bucket, path);
+  } catch (error) {
+    console.error('Не удалось удалить файл из облака:', error);
+  }
+}
+
+// Читает опубликованные файлы из таблицы (доступно любому посетителю, если настроен RLS).
+async function loadPublishedFiles() {
+  if (!cloudClient) return [];
+  const { data, error } = await cloudClient.from(filesTable).select('*').order('created_at', { ascending: false });
+  if (error) {
+    console.error('Не удалось получить список файлов из Supabase:', error);
+    return [];
+  }
+  return data || [];
+}
+
 const cloudToggle = document.querySelector('#cloud-toggle');
 const cloudContent = document.querySelector('#cloud-content');
 
@@ -214,13 +284,42 @@ function getUploads() {
   }));
 }
 
+// Показывает статус загрузки/ошибки рядом со списком документов.
+function setUploadStatus(message, isError = false) {
+  if (!cloudStatus) return;
+  cloudStatus.textContent = message;
+  cloudStatus.style.color = isError ? 'var(--orange)' : '';
+}
+
 function renderDocuments(files, shouldSave = true) {
   Array.from(files).forEach((file) => {
     const documentId = `${file.name}-${file.size}-${file.lastModified}`;
     if (uploadedDocuments.has(documentId)) return;
     const documentUrl = URL.createObjectURL(file);
     uploadedDocuments.set(documentId, documentUrl);
-    if (shouldSave) saveUpload({ id: `document-${documentId}`, kind: 'document', file }).catch(() => {});
+
+    // Ссылка на скачивание из облака появится после успешной загрузки.
+    let cloudDownloadLink = null;
+    if (shouldSave) {
+      setUploadStatus(`Загружаю «${file.name}»...`);
+      uploadFileToCloud(storageBuckets.documents, file).then(({ path, publicUrl }) =>
+        saveFileRecord({
+          kind: 'document',
+          file_name: file.name,
+          file_size: file.size,
+          file_type: file.type || '',
+          bucket: storageBuckets.documents,
+          storage_path: path,
+          public_url: publicUrl
+        }).then(() => {
+          if (cloudDownloadLink) cloudDownloadLink.href = publicUrl;
+          setUploadStatus(`«${file.name}» опубликован.`);
+        })
+      ).catch((error) => {
+        console.error('Не удалось загрузить документ в облако:', error);
+        setUploadStatus('Не удалось загрузить файл в облако. Проверьте настройки Supabase.', true);
+      });
+    }
 
     const item = document.createElement('li');
     item.className = 'upload-item';
@@ -248,6 +347,7 @@ function renderDocuments(files, shouldSave = true) {
       downloadLink.download = file.name;
       downloadLink.className = 'document-download';
       downloadLink.textContent = 'Скачать';
+      cloudDownloadLink = downloadLink;
       documentContent.append(downloadLink);
       preview.innerHTML = '<span class="document-preview-loading">Читаю документ...</span>';
       if (window.mammoth) {
@@ -272,6 +372,7 @@ function renderDocuments(files, shouldSave = true) {
       URL.revokeObjectURL(documentUrl);
       uploadedDocuments.delete(documentId);
       deleteUpload(`document-${documentId}`).catch(() => {});
+      removeCloudRecord(item.dataset.recordId, storageBuckets.documents, item.dataset.storagePath);
       item.remove();
     });
     item.append(documentContent, removeButton);
@@ -301,7 +402,30 @@ function renderCertificates(files, shouldSave = true) {
     if (certificateUrls.has(certificateId)) return;
     const certificateUrl = URL.createObjectURL(file);
     certificateUrls.set(certificateId, certificateUrl);
-    if (shouldSave) saveUpload({ id: `certificate-${certificateId}`, kind: 'certificate', file }).catch(() => {});
+
+    // Загрузка сертификата в облако + публикация для посетителей.
+    let cloudDownloadLink = null;
+    if (shouldSave) {
+      setUploadStatus(`Загружаю «${file.name}»...`);
+      uploadFileToCloud(storageBuckets.certificates, file).then(({ path, publicUrl }) =>
+        saveFileRecord({
+          kind: 'certificate',
+          file_name: file.name,
+          file_size: file.size,
+          file_type: file.type || '',
+          bucket: storageBuckets.certificates,
+          storage_path: path,
+          public_url: publicUrl
+        }).then(() => {
+          if (cloudDownloadLink) cloudDownloadLink.href = publicUrl;
+          setUploadStatus(`«${file.name}» опубликован.`);
+        })
+      ).catch((error) => {
+        console.error('Не удалось загрузить сертификат в облако:', error);
+        setUploadStatus('Не удалось загрузить файл в облако. Проверьте настройки Supabase.', true);
+      });
+    }
+
     const item = document.createElement('li');
     const link = document.createElement('a');
     link.href = certificateUrl;
@@ -323,6 +447,7 @@ function renderCertificates(files, shouldSave = true) {
     downloadLink.download = file.name;
     downloadLink.className = 'document-download';
     downloadLink.textContent = 'Скачать';
+    cloudDownloadLink = downloadLink;
     item.append(downloadLink);
     if (file.type.startsWith('image/')) {
       const image = document.createElement('img');
@@ -346,6 +471,7 @@ function renderCertificates(files, shouldSave = true) {
       URL.revokeObjectURL(certificateUrl);
       certificateUrls.delete(certificateId);
       deleteUpload(`certificate-${certificateId}`).catch(() => {});
+      removeCloudRecord(item.dataset.recordId, storageBuckets.certificates, item.dataset.storagePath);
       item.remove();
     });
     item.append(removeButton);
@@ -354,6 +480,102 @@ function renderCertificates(files, shouldSave = true) {
 }
 
 certificateInput?.addEventListener('change', (event) => renderCertificates(event.target.files));
+
+// --- Публичные записи из облака: те же элементы, но с ссылками Supabase ---
+
+function renderCloudDocument(record) {
+  const sizeKb = record.file_size ? Math.ceil(record.file_size / 1024) : 0;
+  const item = document.createElement('li');
+  item.className = 'upload-item';
+  item.dataset.recordId = record.id;
+  item.dataset.storagePath = record.storage_path || '';
+  const content = document.createElement('div');
+  content.className = 'document-content';
+  const link = document.createElement('a');
+  link.href = record.public_url;
+  link.target = '_blank';
+  link.rel = 'noreferrer';
+  link.textContent = sizeKb ? `${record.file_name} (${sizeKb} КБ)` : record.file_name;
+  const downloadLink = document.createElement('a');
+  downloadLink.href = record.public_url;
+  downloadLink.download = record.file_name;
+  downloadLink.className = 'document-download';
+  downloadLink.textContent = 'Скачать';
+  content.append(link, downloadLink);
+  const removeButton = document.createElement('button');
+  removeButton.className = 'upload-remove owner-only';
+  removeButton.type = 'button';
+  removeButton.setAttribute('aria-label', `Удалить ${record.file_name}`);
+  removeButton.textContent = '×';
+  removeButton.addEventListener('click', () => {
+    removeCloudRecord(record.id, record.bucket, record.storage_path);
+    item.remove();
+  });
+  item.append(content, removeButton);
+  uploadList.append(item);
+}
+
+function renderCloudCertificate(record) {
+  const sizeKb = record.file_size ? Math.ceil(record.file_size / 1024) : 0;
+  const item = document.createElement('li');
+  item.dataset.recordId = record.id;
+  item.dataset.storagePath = record.storage_path || '';
+  const link = document.createElement('a');
+  link.href = record.public_url;
+  link.textContent = sizeKb ? `${record.file_name} (${sizeKb} КБ)` : record.file_name;
+  link.setAttribute('aria-expanded', 'false');
+  link.title = 'Открыть или скрыть сертификат';
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    const isExpanded = item.classList.toggle('is-expanded');
+    link.setAttribute('aria-expanded', String(isExpanded));
+    const imagePreview = item.querySelector('img');
+    const pdfPreview = item.querySelector('iframe');
+    if (imagePreview) imagePreview.hidden = !isExpanded;
+    if (pdfPreview) pdfPreview.hidden = !isExpanded;
+  });
+  item.append(link);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = record.public_url;
+  downloadLink.download = record.file_name;
+  downloadLink.className = 'document-download';
+  downloadLink.textContent = 'Скачать';
+  item.append(downloadLink);
+  const fileType = record.file_type || '';
+  if (fileType.startsWith('image/')) {
+    const image = document.createElement('img');
+    image.src = record.public_url;
+    image.alt = `Сертификат ${record.file_name}`;
+    image.hidden = true;
+    item.append(image);
+  } else if (fileType === 'application/pdf' || /[.]pdf$/i.test(record.file_name || '')) {
+    const pdfPreview = document.createElement('iframe');
+    pdfPreview.className = 'certificate-preview';
+    pdfPreview.src = record.public_url;
+    pdfPreview.title = `Предпросмотр сертификата ${record.file_name}`;
+    pdfPreview.hidden = true;
+    item.append(pdfPreview);
+  }
+  const removeButton = document.createElement('button');
+  removeButton.className = 'upload-remove owner-only';
+  removeButton.type = 'button';
+  removeButton.setAttribute('aria-label', `Удалить сертификат ${record.file_name}`);
+  removeButton.textContent = '×';
+  removeButton.addEventListener('click', () => {
+    removeCloudRecord(record.id, record.bucket, record.storage_path);
+    item.remove();
+  });
+  item.append(removeButton);
+  certificateList.append(item);
+}
+
+// Загружает опубликованные файлы при открытии страницы — для всех посетителей.
+async function renderCloudFiles() {
+  if (!cloudClient || !uploadList) return;
+  const records = await loadPublishedFiles();
+  records.filter((record) => record.kind === 'document').forEach(renderCloudDocument);
+  records.filter((record) => record.kind === 'certificate').forEach(renderCloudCertificate);
+}
 
 const achievementForm = document.querySelector('#achievement-form');
 const achievementList = document.querySelector('#achievement-list');
@@ -412,9 +634,14 @@ function addAchievement(title, year, description, shouldSave = true) {
   if (shouldSave) saveAchievements();
 }
 
-getUploads().then((uploads) => {
-  uploads.filter((upload) => upload.kind === 'document').forEach((upload) => renderDocuments([upload.file], false));
-  uploads.filter((upload) => upload.kind === 'certificate').forEach((upload) => renderCertificates([upload.file], false));
+// Основной источник — облако: его видят все посетители.
+// Если Supabase недоступен, показываем локальные файлы из IndexedDB (только владельцу).
+renderCloudFiles().then(() => {
+  if (cloudClient) return;
+  return getUploads().then((uploads) => {
+    uploads.filter((upload) => upload.kind === 'document').forEach((upload) => renderDocuments([upload.file], false));
+    uploads.filter((upload) => upload.kind === 'certificate').forEach((upload) => renderCertificates([upload.file], false));
+  });
 }).catch(() => {});
 
 try {

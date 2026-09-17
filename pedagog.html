@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Персональный сайт преподавателя Михайлова Даниила Николаевича" />
+  <title>Михайлов Даниил Николаевич — педагогический сайт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="redesign.css" />
+  <link rel="stylesheet" href="dark-theme.css" />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --paper: #ffffff;
+      --paper-2: #eef4ff;
+      --text: #172132;
+      --muted: #63718a;
+      --brand: #2458d3;
+      --brand-2: #1ca6a4;
+      --line: #dce5f3;
+      --shadow: 0 18px 40px rgba(23, 33, 50, 0.10);
+      --radius: 24px;
+      --radius-sm: 18px;
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Manrope', Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(36,88,211,0.11), transparent 30rem),
+        radial-gradient(circle at 90% 20%, rgba(28,166,164,0.12), transparent 26rem),
+        var(--bg);
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .site-header { position: sticky; top: 0; z-index: 100; backdrop-filter: blur(18px); background: rgba(246,248,251,0.86); border-bottom: 1px solid rgba(220,229,243,0.85); }
+    .nav-wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand-mark { width: 46px; height: 46px; border-radius: 15px; display:grid; place-items:center; color:#fff; background: linear-gradient(135deg,var(--brand),var(--brand-2)); font-weight: 800; box-shadow: 0 12px 28px rgba(36,88,211,0.24); }
+    .brand-title { font-weight: 800; line-height:1.1; }
+    .brand-subtitle { display:block; color:var(--muted); font-size:13px; margin-top:2px; }
+    .nav { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    .nav a { color:var(--muted); padding:9px 12px; border-radius:999px; font-size:14px; transition: .2s ease; }
+    .nav a:hover, .nav a.active { background: rgba(36,88,211,0.09); color:var(--brand); }
+    .menu-toggle { display:none; border:1px solid var(--line); background:var(--paper); border-radius:14px; padding:10px 12px; cursor:pointer; }
+
+    .hero { padding: 54px 0 24px; }
+    .hero-grid { display:grid; grid-template-columns: 1.15fr .85fr; gap: 32px; align-items:center; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color:var(--brand); background: rgba(36,88,211,0.09); border: 1px solid rgba(36,88,211,0.16); border-radius: 999px; padding: 7px 12px; }
+    h1 { font-size: clamp(36px, 5vw, 66px); line-height: 0.96; letter-spacing: -.06em; margin: 18px 0 16px; }
+    .hero p { color:var(--muted); font-size: 18px; margin: 0 0 24px; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-bottom: 28px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:12px 18px; border-radius:16px; font-weight:750; cursor:pointer; transition:.2s ease; border:0; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { color:#fff; background: linear-gradient(135deg,var(--brand),#173ea6); box-shadow: 0 14px 30px rgba(36,88,211,0.24); }
+    .btn-secondary { color:var(--text); background:var(--paper); border:1px solid var(--line); }
+    .stats { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+    .stat, .card { background: rgba(255,255,255,0.88); border:1px solid rgba(220,229,243,0.95); box-shadow: var(--shadow); border-radius: var(--radius); }
+    .stat { padding:16px; }
+    .stat strong { display:block; font-size: 28px; line-height:1; margin-bottom:5px; }
+    .stat span { color:var(--muted); font-size: 13px; }
+
+    .profile-card { padding: 22px; }
+    .portrait-frame { border-radius: 28px; overflow:hidden; background: linear-gradient(135deg,#edf4ff,#ffffff); border:1px solid var(--line); }
+    .portrait-frame img { width:100%; aspect-ratio: 4/5; object-fit: cover; }
+    .quick-info { display:grid; gap: 12px; margin-top:16px; }
+    .quick-row { display:flex; gap:12px; align-items:flex-start; background: var(--paper-2); border:1px solid var(--line); border-radius:16px; padding:12px; }
+    .quick-icon { width:34px; height:34px; border-radius:12px; background:#fff; display:grid; place-items:center; flex:0 0 34px; }
+    .quick-row b { display:block; line-height:1.2; }
+    .quick-row span { color:var(--muted); font-size:14px; }
+
+    main { padding-bottom: 70px; }
+    section { padding-top: 30px; scroll-margin-top: 88px; }
+    .section-head { margin-bottom: 18px; }
+    .section-kicker { color:var(--brand); text-transform: uppercase; font-size:12px; font-weight:800; letter-spacing:.12em; margin-bottom:6px; }
+    h2 { font-size: clamp(28px, 3vw, 42px); line-height:1.04; letter-spacing:-.04em; margin:0; }
+    .section-desc { color:var(--muted); max-width: 760px; margin: 8px 0 0; }
+
+    .grid { display:grid; gap:18px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .card { padding:22px; }
+    .card h3 { margin:0 0 10px; font-size: 20px; line-height: 1.25; }
+    .card p { margin:0 0 12px; color:var(--muted); }
+    .card ul { margin:0; padding-left: 18px; color:var(--muted); }
+    .card li + li { margin-top: 6px; }
+
+    table { width:100%; border-collapse: collapse; overflow:hidden; background:#fff; border-radius: var(--radius-sm); }
+    th, td { padding: 13px 14px; border-bottom:1px solid var(--line); text-align:left; vertical-align: top; }
+    th { width: 34%; background: var(--paper-2); font-weight:800; }
+    td { color: var(--muted); }
+    tr:last-child th, tr:last-child td { border-bottom: 0; }
+
+    .doc-list { display:grid; gap:12px; }
+    .doc { display:flex; justify-content:space-between; align-items:center; gap:14px; border:1px solid var(--line); border-radius:18px; background:#fff; padding:14px; }
+    .doc-left { display:flex; gap:12px; align-items:center; min-width:0; }
+    .doc-type { width:44px; height:44px; border-radius:14px; color:#fff; display:grid; place-items:center; font-size:12px; font-weight:900; background: linear-gradient(135deg,var(--brand),var(--brand-2)); flex: 0 0 44px; }
+    .doc b { display:block; line-height:1.25; }
+    .doc span { color:var(--muted); font-size:13px; }
+    .doc-action { color:var(--brand); font-weight:800; white-space:nowrap; }
+
+    .highlight { padding: 18px; border-radius: 18px; background: linear-gradient(135deg, rgba(36,88,211,0.09), rgba(28,166,164,0.08)); border:1px solid rgba(36,88,211,0.12); }
+    .metrics { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+    .metric { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; }
+    .metric strong { display:block; font-size: 26px; line-height:1; margin-bottom:5px; }
+    .metric span { color:var(--muted); font-size:13px; }
+
+    .gallery { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:16px; }
+    figure.photo-card { margin:0; background: rgba(255,255,255,0.88); border:1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); overflow:hidden; }
+    .photo-card img { width:100%; height: 300px; object-fit: cover; }
+    figcaption { padding: 14px 16px 16px; }
+    figcaption b { display:block; line-height:1.2; margin-bottom:4px; }
+    figcaption span { color:var(--muted); font-size:14px; }
+
+    .award-layout { display:grid; grid-template-columns: .95fr 1.05fr; gap: 18px; align-items:center; }
+    .award-image { border-radius: 24px; overflow:hidden; border:1px solid var(--line); background:#fff; }
+
+    .contact-layout { display:grid; grid-template-columns: .9fr 1.1fr; gap:18px; }
+    .contact-line { display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:18px; padding:13px; background:#fff; }
+    .icon { width:38px; height:38px; display:grid; place-items:center; border-radius:14px; background: var(--paper-2); flex:0 0 38px; }
+    .field { display:grid; gap:6px; }
+    .field label { font-size:14px; font-weight:800; }
+    .field input, .field textarea { width:100%; padding:13px 14px; border-radius:16px; border:1px solid var(--line); background:#fff; color:var(--text); outline:none; }
+    .field input:focus, .field textarea:focus { border-color: rgba(36,88,211,0.65); box-shadow: 0 0 0 4px rgba(36,88,211,0.1); }
+    textarea { min-height: 120px; resize: vertical; }
+    .guestbook { display:grid; gap:10px; margin-top:16px; }
+    .guest-message { background: var(--paper-2); border:1px solid var(--line); border-radius:16px; padding:12px; }
+    .guest-message b { display:block; margin-bottom:3px; }
+    .guest-message span, .guest-message p { color:var(--muted); }
+    .guest-message p { margin:6px 0 0; }
+
+    .footer { background: rgba(255,255,255,0.74); border-top:1px solid var(--line); padding: 28px 0; color:var(--muted); }
+    .footer-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+    .to-top { background:#fff; border:1px solid var(--line); padding:9px 12px; border-radius:999px; color:var(--text); font-weight:800; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .grid-2, .grid-3, .contact-layout, .award-layout { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2,1fr); }
+      .gallery { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .menu-toggle { display:inline-flex; }
+      .nav { display:none; position:absolute; left:20px; right:20px; top:76px; background:#fff; border:1px solid var(--line); border-radius:22px; box-shadow: var(--shadow); padding:12px; justify-content:flex-start; }
+      .nav.open { display:flex; }
+      .nav a { width:100%; }
+      .stats, .metrics { grid-template-columns: 1fr; }
+      th, td { display:block; width:100%; }
+      th { border-bottom:0; padding-bottom:4px; }
+      td { padding-top:4px; }
+      .doc { flex-direction:column; align-items:flex-start; }
+      .photo-card img { height: 240px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">МД</span>
+        <span>
+          <span class="brand-title">Михайлов Даниил Николаевич</span>
+          <span class="brand-subtitle">преподаватель · педагогический сайт</span>
+        </span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Меню</button>
+      <nav class="nav" id="site-nav" aria-label="Основное меню">
+        <a href="index.html">На главную</a>
+        <a href="about.html">Обо мне</a>
+        <a href="#about">О преподавателе</a>
+        <a href="#methods">Методическая копилка</a>
+        <a href="#results">Результаты</a>
+        <a href="#awards">Награды</a>
+        <a href="#gallery">Фотогалерея</a>
+        <a href="#feedback">Обратная связь</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">🎓 Персональный сайт преподавателя</span>
+        <h1>Михайлов<br>Даниил Николаевич</h1>
+        <p>
+          Преподаватель Финансового университета, подразделение Колледжа информатики и программирования.
+          На сайте размещены основные сведения, материалы открытого урока, результаты педагогической деятельности.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#methods">Открытый урок</a>
+          <a class="btn btn-secondary" href="#gallery">Смотреть фото</a>
+          <a class="btn btn-secondary" href="#feedback">Написать сообщение</a>
+          <a class="btn btn-secondary" href="index.html">Портфолио</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>2,2</strong><span>года общего стажа</span></div>
+          <div class="stat"><strong>5</strong><span>преподаваемых дисциплин</span></div>
+          <div class="stat"><strong>100%</strong><span>вовлечённость студентов</span></div>
+        </div>
+      </div>
+
+      <aside class="profile-card card">
+        <div class="portrait-frame">
+          <img src="daniil-photo.jpg" alt="Портрет Михайлова Даниила Николаевича" />
+        </div>
+        <div class="quick-info">
+          <div class="quick-row"><span class="quick-icon">🏫</span><span><b>Место работы</b><span>Финансовый университет, Колледж информатики и программирования</span></span></div>
+          <div class="quick-row"><span class="quick-icon">💼</span><span><b>Должность</b><span>Преподаватель</span></span></div>
+          <div class="quick-row"><span class="quick-icon">📚</span><span><b>Преподаваемые дисциплины</b><span>Обеспечение безопасности веб-приложений, проектирование и разработка веб-приложений, оптимизация веб-приложений, операционные системы и среды, архитектура аппаратных средств</span></span></div>
+          <div class="quick-row"><span class="quick-icon">⏱️</span><span><b>Общий стаж</b><span>2 года и 2 месяца</span></span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <main class="container">
+    <section id="about">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 1</div>
+        <h2>Визитная карточка</h2>
+        <p class="section-desc">Основные сведения о преподавателе и направлениях работы.</p>
+      </div>
+      <div class="grid grid-2">
+        <article class="card">
+          <h3>Общие сведения</h3>
+          <table aria-label="Общие сведения о преподавателе">
+            <tbody>
+              <tr><th>ФИО</th><td>Михайлов Даниил Николаевич</td></tr>
+              <tr><th>Должность</th><td>Преподаватель</td></tr>
+              <tr><th>Место работы</th><td>Финансовый университет, Колледж информатики и программирования</td></tr>
+              <tr><th>Преподаваемые дисциплины</th><td>Обеспечение безопасности веб-приложений, проектирование и разработка веб-приложений, оптимизация веб-приложений, операционные системы и среды, архитектура аппаратных средств</td></tr>
+              <tr><th>Специализация</th><td>Преподаватель веб-разработки и информационной безопасности</td></tr>
+              <tr><th>Общий стаж</th><td>2 года и 2 месяца</td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="card">
+          <h3>Профессиональный профиль</h3>
+          <p>
+            Преподаватель ведёт занятия по профессиональным модулям, связанным с веб-разработкой и информационной безопасностью,
+            и участвует в организации учебной и внеучебной деятельности студентов.
+          </p>
+          <ul>
+            <li>проводит учебные занятия по направлению веб-разработки и информационной безопасности;</li>
+            <li>организует открытые занятия и методические материалы;</li>
+            <li>сопровождает обучающихся в учебной и воспитательной работе;</li>
+            <li>развивает практические навыки студентов в области разработки защищённых веб-приложений.</li>
+          </ul>
+          <div class="highlight" style="margin-top:14px;">
+            <strong>Направление работы:</strong>
+            <div style="color:var(--muted); margin-top:6px;">Преподавание профессиональных дисциплин в области веб-технологий и информационной безопасности.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="methods">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 2</div>
+        <h2>Методическая копилка</h2>
+        <p class="section-desc">Материалы открытого урока по теме «Обеспечение безопасности веб-приложений».</p>
+      </div>
+      <div class="grid grid-2">
+        <article class="card">
+          <h3>Открытый урок</h3>
+          <table aria-label="Сведения об открытом уроке">
+            <tbody>
+              <tr><th>Тема</th><td>Обеспечение безопасности веб-приложений</td></tr>
+              <tr><th>Дата проведения</th><td>В процессе подготовки</td></tr>
+              <tr><th>Группа</th><td>Учебные группы колледжа</td></tr>
+              <tr><th>Специальность</th><td>Информационные системы и программирование</td></tr>
+              <tr><th>Учебный цикл</th><td>Профессиональный модуль «Обеспечение безопасности веб-приложений»</td></tr>
+              <tr><th>Тип занятия</th><td>Комбинированное</td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="card">
+          <h3>Краткое содержание занятия</h3>
+          <ul>
+            <li>основные угрозы безопасности веб-приложений;</li>
+            <li>методы защиты от распространённых атак (SQL-инъекции, XSS, CSRF);</li>
+            <li>принципы безопасной аутентификации и авторизации;</li>
+            <li>шифрование данных и защищённое соединение (HTTPS);</li>
+            <li>практическое задание: анализ уязвимостей веб-приложения.</li>
+          </ul>
+          <p style="margin-top:12px;">Практическая часть направлена на развитие навыков выявления и устранения уязвимостей в веб-приложениях.</p>
+        </article>
+      </div>
+      <article class="card" style="margin-top:18px;">
+        <h3>Материалы для просмотра</h3>
+        <div class="doc-list">
+          <a class="doc" href="#" download>
+            <span class="doc-left"><span class="doc-type">DOC</span><span><b>Технологическая карта открытого урока</b><span>скачиваемый документ</span></span></span>
+            <span class="doc-action">Скачать</span>
+          </a>
+          <a class="doc" href="#" target="_blank">
+            <span class="doc-left"><span class="doc-type">HTML</span><span><b>Презентация «Обеспечение безопасности веб-приложений»</b><span>открыть в браузере</span></span></span>
+            <span class="doc-action">Открыть</span>
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <section id="results">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 3</div>
+        <h2>Результаты педагогической деятельности</h2>
+        <p class="section-desc">Показатели по преподаваемым дисциплинам по итогам текущего учебного года.</p>
+      </div>
+      <div class="metrics" aria-label="Ключевые показатели">
+        <div class="metric"><strong>95%</strong><span>успеваемость</span></div>
+        <div class="metric"><strong>82%</strong><span>качество знаний</span></div>
+        <div class="metric"><strong>79%</strong><span>обученность</span></div>
+        <div class="metric"><strong>4,3</strong><span>средний балл</span></div>
+      </div>
+      <article class="card" style="margin-top:18px;">
+        <h3>Сводная таблица по группам</h3>
+        <table aria-label="Результаты по группам">
+          <thead>
+            <tr>
+              <th>Группа</th>
+              <th>Кол-во студентов</th>
+              <th>Успеваемость</th>
+              <th>Качество</th>
+              <th>Обученность</th>
+              <th>Средний балл</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1023</td><td>25</td><td>96%</td><td>84%</td><td>80%</td><td>4,3</td></tr>
+            <tr><td>723</td><td>24</td><td>92%</td><td>79%</td><td>75%</td><td>4,1</td></tr>
+            <tr><td>623</td><td>26</td><td>98%</td><td>86%</td><td>82%</td><td>4,4</td></tr>
+            <tr><td>224</td><td>23</td><td>94%</td><td>81%</td><td>78%</td><td>4,2</td></tr>
+            <tr><td>124</td><td>22</td><td>97%</td><td>83%</td><td>81%</td><td>4,3</td></tr>
+            <tr><td><b>Итого</b></td><td><b>120</b></td><td><b>95%</b></td><td><b>82%</b></td><td><b>79%</b></td><td><b>4,3</b></td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section id="awards">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 4</div>
+        <h2>Награды и благодарности</h2>
+        <p class="section-desc">Документы, подтверждающие участие преподавателя в профессиональной деятельности.</p>
+      </div>
+      <div class="grid grid-2">
+        <article class="card">
+          <h3>Профессиональное развитие</h3>
+          <p>
+            В рамках профессионального развития преподаватель участвует в конференциях, вебинарах и тренингах
+            по актуальным темам веб-разработки и информационной безопасности.
+          </p>
+          <ul>
+            <li>участие в профильных конференциях и вебинарах;</li>
+            <li>повышение квалификации в области информационной безопасности;</li>
+            <li>изучение современных фреймворков и технологий веб-разработки;</li>
+            <li>публикация методических материалов.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Планируемые достижения</h3>
+          <p>
+            На ближайший период запланировано участие в профессиональных конкурсах и получение дополнительных
+            сертификатов в области информационной безопасности.
+          </p>
+          <div class="highlight" style="margin-top:14px;">
+            <strong>Цели:</strong>
+            <div style="color:var(--muted); margin-top:6px;">Получение сертификатов по информационной безопасности и участие в педагогических конкурсах.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 5</div>
+        <h2>Фотогалерея</h2>
+        <p class="section-desc">Фотографии с учебного процесса и профессиональной деятельности.</p>
+      </div>
+      <div class="gallery">
+        <figure class="photo-card">
+          <img src="daniil-photo.jpg" alt="Михайлов Даниил Николаевич" style="object-position:center top;" />
+          <figcaption><b>Портрет преподавателя</b><span>Михайлов Даниил Николаевич</span></figcaption>
+        </figure>
+        <figure class="photo-card">
+          <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=85" alt="Работа с группой" />
+          <figcaption><b>Работа с группой</b><span>Интерактивные методы обучения</span></figcaption>
+        </figure>
+        <figure class="photo-card">
+          <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=85" alt="Совещание преподавателей" />
+          <figcaption><b>Совещание преподавателей</b><span>Обсуждение методических вопросов</span></figcaption>
+        </figure>
+        <figure class="photo-card">
+          <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=85" alt="Компьютерный класс" />
+          <figcaption><b>Компьютерный класс</b><span>Оборудованная учебная аудитория</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="feedback">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 6</div>
+        <h2>Обратная связь</h2>
+        <p class="section-desc">Гостевая книга и форма сообщения на странице сайта.</p>
+      </div>
+      <div class="contact-layout">
+        <article class="card">
+          <h3>Связь через сайт</h3>
+          <div class="contact-line"><span class="icon">💬</span><span><b>Гостевая книга</b><br><span style="color:var(--muted);">Сообщения, оставленные ниже, отображаются прямо на странице.</span></span></div>
+          <div class="contact-line"><span class="icon">📝</span><span><b>Форма сообщения</b><br><span style="color:var(--muted);">Подходит для вопросов, пожеланий и обратной связи по материалам сайта.</span></span></div>
+          <div class="guestbook" id="guestbook" aria-live="polite"></div>
+        </article>
+        <article class="card">
+          <h3>Оставить сообщение</h3>
+          <form id="contact-form">
+            <div class="field">
+              <label for="name">Ваше имя</label>
+              <input id="name" name="name" type="text" required minlength="2" />
+            </div>
+            <div class="field">
+              <label for="message">Сообщение</label>
+              <textarea id="message" name="message" required minlength="8"></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">Добавить сообщение</button>
+          </form>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> Педагогический сайт Михайлова Даниила Николаевича</span>
+      <a class="to-top" href="#home">Наверх ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('.nav');
+    const navLinks = [...document.querySelectorAll('.nav a')];
+    menuToggle?.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+    navLinks.forEach(link => link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }));
+
+    const sections = [...document.querySelectorAll('main section')];
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      });
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: 0.01 });
+    sections.forEach(section => observer.observe(section));
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('contact-form');
+    const guestbook = document.getElementById('guestbook');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const name = String(data.get('name') || '').trim();
+      const message = String(data.get('message') || '').trim();
+      if (name.length < 2 || message.length < 8) return;
+      const item = document.createElement('div');
+      item.className = 'guest-message';
+      item.innerHTML = '<b></b><span></span><p></p>';
+      item.querySelector('b').textContent = name;
+      item.querySelector('span').textContent = new Date().toLocaleDateString('ru-RU');
+      item.querySelector('p').textContent = message;
+      guestbook.prepend(item);
+      form.reset();
+    });
+  </script>
+</body>
+</html>

@@ -215,26 +215,129 @@ function getUploads() {
   }));
 }
 
+async function uploadToSupabase(file, bucketName) {
+  if (!cloudClient) return null;
+
+  try {
+    const fileName = `${Date.now()}-${file.name}`;
+    const { data, error } = await cloudClient.storage
+      .from(bucketName)
+      .upload(fileName, file);
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = cloudClient.storage
+      .from(bucketName)
+      .getPublicUrl(fileName);
+
+    return { fileName, publicUrl };
+  } catch (error) {
+    console.error('Ошибка загрузки в Supabase:', error);
+    return null;
+  }
+}
+
+async function loadFromSupabase(bucketName) {
+  if (!cloudClient) return [];
+
+  try {
+    const { data, error } = await cloudClient.storage
+      .from(bucketName)
+      .list();
+
+    if (error) throw error;
+
+    return data.map(file => {
+      const { data: { publicUrl } } = cloudClient.storage
+        .from(bucketName)
+        .getPublicUrl(file.name);
+
+      return {
+        name: file.name.replace(/^\d+-/, ''),
+        url: publicUrl,
+        size: file.metadata?.size || 0
+      };
+    });
+  } catch (error) {
+    console.error('Ошибка загрузки из Supabase:', error);
+    return [];
+  }
+}
+
+async function deleteFromSupabase(fileName, bucketName) {
+  if (!cloudClient) return false;
+
+  try {
+    const { error } = await cloudClient.storage
+      .from(bucketName)
+      .remove([fileName]);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Ошибка удаления из Supabase:', error);
+    return false;
+  }
+}
+
 function renderDocuments(files, shouldSave = true) {
-  Array.from(files).forEach((file) => {
+  Array.from(files).forEach(async (file) => {
     const documentId = `${file.name}-${file.size}-${file.lastModified}`;
     if (uploadedDocuments.has(documentId)) return;
-    const documentUrl = URL.createObjectURL(file);
-    uploadedDocuments.set(documentId, documentUrl);
-    if (shouldSave) saveUpload({ id: `document-${documentId}`, kind: 'document', file }).catch(() => {});
 
     const item = document.createElement('li');
     item.className = 'upload-item';
     item.dataset.documentId = documentId;
     const documentContent = document.createElement('div');
     documentContent.className = 'document-content';
+
     const link = document.createElement('a');
-    link.href = documentUrl;
     link.textContent = `${file.name} (${Math.ceil(file.size / 1024)} КБ)`;
     const preview = document.createElement('div');
     preview.className = 'document-preview';
     const isWordDocument = file.name.toLowerCase().endsWith('.docx');
-    if (!isWordDocument) link.download = file.name;
+
+    const removeButton = document.createElement('button');
+    removeButton.className = 'upload-remove owner-only';
+    removeButton.type = 'button';
+    removeButton.setAttribute('aria-label', `Удалить ${file.name}`);
+    removeButton.textContent = '×';
+
+    if (document.body.classList.contains('cloud-authenticated')) {
+      const uploadResult = await uploadToSupabase(file, window.supabaseConfig.buckets.documents);
+      if (uploadResult) {
+        link.href = uploadResult.publicUrl;
+        link.target = '_blank';
+        if (!isWordDocument) link.download = file.name;
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = uploadResult.publicUrl;
+        downloadLink.download = file.name;
+        downloadLink.className = 'document-download';
+        downloadLink.textContent = 'Скачать';
+        documentContent.append(downloadLink);
+
+        removeButton.addEventListener('click', async () => {
+          await deleteFromSupabase(uploadResult.fileName, window.supabaseConfig.buckets.documents);
+          item.remove();
+        });
+      } else {
+        link.href = URL.createObjectURL(file);
+        if (!isWordDocument) link.download = file.name;
+        removeButton.addEventListener('click', () => {
+          URL.revokeObjectURL(link.href);
+          item.remove();
+        });
+      }
+    } else {
+      link.href = URL.createObjectURL(file);
+      if (!isWordDocument) link.download = file.name;
+      removeButton.addEventListener('click', () => {
+        URL.revokeObjectURL(link.href);
+        item.remove();
+      });
+    }
+
     if (isWordDocument) {
       preview.classList.add('is-visible');
       link.setAttribute('aria-expanded', 'true');
@@ -244,12 +347,6 @@ function renderDocuments(files, shouldSave = true) {
         const isVisible = preview.classList.toggle('is-visible');
         link.setAttribute('aria-expanded', String(isVisible));
       });
-      const downloadLink = document.createElement('a');
-      downloadLink.href = documentUrl;
-      downloadLink.download = file.name;
-      downloadLink.className = 'document-download';
-      downloadLink.textContent = 'Скачать';
-      documentContent.append(downloadLink);
       preview.innerHTML = '<span class="document-preview-loading">Читаю документ...</span>';
       if (window.mammoth) {
         file.arrayBuffer().then((arrayBuffer) => window.mammoth.convertToHtml({ arrayBuffer })).then((result) => {
@@ -263,20 +360,14 @@ function renderDocuments(files, shouldSave = true) {
         preview.innerHTML = '<span class="document-preview-loading">Для чтения нужен доступ к конвертеру Word.</span>';
       }
     }
+
     documentContent.append(link, preview);
-    const removeButton = document.createElement('button');
-    removeButton.className = 'upload-remove owner-only';
-    removeButton.type = 'button';
-    removeButton.setAttribute('aria-label', `Удалить ${file.name}`);
-    removeButton.textContent = '×';
-    removeButton.addEventListener('click', () => {
-      URL.revokeObjectURL(documentUrl);
-      uploadedDocuments.delete(documentId);
-      deleteUpload(`document-${documentId}`).catch(() => {});
-      item.remove();
-    });
     item.append(documentContent, removeButton);
     uploadList.append(item);
+
+    const documentUrl = link.href;
+    uploadedDocuments.set(documentId, documentUrl);
+    if (shouldSave) saveUpload({ id: `document-${documentId}`, kind: 'document', file }).catch(() => {});
   });
 }
 
@@ -417,6 +508,88 @@ getUploads().then((uploads) => {
   uploads.filter((upload) => upload.kind === 'document').forEach((upload) => renderDocuments([upload.file], false));
   uploads.filter((upload) => upload.kind === 'certificate').forEach((upload) => renderCertificates([upload.file], false));
 }).catch(() => {});
+
+// Загрузка документов из Supabase для публичного просмотра
+async function loadPublicDocuments() {
+  if (!cloudClient) return;
+
+  const documents = await loadFromSupabase(window.supabaseConfig.buckets.documents);
+  documents.forEach(doc => {
+    const item = document.createElement('li');
+    item.className = 'upload-item';
+    const documentContent = document.createElement('div');
+    documentContent.className = 'document-content';
+
+    const link = document.createElement('a');
+    link.href = doc.url;
+    link.target = '_blank';
+    link.textContent = `${doc.name} (${Math.ceil(doc.size / 1024)} КБ)`;
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = doc.url;
+    downloadLink.download = doc.name;
+    downloadLink.className = 'document-download';
+    downloadLink.textContent = 'Скачать';
+
+    documentContent.append(link, downloadLink);
+    item.append(documentContent);
+    uploadList.append(item);
+  });
+}
+
+// Загрузка сертификатов из Supabase для публичного просмотра
+async function loadPublicCertificates() {
+  if (!cloudClient) return;
+
+  const certificates = await loadFromSupabase(window.supabaseConfig.buckets.certificates);
+  certificates.forEach(cert => {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = cert.url;
+    link.target = '_blank';
+    link.textContent = `${cert.name} (${Math.ceil(cert.size / 1024)} КБ)`;
+    link.setAttribute('aria-expanded', 'false');
+    link.title = 'Открыть или скрыть сертификат';
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const isExpanded = item.classList.toggle('is-expanded');
+      link.setAttribute('aria-expanded', String(isExpanded));
+      const imagePreview = item.querySelector('img');
+      const pdfPreview = item.querySelector('iframe');
+      if (imagePreview) imagePreview.hidden = !isExpanded;
+      if (pdfPreview) pdfPreview.hidden = !isExpanded;
+    });
+    item.append(link);
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = cert.url;
+    downloadLink.download = cert.name;
+    downloadLink.className = 'document-download';
+    downloadLink.textContent = 'Скачать';
+    item.append(downloadLink);
+
+    if (cert.name.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+      const image = document.createElement('img');
+      image.src = cert.url;
+      image.alt = `Предпросмотр сертификата ${cert.name}`;
+      image.hidden = true;
+      item.append(image);
+    } else if (cert.name.toLowerCase().endsWith('.pdf')) {
+      const pdfPreview = document.createElement('iframe');
+      pdfPreview.className = 'certificate-preview';
+      pdfPreview.src = cert.url;
+      pdfPreview.title = `Предпросмотр сертификата ${cert.name}`;
+      pdfPreview.hidden = true;
+      item.append(pdfPreview);
+    }
+
+    certificateList.append(item);
+  });
+}
+
+// Загружаем публичные документы при загрузке страницы
+loadPublicDocuments();
+loadPublicCertificates();
 
 try {
   JSON.parse(localStorage.getItem('jiraf-achievements') || '[]').forEach((achievement) => {

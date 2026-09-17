@@ -229,7 +229,10 @@ async function uploadToSupabase(file, bucketName) {
       .from(bucketName)
       .upload(fileName, file);
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Supabase Storage недоступен, используется локальное хранение:', error.message);
+      return null;
+    }
 
     const { data: { publicUrl } } = cloudClient.storage
       .from(bucketName)
@@ -237,7 +240,7 @@ async function uploadToSupabase(file, bucketName) {
 
     return { fileName, publicUrl };
   } catch (error) {
-    console.error('Ошибка загрузки в Supabase:', error);
+    console.warn('Supabase Storage недоступен, используется локальное хранение:', error.message);
     return null;
   }
 }
@@ -250,7 +253,10 @@ async function loadFromSupabase(bucketName) {
       .from(bucketName)
       .list();
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Supabase Storage недоступен, используется локальное хранение:', error.message);
+      return [];
+    }
 
     return data.map(file => {
       const { data: { publicUrl } } = cloudClient.storage
@@ -264,7 +270,7 @@ async function loadFromSupabase(bucketName) {
       };
     });
   } catch (error) {
-    console.error('Ошибка загрузки из Supabase:', error);
+    console.warn('Supabase Storage недоступен, используется локальное хранение:', error.message);
     return [];
   }
 }
@@ -592,9 +598,11 @@ async function loadPublicCertificates() {
   });
 }
 
-// Загружаем публичные документы при загрузке страницы
-loadPublicDocuments();
-loadPublicCertificates();
+// Загружаем публичные документы при загрузке страницы (только если Supabase настроен)
+if (cloudClient) {
+  loadPublicDocuments().catch(() => console.log('Документы загружаются из локального хранилища'));
+  loadPublicCertificates().catch(() => console.log('Сертификаты загружаются из локального хранилища'));
+}
 
 try {
   JSON.parse(localStorage.getItem('jiraf-achievements') || '[]').forEach((achievement) => {

@@ -48,6 +48,11 @@ const cloudClient = window.supabase && window.supabaseConfig?.url && window.supa
   ? window.supabase.createClient(window.supabaseConfig.url, window.supabaseConfig.key)
   : null;
 
+// Обработка ошибок загрузки скриптов
+window.addEventListener('error', (event) => {
+  console.error('Ошибка загрузки ресурса:', event.target.src || event.target.href);
+});
+
 const cloudToggle = document.querySelector('#cloud-toggle');
 const cloudContent = document.querySelector('#cloud-content');
 

@@ -220,11 +220,14 @@ function getUploads() {
   }));
 }
 
-async function uploadToSupabase(file, bucketName) {
+async function uploadToSupabase(file, folderName) {
   if (!cloudClient) return null;
 
   try {
-    const fileName = `${Date.now()}-${file.name}`;
+    const bucketName = window.supabaseConfig.bucket;
+    const folderPath = window.supabaseConfig.folders[folderName];
+    const fileName = `${folderPath}/${Date.now()}-${file.name}`;
+
     const { data, error } = await cloudClient.storage
       .from(bucketName)
       .upload(fileName, file);
@@ -245,13 +248,16 @@ async function uploadToSupabase(file, bucketName) {
   }
 }
 
-async function loadFromSupabase(bucketName) {
+async function loadFromSupabase(folderName) {
   if (!cloudClient) return [];
 
   try {
+    const bucketName = window.supabaseConfig.bucket;
+    const folderPath = window.supabaseConfig.folders[folderName];
+
     const { data, error } = await cloudClient.storage
       .from(bucketName)
-      .list();
+      .list(folderPath);
 
     if (error) {
       console.warn('Supabase Storage недоступен, используется локальное хранение:', error.message);
@@ -259,9 +265,10 @@ async function loadFromSupabase(bucketName) {
     }
 
     return data.map(file => {
+      const fullPath = `${folderPath}/${file.name}`;
       const { data: { publicUrl } } = cloudClient.storage
         .from(bucketName)
-        .getPublicUrl(file.name);
+        .getPublicUrl(fullPath);
 
       return {
         name: file.name.replace(/^\d+-/, ''),
@@ -275,13 +282,17 @@ async function loadFromSupabase(bucketName) {
   }
 }
 
-async function deleteFromSupabase(fileName, bucketName) {
+async function deleteFromSupabase(fileName, folderName) {
   if (!cloudClient) return false;
 
   try {
+    const bucketName = window.supabaseConfig.bucket;
+    const folderPath = window.supabaseConfig.folders[folderName];
+    const fullPath = `${folderPath}/${fileName}`;
+
     const { error } = await cloudClient.storage
       .from(bucketName)
-      .remove([fileName]);
+      .remove([fullPath]);
 
     if (error) throw error;
     return true;
@@ -315,7 +326,7 @@ function renderDocuments(files, shouldSave = true) {
     removeButton.textContent = '×';
 
     if (document.body.classList.contains('cloud-authenticated')) {
-      const uploadResult = await uploadToSupabase(file, window.supabaseConfig.buckets.documents);
+      const uploadResult = await uploadToSupabase(file, 'documents');
       if (uploadResult) {
         link.href = uploadResult.publicUrl;
         link.target = '_blank';
@@ -329,7 +340,7 @@ function renderDocuments(files, shouldSave = true) {
         documentContent.append(downloadLink);
 
         removeButton.addEventListener('click', async () => {
-          await deleteFromSupabase(uploadResult.fileName, window.supabaseConfig.buckets.documents);
+          await deleteFromSupabase(uploadResult.fileName, 'documents');
           item.remove();
         });
       } else {
@@ -399,7 +410,7 @@ const certificateList = document.querySelector('#certificate-list');
 const certificateUrls = new Map();
 
 function renderCertificates(files, shouldSave = true) {
-  Array.from(files).forEach((file) => {
+  Array.from(files).forEach(async (file) => {
     const certificateId = `${file.name}-${file.size}-${file.lastModified}`;
     if (certificateUrls.has(certificateId)) return;
     const certificateUrl = URL.createObjectURL(file);
@@ -407,7 +418,6 @@ function renderCertificates(files, shouldSave = true) {
     if (shouldSave) saveUpload({ id: `certificate-${certificateId}`, kind: 'certificate', file }).catch(() => {});
     const item = document.createElement('li');
     const link = document.createElement('a');
-    link.href = certificateUrl;
     link.textContent = `${file.name} (${Math.ceil(file.size / 1024)} КБ)`;
     link.setAttribute('aria-expanded', 'false');
     link.title = 'Открыть или скрыть сертификат';
@@ -421,36 +431,60 @@ function renderCertificates(files, shouldSave = true) {
       if (pdfPreview) pdfPreview.hidden = !isExpanded;
     });
     item.append(link);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = certificateUrl;
-    downloadLink.download = file.name;
-    downloadLink.className = 'document-download';
-    downloadLink.textContent = 'Скачать';
-    item.append(downloadLink);
-    if (file.type.startsWith('image/')) {
-      const image = document.createElement('img');
-      image.src = certificateUrl;
-      image.alt = `Предпросмотр сертификата ${file.name}`;
-      item.append(image);
-    } else if (file.type === 'application/pdf') {
-      const pdfPreview = document.createElement('iframe');
-      pdfPreview.className = 'certificate-preview';
-      pdfPreview.src = certificateUrl;
-      pdfPreview.title = `Предпросмотр сертификата ${file.name}`;
-      pdfPreview.hidden = true;
-      item.append(pdfPreview);
-    }
+
     const removeButton = document.createElement('button');
     removeButton.className = 'upload-remove owner-only';
     removeButton.type = 'button';
     removeButton.setAttribute('aria-label', `Удалить сертификат ${file.name}`);
     removeButton.textContent = '×';
-    removeButton.addEventListener('click', () => {
-      URL.revokeObjectURL(certificateUrl);
-      certificateUrls.delete(certificateId);
-      deleteUpload(`certificate-${certificateId}`).catch(() => {});
-      item.remove();
-    });
+
+    if (document.body.classList.contains('cloud-authenticated')) {
+      const uploadResult = await uploadToSupabase(file, 'certificates');
+      if (uploadResult) {
+        link.href = uploadResult.publicUrl;
+        link.target = '_blank';
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = uploadResult.publicUrl;
+        downloadLink.download = file.name;
+        downloadLink.className = 'document-download';
+        downloadLink.textContent = 'Скачать';
+        item.append(downloadLink);
+
+        removeButton.addEventListener('click', async () => {
+          await deleteFromSupabase(uploadResult.fileName, 'certificates');
+          item.remove();
+        });
+      } else {
+        link.href = certificateUrl;
+        removeButton.addEventListener('click', () => {
+          URL.revokeObjectURL(certificateUrl);
+          item.remove();
+        });
+      }
+    } else {
+      link.href = certificateUrl;
+      removeButton.addEventListener('click', () => {
+        URL.revokeObjectURL(certificateUrl);
+        item.remove();
+      });
+    }
+
+    if (file.type.startsWith('image/')) {
+      const image = document.createElement('img');
+      image.src = link.href;
+      image.alt = `Предпросмотр сертификата ${file.name}`;
+      image.hidden = true;
+      item.append(image);
+    } else if (file.type === 'application/pdf') {
+      const pdfPreview = document.createElement('iframe');
+      pdfPreview.className = 'certificate-preview';
+      pdfPreview.src = link.href;
+      pdfPreview.title = `Предпросмотр сертификата ${file.name}`;
+      pdfPreview.hidden = true;
+      item.append(pdfPreview);
+    }
+
     item.append(removeButton);
     certificateList.append(item);
   });
@@ -524,7 +558,7 @@ getUploads().then((uploads) => {
 async function loadPublicDocuments() {
   if (!cloudClient) return;
 
-  const documents = await loadFromSupabase(window.supabaseConfig.buckets.documents);
+  const documents = await loadFromSupabase('documents');
   documents.forEach(doc => {
     const item = document.createElement('li');
     item.className = 'upload-item';
@@ -552,7 +586,7 @@ async function loadPublicDocuments() {
 async function loadPublicCertificates() {
   if (!cloudClient) return;
 
-  const certificates = await loadFromSupabase(window.supabaseConfig.buckets.certificates);
+  const certificates = await loadFromSupabase('certificates');
   certificates.forEach(cert => {
     const item = document.createElement('li');
     const link = document.createElement('a');

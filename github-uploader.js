@@ -140,10 +140,17 @@
     if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
       return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(rawUrl)}`;
     }
-    if (['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'md'].includes(extension)) {
+    if (extension === 'pdf') {
+      return publicFilePageUrl(file.path);
+    }
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'md'].includes(extension)) {
       return rawUrl;
     }
     return publicFilePageUrl(file.path);
+  }
+
+  function pdfViewerUrl(rawUrl) {
+    return `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(rawUrl)}`;
   }
 
   async function encodeFile(file) {
@@ -207,7 +214,9 @@
     frame.loading = 'lazy';
     frame.referrerPolicy = 'no-referrer';
 
-    if (extension === 'pdf' || extension === 'txt' || extension === 'md') {
+    if (extension === 'pdf') {
+      frame.src = pdfViewerUrl(url);
+    } else if (extension === 'txt' || extension === 'md') {
       frame.src = url;
     } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
       frame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;

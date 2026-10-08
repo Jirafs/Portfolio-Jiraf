@@ -1,0 +1,561 @@
+:root {
+  --ink: #eaf1f2;
+  --paper: #0b1115;
+  --acid: #b9f27c;
+  --orange: #80e4c1;
+  --line: rgba(210, 231, 232, 0.16);
+  --blue: #7c9cff;
+  --mono: "DM Mono", monospace;
+  --sans: "Manrope", sans-serif;
+  color-scheme: dark;
+}
+
+html {
+  scroll-padding-top: 88px;
+}
+
+body:not(.teacher-site) {
+  background:
+    radial-gradient(ellipse at 78% 4%, rgba(124, 156, 255, 0.1), transparent 34rem),
+    #0b1115;
+  color: var(--ink);
+}
+
+body:not(.teacher-site) ::selection,
+.teacher-site ::selection {
+  color: #07110f;
+  background: #b9f27c;
+}
+
+body:not(.teacher-site) a:focus-visible,
+body:not(.teacher-site) button:focus-visible,
+.teacher-site a:focus-visible,
+.teacher-site button:focus-visible,
+.teacher-site input:focus-visible,
+.teacher-site textarea:focus-visible {
+  outline: 2px solid #80e4c1;
+  outline-offset: 4px;
+}
+
+body:not(.teacher-site) .topbar {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  border-color: rgba(210, 231, 232, 0.12);
+  background: rgba(11, 17, 21, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+body:not(.teacher-site) .desktop-nav,
+body:not(.teacher-site) .availability {
+  color: rgba(234, 241, 242, 0.72);
+}
+
+body:not(.teacher-site) .brand {
+  border-color: rgba(210, 231, 232, 0.28);
+}
+
+body:not(.teacher-site) .hero {
+  position: relative;
+  isolation: isolate;
+  min-height: min(800px, calc(100svh - 78px));
+}
+
+body:not(.teacher-site) .hero::before {
+  position: absolute;
+  z-index: -1;
+  top: 14%;
+  left: 1%;
+  width: clamp(220px, 34vw, 480px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(128, 228, 193, 0.14);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+body:not(.teacher-site) .hero h1 {
+  max-width: 760px;
+  text-wrap: balance;
+}
+
+body:not(.teacher-site) .hero-lead {
+  color: rgba(234, 241, 242, 0.68);
+}
+
+body:not(.teacher-site) .hero-image-wrap {
+  border: 1px solid rgba(210, 231, 232, 0.16);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.48);
+}
+
+body:not(.teacher-site) .hero-image-wrap::before {
+  background: linear-gradient(145deg, rgba(128, 228, 193, 0.7), rgba(124, 156, 255, 0.7));
+}
+
+body:not(.teacher-site) .hero-image-wrap img {
+  filter: saturate(0.7) contrast(1.05);
+}
+
+body:not(.teacher-site) .image-caption {
+  color: var(--ink);
+  background: rgba(11, 17, 21, 0.84);
+  backdrop-filter: blur(12px);
+}
+
+body:not(.teacher-site) .hero-stamp {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: #0b1115;
+}
+
+body:not(.teacher-site) .circle-link {
+  box-shadow: 0 16px 44px rgba(128, 228, 193, 0.18);
+}
+
+body:not(.teacher-site) .ticker {
+  border-color: var(--line);
+  background: #121d22;
+  color: var(--orange);
+}
+
+body:not(.teacher-site) .work,
+body:not(.teacher-site) .about,
+body:not(.teacher-site) .contact {
+  background: #10191e;
+  color: var(--ink);
+}
+
+body:not(.teacher-site) .work {
+  border-top: 1px solid var(--line);
+}
+
+body:not(.teacher-site) .work .section-note,
+body:not(.teacher-site) .about .section-note,
+body:not(.teacher-site) .about .signature,
+body:not(.teacher-site) .service-list span {
+  color: var(--orange);
+}
+
+body:not(.teacher-site) .project-image {
+  border: 1px solid var(--line);
+  background: #172329;
+}
+
+body:not(.teacher-site) .project-image::after {
+  display: grid;
+  place-items: center;
+  color: #07110f;
+  background: rgba(128, 228, 193, 0.91);
+  font: 11px var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body:not(.teacher-site) .project-meta {
+  border-color: var(--line);
+}
+
+body:not(.teacher-site) .about {
+  background:
+    radial-gradient(ellipse at 80% 40%, rgba(124, 156, 255, 0.08), transparent 36rem),
+    #0e171b;
+}
+
+body:not(.teacher-site) .teacher-band,
+body:not(.teacher-site) .documents,
+body:not(.teacher-site) .credentials,
+body:not(.teacher-site) .teacher-cta,
+body:not(.teacher-site) .cloud-access {
+  color: var(--ink);
+  border-color: var(--line);
+  background: #121d22;
+}
+
+body:not(.teacher-site) .teacher-band h2 em,
+body:not(.teacher-site) .teacher-achievements h2 em,
+body:not(.teacher-site) .credentials h2 em,
+body:not(.teacher-site) .teacher-cta h2 em {
+  color: var(--orange);
+}
+
+body:not(.teacher-site) .teacher-band .lesson,
+body:not(.teacher-site) .credential-panel,
+body:not(.teacher-site) .credential-list li,
+body:not(.teacher-site) .certificate-list li {
+  border-color: var(--line);
+}
+
+body:not(.teacher-site) .format-tags span {
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+body:not(.teacher-site) .cloud-toggle,
+body:not(.teacher-site) .oauth-button {
+  color: var(--ink);
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+body:not(.teacher-site) .cloud-form input,
+body:not(.teacher-site) .credential-form input,
+body:not(.teacher-site) .credential-form textarea {
+  color: var(--ink);
+  border-color: var(--line);
+  background: #0b1115;
+}
+
+body:not(.teacher-site) .cloud-form button,
+body:not(.teacher-site) .credential-form button {
+  color: #07110f;
+}
+
+body:not(.teacher-site) .teacher-cta a {
+  color: var(--ink);
+  border-color: rgba(234, 241, 242, 0.5);
+}
+
+body:not(.teacher-site) .knowledge-grid span {
+  border-color: var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+body:not(.teacher-site) .contact {
+  background: linear-gradient(135deg, #17262b, #1c3232);
+}
+
+body:not(.teacher-site) .contact h2 {
+  color: var(--ink);
+}
+
+body:not(.teacher-site) .contact h2 em,
+body:not(.teacher-site) .email-link span {
+  color: var(--orange);
+}
+
+body:not(.teacher-site) .email-link {
+  border-color: rgba(234, 241, 242, 0.46);
+}
+
+body:not(.teacher-site) .contact-bottom {
+  border-color: var(--line);
+}
+
+body:not(.teacher-site) footer,
+body:not(.teacher-site) .case-footer,
+body:not(.teacher-site) .teacher-footer {
+  border-color: var(--line);
+  background: #090e11;
+  color: rgba(234, 241, 242, 0.68);
+}
+
+.case-page {
+  background: #0b1115;
+}
+
+.case-page .case-hero,
+.case-page .case-info,
+.case-page .case-gallery {
+  color: var(--ink);
+  background: #0b1115;
+}
+
+.case-page .case-story {
+  color: var(--ink);
+  background: #142126;
+}
+
+.case-page .case-process article {
+  border-color: var(--line);
+}
+
+.case-page .case-cta {
+  color: var(--ink);
+  background: linear-gradient(135deg, #1b3435, #18252c);
+}
+
+.case-page .case-hero-image {
+  background: #172329;
+}
+
+.case-page .case-switcher {
+  border-color: var(--line);
+  background: #0b1115;
+}
+
+.case-page .case-switcher a:hover {
+  color: #07110f;
+  background: var(--orange);
+}
+
+body.teacher-site {
+  --bg: #0b1115;
+  --paper: #121d22;
+  --paper-2: #19272c;
+  --text: #eaf1f2;
+  --muted: #a1b2b7;
+  --brand: #80e4c1;
+  --brand-2: #b9f27c;
+  --line: rgba(210, 231, 232, 0.15);
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+  --radius: 22px;
+  --radius-sm: 16px;
+  color-scheme: dark;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 86% 0%, rgba(124, 156, 255, 0.1), transparent 35rem),
+    radial-gradient(ellipse at 0 30%, rgba(128, 228, 193, 0.07), transparent 35rem),
+    var(--bg);
+}
+
+.teacher-site .site-header {
+  border-color: var(--line);
+  background: rgba(11, 17, 21, 0.86);
+}
+
+.teacher-site .brand-mark {
+  color: #07110f;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: 0 12px 28px rgba(128, 228, 193, 0.14);
+}
+
+.teacher-site .brand-subtitle,
+.teacher-site .section-desc,
+.teacher-site .hero p,
+.teacher-site .card p,
+.teacher-site .card ul {
+  color: var(--muted);
+}
+
+.teacher-site .nav a {
+  color: var(--muted);
+}
+
+.teacher-site .nav a:hover,
+.teacher-site .nav a.active {
+  color: var(--brand);
+  background: rgba(128, 228, 193, 0.1);
+}
+
+.teacher-site .menu-toggle,
+.teacher-site .btn-secondary {
+  color: var(--text);
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.teacher-site .hero {
+  background:
+    radial-gradient(ellipse at 83% 36%, rgba(128, 228, 193, 0.08), transparent 26rem),
+    transparent;
+}
+
+.teacher-site .eyebrow {
+  color: var(--brand);
+  border-color: rgba(128, 228, 193, 0.2);
+  background: rgba(128, 228, 193, 0.08);
+}
+
+.teacher-site .btn-primary,
+.teacher-site .teacher-upload-dropzone .upload-button,
+.teacher-site .teacher-owner-access .cloud-form button,
+.teacher-site .teacher-owner-access .cloud-logout {
+  color: #07110f;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: 0 12px 28px rgba(128, 228, 193, 0.12);
+}
+
+.teacher-site .stat,
+.teacher-site .card,
+.teacher-site .photo-card,
+.teacher-site .profile-card,
+.teacher-site .teacher-upload-block,
+.teacher-site .metric {
+  color: var(--text);
+  border-color: var(--line);
+  background: linear-gradient(145deg, rgba(24, 38, 44, 0.94), rgba(17, 28, 33, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.teacher-site .stat strong,
+.teacher-site .metric strong,
+.teacher-site .section-kicker {
+  color: var(--brand);
+}
+
+.teacher-site .profile-card {
+  backdrop-filter: blur(18px);
+}
+
+.teacher-site .portrait-frame {
+  border-color: var(--line);
+  background: #19272c;
+}
+
+.teacher-site .quick-row,
+.teacher-site .contact-line,
+.teacher-site .guest-message,
+.teacher-site .teacher-owner-access,
+.teacher-site .group-subject-empty {
+  color: var(--text);
+  border-color: var(--line);
+  background: rgba(25, 39, 44, 0.82);
+}
+
+.teacher-site .quick-row span,
+.teacher-site .quick-row b {
+  color: var(--text);
+}
+
+.teacher-site .section-head::before {
+  background: linear-gradient(var(--brand), var(--brand-2));
+}
+
+.teacher-site .card:hover,
+.teacher-site .photo-card:hover {
+  border-color: rgba(128, 228, 193, 0.3);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.36);
+}
+
+.teacher-site table {
+  color: var(--text);
+  background: #111b20;
+}
+
+.teacher-site th,
+.teacher-site .group-subject-table th {
+  color: var(--text);
+  background: #1a292f;
+}
+
+.teacher-site td,
+.teacher-site .group-subject-table td {
+  color: var(--muted);
+}
+
+.teacher-site th,
+.teacher-site td,
+.teacher-site .group-subject-table-wrap {
+  border-color: var(--line);
+}
+
+.teacher-site .doc,
+.teacher-site .teacher-upload-dropzone {
+  color: var(--text);
+  border-color: rgba(128, 228, 193, 0.22);
+  background: rgba(25, 39, 44, 0.82);
+}
+
+.teacher-site .doc:hover,
+.teacher-site .upload-item:hover {
+  border-color: rgba(128, 228, 193, 0.36);
+  background: rgba(128, 228, 193, 0.065);
+}
+
+.teacher-site .teacher-upload-block h4,
+.teacher-site .upload-item a,
+.teacher-site .teacher-owner-access summary {
+  color: var(--text);
+}
+
+.teacher-site .upload-item,
+.teacher-site .upload-item .document-preview-toggle {
+  border-color: var(--line);
+}
+
+.teacher-site .upload-item .document-preview-toggle {
+  color: var(--brand);
+  background: rgba(128, 228, 193, 0.08);
+}
+
+.teacher-site .upload-item .document-preview-toggle:hover,
+.teacher-site .upload-item .document-preview-toggle[aria-expanded="true"] {
+  color: #07110f;
+  background: var(--brand);
+}
+
+.teacher-site .upload-preview,
+.teacher-site .pdf-preview-canvas {
+  color-scheme: light;
+}
+
+.teacher-site .upload-status,
+.teacher-site .cloud-status,
+.teacher-site .doc-action {
+  color: var(--brand);
+}
+
+.teacher-site .teacher-owner-access .cloud-form input,
+.teacher-site .field input,
+.teacher-site .field textarea {
+  color: var(--text);
+  border-color: var(--line);
+  background: #0d171b;
+}
+
+.teacher-site .field input::placeholder,
+.teacher-site .field textarea::placeholder {
+  color: #82969b;
+}
+
+.teacher-site .field input:focus,
+.teacher-site .field textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px rgba(128, 228, 193, 0.12);
+}
+
+.teacher-site .teacher-owner-access summary {
+  color: var(--brand);
+}
+
+.teacher-site .teacher-owner-access > p {
+  color: var(--muted);
+}
+
+.teacher-site .footer {
+  color: var(--muted);
+  border-color: var(--line);
+  background: rgba(9, 14, 17, 0.88);
+}
+
+.teacher-site .to-top {
+  color: var(--text);
+  border-color: var(--line);
+  background: #121d22;
+}
+
+.teacher-site .cloud-logout:hover,
+.teacher-site .teacher-owner-access .cloud-logout:hover {
+  color: #fff;
+  background: #a33d36;
+}
+
+@media (max-width: 760px) {
+  body:not(.teacher-site) .topbar {
+    background: rgba(11, 17, 21, 0.94);
+  }
+
+  body:not(.teacher-site) .desktop-nav.nav-open {
+    color: var(--ink);
+    border-color: var(--line);
+    background: #121d22;
+  }
+
+  .teacher-site .nav {
+    border-color: var(--line);
+    background: rgba(15, 24, 29, 0.98);
+    box-shadow: var(--shadow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(.teacher-site) *,
+  body:not(.teacher-site) *::before,
+  body:not(.teacher-site) *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

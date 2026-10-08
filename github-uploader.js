@@ -11,6 +11,7 @@
   const groupExcelInput = document.querySelector('#group-excel-input');
   const groupExcelList = document.querySelector('#group-excel-list');
   const groupExcelStatus = document.querySelector('#group-excel-status');
+  const groupExcelDropzone = document.querySelector('#group-excel-dropzone');
   const dropzone = document.querySelector('#upload-dropzone');
   const documentList = document.querySelector('#upload-list');
   const certificateList = document.querySelector('#certificate-list');
@@ -45,6 +46,7 @@
     document.body.classList.toggle('github-authenticated', isAuthenticated);
     if (form) form.hidden = isAuthenticated;
     if (logoutButton) logoutButton.hidden = !isAuthenticated;
+    if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';
     if (status && isAuthenticated) status.textContent = `Вход выполнен как @${login}. Токен хранится только в этой вкладке.`;
   }

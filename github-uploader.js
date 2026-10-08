@@ -56,8 +56,12 @@
     if (!response.ok) {
       let message = body.message || `GitHub API вернул ошибку ${response.status}.`;
       if (message.includes('Resource not accessible by personal access token')) {
-        message += ' Проверьте fine-grained token: владелец ресурса — Jirafs, в выбранных репозиториях есть Portfolio-Jiraf, а Contents имеет право Read and write. Если изменили разрешения токена, войдите снова с обновлённым токеном.';
+        const requiredPermissions = response.headers.get('X-Accepted-GitHub-Permissions');
+        const requiredPermission = requiredPermissions || 'Contents: write';
+        message += ` Для этой операции GitHub требует разрешение ${requiredPermission}. Проверьте fine-grained token: владелец ресурса — Jirafs, в выбранных репозиториях есть Portfolio-Jiraf, а Contents имеет право Read and write. Если изменили разрешения токена, войдите снова с обновлённым токеном.`;
       }
+      const requestId = response.headers.get('X-GitHub-Request-Id');
+      if (requestId) message += ` Код запроса GitHub: ${requestId}.`;
       const error = new Error(message);
       error.status = response.status;
       throw error;

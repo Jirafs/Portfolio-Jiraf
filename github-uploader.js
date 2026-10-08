@@ -173,6 +173,38 @@
     return `${(size / (1024 * 1024)).toFixed(1)} МБ`;
   }
 
+  function createPreview(file, url, extension) {
+    const preview = document.createElement('div');
+    preview.className = 'upload-preview';
+    preview.hidden = true;
+
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+      const image = document.createElement('img');
+      image.alt = `Предпросмотр файла ${file.name}`;
+      image.loading = 'lazy';
+      image.hidden = true;
+      preview.append(image);
+      return { element: preview, open: () => { image.src = url; } };
+    }
+
+    const frame = document.createElement('iframe');
+    frame.className = 'upload-preview-frame';
+    frame.title = `Предпросмотр файла ${file.name}`;
+    frame.loading = 'lazy';
+    frame.referrerPolicy = 'no-referrer';
+
+    if (extension === 'pdf' || extension === 'txt' || extension === 'md') {
+      frame.src = url;
+    } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
+      frame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+    } else {
+      return null;
+    }
+
+    preview.append(frame);
+    return { element: preview, open() {} };
+  }
+
   function renderFile(file, type, list, ownerMode) {
     const item = document.createElement('li');
     item.className = 'upload-item';
@@ -186,6 +218,24 @@
     link.textContent = `${file.name} (${formatSize(file.size)})`;
     content.append(link);
 
+    const extension = file.name.toLowerCase().split('.').pop();
+    const preview = createPreview(file, url, extension);
+    if (preview) {
+      const togglePreview = document.createElement('button');
+      togglePreview.className = 'document-preview-toggle';
+      togglePreview.type = 'button';
+      togglePreview.textContent = 'Просмотреть на странице';
+      togglePreview.setAttribute('aria-expanded', 'false');
+      togglePreview.addEventListener('click', () => {
+        const isOpening = preview.element.hidden;
+        preview.element.hidden = !isOpening;
+        togglePreview.setAttribute('aria-expanded', String(isOpening));
+        togglePreview.textContent = isOpening ? 'Скрыть просмотр' : 'Просмотреть на странице';
+        if (isOpening) preview.open();
+      });
+      content.append(togglePreview, preview.element);
+    }
+
     const download = document.createElement('a');
     download.href = url;
     download.download = file.name;
@@ -193,36 +243,6 @@
     download.className = 'document-download';
     download.textContent = 'Скачать';
     content.append(download);
-
-    if (type === 'certificates') {
-      const extension = file.name.toLowerCase().split('.').pop();
-      if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
-        const image = document.createElement('img');
-        image.src = url;
-        image.alt = `Предпросмотр сертификата ${file.name}`;
-        image.hidden = true;
-        link.setAttribute('aria-expanded', 'false');
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-          image.hidden = !image.hidden;
-          link.setAttribute('aria-expanded', String(!image.hidden));
-        });
-        content.append(image);
-      } else if (extension === 'pdf') {
-        const preview = document.createElement('iframe');
-        preview.className = 'certificate-preview';
-        preview.src = url;
-        preview.title = `Предпросмотр сертификата ${file.name}`;
-        preview.hidden = true;
-        link.setAttribute('aria-expanded', 'false');
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-          preview.hidden = !preview.hidden;
-          link.setAttribute('aria-expanded', String(!preview.hidden));
-        });
-        content.append(preview);
-      }
-    }
 
     if (ownerMode) {
       const remove = document.createElement('button');

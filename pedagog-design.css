@@ -345,6 +345,39 @@ body.teacher-site {
   background: var(--brand);
 }
 
+.teacher-site .upload-item .document-preview-toggle {
+  width: fit-content;
+  padding: 6px 10px;
+  border: 1px solid rgba(23, 107, 87, 0.2);
+  border-radius: 999px;
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.06);
+  font: 10px 'DM Mono', monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.teacher-site .upload-item .document-preview-toggle:hover,
+.teacher-site .upload-item .document-preview-toggle[aria-expanded="true"] {
+  color: #fff;
+  background: var(--brand);
+}
+
+.teacher-site .upload-item .upload-preview {
+  grid-column: 1 / -1;
+}
+
+.teacher-site .upload-item .upload-preview img,
+.teacher-site .upload-item .upload-preview-frame {
+  max-height: min(72vh, 620px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.teacher-site .upload-item .upload-preview-frame {
+  height: min(72vh, 620px);
+}
+
 .teacher-site .upload-item .upload-remove {
   flex: 0 0 32px;
   border: 1px solid var(--line);

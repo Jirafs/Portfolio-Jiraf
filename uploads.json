@@ -5,5 +5,12 @@
     "path": "uploads/documents/1791453836954-5c7cfcc3-5298-4c39-bff3-31c5f7eb15c0-lecture_web_security (7).docx",
     "size": 78910,
     "sha": "fcb286d6d986ae448fc358505df6adeb388478e3"
+  },
+  {
+    "type": "certificates",
+    "name": "SERTIFICATED.pdf",
+    "path": "uploads/certificates/1791453937719-fb27bb68-85f2-439c-9e26-ae973411f263-SERTIFICATED.pdf",
+    "size": 697265,
+    "sha": "5cc75bb9c3cdb7181e32cf6190eb5cfc7cabe9e2"
   }
 ]

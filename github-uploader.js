@@ -8,6 +8,9 @@
   const uploadStatus = document.querySelector('#upload-status');
   const documentInput = document.querySelector('#document-input');
   const certificateInput = document.querySelector('#certificate-input');
+  const groupExcelInput = document.querySelector('#group-excel-input');
+  const groupExcelList = document.querySelector('#group-excel-list');
+  const groupExcelStatus = document.querySelector('#group-excel-status');
   const dropzone = document.querySelector('#upload-dropzone');
   const documentList = document.querySelector('#upload-list');
   const certificateList = document.querySelector('#certificate-list');
@@ -20,7 +23,8 @@
   const summaryCache = new Map();
   const allowedExtensions = {
     documents: new Set(['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'rtf', 'md']),
-    certificates: new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'])
+    certificates: new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf']),
+    'group-data': new Set(['xls', 'xlsx'])
   };
 
   if (!config) {
@@ -631,9 +635,11 @@
   function renderManifest(files, ownerMode = false) {
     if (documentList) documentList.replaceChildren();
     if (certificateList) certificateList.replaceChildren();
+    if (groupExcelList) groupExcelList.replaceChildren();
     files.forEach((file) => {
       if (file.type === 'documents' && documentList) renderFile(file, 'documents', documentList, ownerMode);
       if (file.type === 'certificates' && certificateList) renderFile(file, 'certificates', certificateList, ownerMode);
+      if (file.type === 'group-data' && groupExcelList) renderFile(file, 'group-data', groupExcelList, ownerMode);
     });
     renderGroupSubjectSummary(files);
     if (uploadStatus && !files.length) uploadStatus.textContent = 'Здесь появятся опубликованные материалы.';
@@ -681,6 +687,9 @@
       try {
         groupSubjects = await extractGroupSubjects(file);
       } catch (error) {
+        if (type === 'group-data') {
+          throw new Error(`Не удалось прочитать таблицу групп и предметов: ${error.message}`);
+        }
         summaryWarning = ` Файл сохранён, но сводка не сформирована: ${error.message}`;
         console.error(`Не удалось сформировать сводку из ${file.name}:`, error);
       }
@@ -709,19 +718,27 @@
 
     uploadManifest = nextFiles;
     renderManifest(uploadManifest, true);
-    showStatus(`Файл «${file.name}» загружен в GitHub и опубликован.${summaryWarning}`);
+    const successMessage = `Файл «${file.name}» загружен в GitHub и опубликован.${summaryWarning}`;
+    if (type === 'group-data' && groupExcelStatus) groupExcelStatus.textContent = successMessage;
+    else showStatus(successMessage);
   }
 
   async function handleFiles(files, type) {
     if (!accessToken) {
-      showStatus('Для загрузки войдите в GitHub как владелец репозитория.');
+      const message = 'Для загрузки войдите в GitHub как владелец репозитория.';
+      if (type === 'group-data' && groupExcelStatus) groupExcelStatus.textContent = message;
+      else showStatus(message);
       return;
     }
     for (const file of Array.from(files || [])) {
       try {
         await writeFile(file, type);
       } catch (error) {
-        showStatus(`Не удалось загрузить «${file.name}»: ${error.message}`, error);
+        const message = `Не удалось загрузить «${file.name}»: ${error.message}`;
+        if (type === 'group-data' && groupExcelStatus) {
+          groupExcelStatus.textContent = message;
+          console.error(message, error);
+        } else showStatus(message, error);
       }
     }
   }
@@ -752,7 +769,9 @@
       }
       uploadManifest = nextFiles;
       item.remove();
-      showStatus(`Файл «${file.name}» удалён из GitHub.`);
+      const message = `Файл «${file.name}» удалён из GitHub.`;
+      if (file.type === 'group-data' && groupExcelStatus) groupExcelStatus.textContent = message;
+      else showStatus(message);
     } catch (error) {
       showStatus(`Не удалось удалить «${file.name}»: ${error.message}`, error);
     }
@@ -790,6 +809,10 @@
   });
   certificateInput?.addEventListener('change', (event) => {
     handleFiles(event.currentTarget.files, 'certificates');
+    event.currentTarget.value = '';
+  });
+  groupExcelInput?.addEventListener('change', (event) => {
+    handleFiles(event.currentTarget.files, 'group-data');
     event.currentTarget.value = '';
   });
 

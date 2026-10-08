@@ -267,6 +267,30 @@ body.teacher-site {
   margin-top: 8px;
 }
 
+.teacher-site .group-excel-upload {
+  margin: 18px 0 22px;
+}
+
+.teacher-site .group-excel-list:not(:empty) {
+  margin-bottom: 14px;
+}
+
+.teacher-site .group-excel-upload .upload-status {
+  margin: 10px 4px 0;
+}
+
+.teacher-site .group-excel-upload .upload-dropzone {
+  margin-top: 0;
+}
+
+.teacher-site #group-excel-dropzone {
+  display: none;
+}
+
+.teacher-site.github-authenticated #group-excel-dropzone {
+  display: block;
+}
+
 .teacher-site .teacher-upload-dropzone {
   margin-top: 16px;
   padding: 24px 16px;

@@ -54,7 +54,11 @@
   async function responseJson(response) {
     const body = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const error = new Error(body.message || `GitHub API вернул ошибку ${response.status}.`);
+      let message = body.message || `GitHub API вернул ошибку ${response.status}.`;
+      if (message.includes('Resource not accessible by personal access token')) {
+        message += ' Проверьте fine-grained token: владелец ресурса — Jirafs, в выбранных репозиториях есть Portfolio-Jiraf, а Contents имеет право Read and write. Если изменили разрешения токена, войдите снова с обновлённым токеном.';
+      }
+      const error = new Error(message);
       error.status = response.status;
       throw error;
     }

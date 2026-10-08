@@ -313,6 +313,12 @@ body.teacher-site .container {
   padding-inline: clamp(24px, 5vw, 64px);
 }
 
+@media (min-width: 981px) {
+  .teacher-site .hero-grid {
+    transform: translateX(clamp(24px, 4vw, 64px));
+  }
+}
+
 .teacher-site .site-header {
   border-color: var(--line);
   background: rgba(11, 17, 21, 0.86);

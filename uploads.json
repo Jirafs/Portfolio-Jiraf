@@ -5,5 +5,12 @@
     "path": "uploads/certificates/1791453937719-fb27bb68-85f2-439c-9e26-ae973411f263-SERTIFICATED.pdf",
     "size": 697265,
     "sha": "5cc75bb9c3cdb7181e32cf6190eb5cfc7cabe9e2"
+  },
+  {
+    "type": "documents",
+    "name": "METREC_09.02.11_React_чистый_доработан.docx",
+    "path": "uploads/documents/1791456154706-aa4fea60-55d9-40dd-a5eb-1e0c87dee113-METREC_09.02.11_React_чистый_доработан.docx",
+    "size": 353442,
+    "sha": "8374439d21eff8e569b8e9fe82ea6e2d5354f497"
   }
 ]

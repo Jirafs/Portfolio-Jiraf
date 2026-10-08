@@ -132,6 +132,20 @@
     return `${rawRoot}/${encodePath(path)}`;
   }
 
+  function publicFilePageUrl(path) {
+    return `https://github.com/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repository)}/blob/${encodeURIComponent(config.branch)}/${encodePath(path)}`;
+  }
+
+  function fileViewUrl(file, rawUrl, extension) {
+    if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
+      return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(rawUrl)}`;
+    }
+    if (['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'md'].includes(extension)) {
+      return rawUrl;
+    }
+    return publicFilePageUrl(file.path);
+  }
+
   async function encodeFile(file) {
     const bytes = new Uint8Array(await file.arrayBuffer());
     let binary = '';
@@ -212,13 +226,13 @@
     content.className = 'document-content';
     const link = document.createElement('a');
     const url = publicFileUrl(file.path);
-    link.href = url;
+    const extension = file.name.toLowerCase().split('.').pop();
+    link.href = fileViewUrl(file, url, extension);
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     link.textContent = `${file.name} (${formatSize(file.size)})`;
     content.append(link);
 
-    const extension = file.name.toLowerCase().split('.').pop();
     const preview = createPreview(file, url, extension);
     if (preview) {
       const togglePreview = document.createElement('button');
@@ -235,14 +249,6 @@
       });
       content.append(togglePreview, preview.element);
     }
-
-    const download = document.createElement('a');
-    download.href = url;
-    download.download = file.name;
-    download.rel = 'noopener noreferrer';
-    download.className = 'document-download';
-    download.textContent = 'Скачать';
-    content.append(download);
 
     if (ownerMode) {
       const remove = document.createElement('button');

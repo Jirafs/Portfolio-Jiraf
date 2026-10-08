@@ -11,8 +11,12 @@
   const dropzone = document.querySelector('#upload-dropzone');
   const documentList = document.querySelector('#upload-list');
   const certificateList = document.querySelector('#certificate-list');
+  const groupSubjectSummary = document.querySelector('#group-subject-summary');
   let accessToken = '';
   let uploadManifest = [];
+  let xlsxLibraryPromise;
+  let summaryRenderId = 0;
+  const summaryCache = new Map();
   const allowedExtensions = {
     documents: new Set(['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'rtf', 'md']),
     certificates: new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'])
@@ -132,6 +136,10 @@
     return `${rawRoot}/${encodePath(path)}`;
   }
 
+  function githubPagesFileUrl(path) {
+    return new URL(encodePath(path), config.pagesBaseUrl).href;
+  }
+
   function publicFilePageUrl(path) {
     return `https://github.com/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repository)}/blob/${encodeURIComponent(config.branch)}/${encodePath(path)}`;
   }
@@ -141,7 +149,7 @@
       return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(rawUrl)}`;
     }
     if (extension === 'pdf') {
-      return publicFilePageUrl(file.path);
+      return githubPagesFileUrl(file.path);
     }
     if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt', 'md'].includes(extension)) {
       return rawUrl;
@@ -149,8 +157,214 @@
     return publicFilePageUrl(file.path);
   }
 
-  function pdfViewerUrl(rawUrl) {
-    return `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(rawUrl)}`;
+  function loadXlsxLibrary() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    if (xlsxLibraryPromise) return xlsxLibraryPromise;
+
+    xlsxLibraryPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+      script.integrity = 'sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT';
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      script.onload = () => {
+        if (window.XLSX) resolve(window.XLSX);
+        else reject(new Error('Библиотека чтения Excel загрузилась без API XLSX.'));
+      };
+      script.onerror = () => reject(new Error('Не удалось загрузить библиотеку чтения Excel.'));
+      document.head.append(script);
+    });
+    return xlsxLibraryPromise;
+  }
+
+  function cellText(value) {
+    return value == null ? '' : String(value).trim();
+  }
+
+  function normalizedHeader(value) {
+    return cellText(value).toLocaleLowerCase('ru-RU').replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, '');
+  }
+
+  function groupSubjectsFromWorkbook(bytes) {
+    const workbook = window.XLSX.read(bytes, { type: 'array', cellDates: false });
+    const groupAliases = new Set(['группа', 'учебнаягруппа', 'названиегруппы', 'номергр', 'кодгруппы', 'group', 'class']);
+    const subjectAliases = new Set(['предмет', 'дисциплина', 'наименованиепредмета', 'названиепредмета', 'учебныйпредмет', 'subject', 'course']);
+    const excludedWideHeaders = /фио|студент|обучающ|фамил|имя|отчеств|оценк|балл|итого|всего|преподавател|семестр|курс|год|дат|номер|количество|час|код|№/i;
+    const subjectsByGroup = new Map();
+
+    function addSubject(group, subject) {
+      const groupName = cellText(group);
+      const subjectNames = cellText(subject).split(/[;\n|]+/).map((name) => name.trim()).filter(Boolean);
+      if (!groupName || /^(итого|всего|total)$/i.test(groupName) || !subjectNames.length) return;
+      if (!subjectsByGroup.has(groupName)) subjectsByGroup.set(groupName, new Set());
+      subjectNames.forEach((name) => subjectsByGroup.get(groupName).add(name));
+    }
+
+    for (const sheetName of workbook.SheetNames) {
+      const rows = window.XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, defval: '', raw: false });
+      const headerIndex = rows.slice(0, 30).findIndex((row) => {
+        const headers = row.map(normalizedHeader);
+        return headers.some((header) => groupAliases.has(header));
+      });
+
+      if (headerIndex >= 0) {
+        const headers = rows[headerIndex].map(normalizedHeader);
+        const groupColumn = headers.findIndex((header) => groupAliases.has(header));
+        const subjectColumn = headers.findIndex((header) => subjectAliases.has(header));
+        const rawHeaders = rows[headerIndex].map(cellText);
+        let previousGroup = '';
+
+        for (const row of rows.slice(headerIndex + 1)) {
+          const group = cellText(row[groupColumn]) || previousGroup;
+          if (cellText(row[groupColumn])) previousGroup = group;
+          if (!group) continue;
+
+          if (subjectColumn >= 0) {
+            addSubject(group, row[subjectColumn]);
+          } else {
+            row.forEach((value, column) => {
+              const subject = rawHeaders[column];
+              if (column !== groupColumn && subject && !excludedWideHeaders.test(subject) && cellText(value)) {
+                addSubject(group, subject);
+              }
+            });
+          }
+        }
+        continue;
+      }
+
+      const matrixHeaderIndex = rows.slice(0, 30).findIndex((row) => {
+        const headers = row.map(cellText);
+        return headers.length > 1
+          && subjectAliases.has(normalizedHeader(headers[0]))
+          && headers.slice(1).some((header) => /^\d{3,6}[а-яa-z]?$/i.test(header));
+      });
+      if (matrixHeaderIndex < 0) continue;
+
+      const headers = rows[matrixHeaderIndex].map(cellText);
+      for (const row of rows.slice(matrixHeaderIndex + 1)) {
+        const subject = cellText(row[0]);
+        if (!subject) continue;
+        headers.slice(1).forEach((group, index) => {
+          if (cellText(row[index + 1])) addSubject(group, subject);
+        });
+      }
+    }
+
+    if (!subjectsByGroup.size) {
+      throw new Error('Не найдены данные для сводки. Нужны столбцы «Группа» и «Предмет»/«Дисциплина» либо предметы в заголовках столбцов.');
+    }
+    return [...subjectsByGroup.entries()]
+      .map(([group, subjects]) => ({ group, subjects: [...subjects].sort((a, b) => a.localeCompare(b, 'ru')) }))
+      .sort((a, b) => a.group.localeCompare(b.group, 'ru', { numeric: true }));
+  }
+
+  async function extractGroupSubjects(file) {
+    const xlsx = await loadXlsxLibrary();
+    const bytes = await file.arrayBuffer();
+    return groupSubjectsFromWorkbook(bytes);
+  }
+
+  function mergeGroupSubjects(files) {
+    const merged = new Map();
+    files.forEach((file) => {
+      if (!Array.isArray(file.groupSubjects)) return;
+      file.groupSubjects.forEach(({ group, subjects }) => {
+        const groupName = cellText(group);
+        if (!groupName || !Array.isArray(subjects)) return;
+        if (!merged.has(groupName)) merged.set(groupName, new Set());
+        subjects.map(cellText).filter(Boolean).forEach((subject) => merged.get(groupName).add(subject));
+      });
+    });
+    return [...merged.entries()]
+      .map(([group, subjects]) => ({ group, subjects: [...subjects].sort((a, b) => a.localeCompare(b, 'ru')) }))
+      .sort((a, b) => a.group.localeCompare(b.group, 'ru', { numeric: true }));
+  }
+
+  function renderGroupSubjectTable(groups, errors) {
+    if (!groupSubjectSummary) return;
+    groupSubjectSummary.replaceChildren();
+
+    if (!groups.length) {
+      const message = document.createElement('p');
+      message.className = 'group-subject-empty';
+      message.textContent = errors.length
+        ? `Не удалось построить сводку: ${errors.join(' ')}`
+        : 'Сводка появится после загрузки Excel-таблицы с группами и предметами.';
+      groupSubjectSummary.append(message);
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'group-subject-table-wrap';
+    const table = document.createElement('table');
+    table.className = 'group-subject-table';
+    table.setAttribute('aria-label', 'Сводка учебных предметов по группам из Excel');
+    const head = document.createElement('thead');
+    const heading = document.createElement('tr');
+    ['Группа', 'Предметы'].forEach((label) => {
+      const cell = document.createElement('th');
+      cell.scope = 'col';
+      cell.textContent = label;
+      heading.append(cell);
+    });
+    head.append(heading);
+    const body = document.createElement('tbody');
+    groups.forEach(({ group, subjects }) => {
+      const row = document.createElement('tr');
+      const groupCell = document.createElement('th');
+      groupCell.scope = 'row';
+      groupCell.textContent = group;
+      const subjectsCell = document.createElement('td');
+      subjectsCell.textContent = subjects.join(', ');
+      row.append(groupCell, subjectsCell);
+      body.append(row);
+    });
+    table.append(head, body);
+    wrapper.append(table);
+    groupSubjectSummary.append(wrapper);
+
+    if (errors.length) {
+      const note = document.createElement('p');
+      note.className = 'group-subject-empty';
+      note.textContent = `Некоторые таблицы не вошли в сводку: ${errors.join(' ')}`;
+      groupSubjectSummary.append(note);
+    }
+  }
+
+  async function loadLegacyGroupSubjects(file) {
+    if (summaryCache.has(file.path)) return summaryCache.get(file.path);
+    const request = (async () => {
+      const response = await fetch(githubPagesFileUrl(file.path), { cache: 'no-store' });
+      if (!response.ok) throw new Error(`не удалось открыть ${file.name} (${response.status})`);
+      return extractGroupSubjects(new File([await response.arrayBuffer()], file.name));
+    })();
+    summaryCache.set(file.path, request);
+    return request;
+  }
+
+  async function renderGroupSubjectSummary(files) {
+    if (!groupSubjectSummary) return;
+    const renderId = ++summaryRenderId;
+    const spreadsheets = files.filter((file) => /\.(xlsx|xls)$/i.test(file.name));
+    if (!spreadsheets.length) {
+      renderGroupSubjectTable([], []);
+      return;
+    }
+
+    groupSubjectSummary.textContent = 'Формирую сводку из Excel…';
+    const errors = [];
+    for (const file of spreadsheets) {
+      if (Array.isArray(file.groupSubjects)) continue;
+      try {
+        file.groupSubjects = await loadLegacyGroupSubjects(file);
+      } catch (error) {
+        errors.push(`${file.name}: ${error.message}`);
+      }
+      if (renderId !== summaryRenderId) return;
+    }
+    if (renderId !== summaryRenderId) return;
+    renderGroupSubjectTable(mergeGroupSubjects(spreadsheets), errors);
   }
 
   async function encodeFile(file) {
@@ -215,7 +429,7 @@
     frame.referrerPolicy = 'no-referrer';
 
     if (extension === 'pdf') {
-      frame.src = pdfViewerUrl(url);
+      frame.src = githubPagesFileUrl(file.path);
     } else if (extension === 'txt' || extension === 'md') {
       frame.src = url;
     } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
@@ -280,6 +494,7 @@
       if (file.type === 'documents' && documentList) renderFile(file, 'documents', documentList, ownerMode);
       if (file.type === 'certificates' && certificateList) renderFile(file, 'certificates', certificateList, ownerMode);
     });
+    renderGroupSubjectSummary(files);
     if (uploadStatus && !files.length) uploadStatus.textContent = 'Здесь появятся опубликованные материалы.';
   }
 
@@ -319,10 +534,21 @@
     if (file.size > config.maxFileSize) throw new Error('Максимальный размер файла — 10 МБ.');
     const extension = file.name.toLowerCase().split('.').pop();
     if (!allowedExtensions[type]?.has(extension)) throw new Error('Этот формат файла не поддерживается.');
+    let groupSubjects;
+    let summaryWarning = '';
+    if (extension === 'xlsx' || extension === 'xls') {
+      try {
+        groupSubjects = await extractGroupSubjects(file);
+      } catch (error) {
+        summaryWarning = ` Файл сохранён, но сводка не сформирована: ${error.message}`;
+        console.error(`Не удалось сформировать сводку из ${file.name}:`, error);
+      }
+    }
     const safeName = file.name.replace(/[\\/]/g, '_');
     const path = `${config.uploadDirectory}/${type}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
     const uploaded = await putFile(file, path);
     const entry = { type, name: file.name, path, size: file.size, sha: uploaded.content.sha };
+    if (groupSubjects) entry.groupSubjects = groupSubjects;
     let nextFiles;
 
     try {
@@ -342,7 +568,7 @@
 
     uploadManifest = nextFiles;
     renderManifest(uploadManifest, true);
-    showStatus(`Файл «${file.name}» загружен в GitHub и опубликован.`);
+    showStatus(`Файл «${file.name}» загружен в GitHub и опубликован.${summaryWarning}`);
   }
 
   async function handleFiles(files, type) {

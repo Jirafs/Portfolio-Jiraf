@@ -453,6 +453,43 @@ body.teacher-site {
   background: rgba(255, 254, 250, 0.82);
 }
 
+.teacher-site .excel-summary-card {
+  margin-top: 18px;
+}
+
+.teacher-site .excel-summary-card > p {
+  margin: 8px 0 16px;
+}
+
+.teacher-site .group-subject-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.teacher-site .group-subject-table {
+  min-width: 480px;
+}
+
+.teacher-site .group-subject-table th {
+  width: auto;
+  color: var(--text);
+}
+
+.teacher-site .group-subject-table td {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.teacher-site .group-subject-empty {
+  margin: 0;
+  padding: 14px;
+  border-radius: 12px;
+  color: var(--muted);
+  background: rgba(234, 240, 233, 0.6);
+  font-size: 14px;
+}
+
 .teacher-site .metric strong {
   color: var(--brand);
   font-size: 30px;

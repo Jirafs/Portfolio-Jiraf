@@ -1,0 +1,437 @@
+body.teacher-site {
+  --bg: #f3f4ef;
+  --paper: #fffefa;
+  --paper-2: #eaf0e9;
+  --text: #1b2b27;
+  --muted: #64736d;
+  --brand: #176b57;
+  --brand-2: #b2c875;
+  --line: #dbe3dc;
+  --shadow: 0 22px 54px rgba(27, 43, 39, 0.08);
+  --radius: 22px;
+  --radius-sm: 16px;
+  background:
+    radial-gradient(ellipse at 92% 2%, rgba(178, 200, 117, 0.2), transparent 28rem),
+    radial-gradient(ellipse at 0 25%, rgba(23, 107, 87, 0.07), transparent 28rem),
+    var(--bg);
+}
+
+.teacher-site .site-header {
+  background: rgba(243, 244, 239, 0.84);
+  border-color: rgba(219, 227, 220, 0.82);
+}
+
+.teacher-site .nav-wrap {
+  min-height: 76px;
+}
+
+.teacher-site .brand-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--brand);
+  box-shadow: 0 12px 28px rgba(23, 107, 87, 0.2);
+}
+
+.teacher-site .brand-title {
+  letter-spacing: -0.035em;
+}
+
+.teacher-site .nav a {
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.teacher-site .nav a:hover,
+.teacher-site .nav a.active {
+  background: rgba(23, 107, 87, 0.09);
+}
+
+.teacher-site .hero {
+  position: relative;
+  padding: clamp(48px, 7vw, 96px) 0 54px;
+  background: transparent;
+}
+
+.teacher-site .hero-grid {
+  gap: clamp(36px, 6vw, 88px);
+}
+
+.teacher-site .hero-grid > div:first-child {
+  padding: clamp(24px, 4vw, 52px) 0;
+}
+
+.teacher-site .eyebrow {
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.07);
+  border-color: rgba(23, 107, 87, 0.14);
+  font-size: 12px;
+}
+
+.teacher-site h1 {
+  max-width: 720px;
+  color: var(--text);
+  font-size: clamp(48px, 6.4vw, 84px);
+  line-height: 0.98;
+  letter-spacing: -0.075em;
+}
+
+.teacher-site .hero p {
+  max-width: 650px;
+  color: var(--muted);
+  font-size: clamp(16px, 1.4vw, 19px);
+  line-height: 1.7;
+}
+
+.teacher-site .hero-actions {
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.teacher-site .btn {
+  min-height: 46px;
+  border-radius: 999px;
+  padding: 12px 18px;
+}
+
+.teacher-site .btn-primary {
+  background: var(--brand);
+  box-shadow: 0 12px 26px rgba(23, 107, 87, 0.18);
+}
+
+.teacher-site .btn-primary:hover {
+  background: #105743;
+  box-shadow: 0 15px 32px rgba(23, 107, 87, 0.25);
+}
+
+.teacher-site .btn-secondary {
+  background: rgba(255, 254, 250, 0.78);
+}
+
+.teacher-site .stat {
+  padding: 17px 15px;
+  border-radius: 17px;
+  box-shadow: 0 10px 24px rgba(27, 43, 39, 0.045);
+}
+
+.teacher-site .stat strong {
+  color: var(--brand);
+  font-size: 30px;
+  letter-spacing: -0.06em;
+}
+
+.teacher-site .profile-card {
+  padding: 16px;
+  border-color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 254, 250, 0.76);
+  backdrop-filter: blur(14px);
+}
+
+.teacher-site .portrait-frame {
+  position: relative;
+  border-radius: 18px;
+}
+
+.teacher-site .portrait-frame img {
+  aspect-ratio: 0.92;
+  object-position: center 28%;
+}
+
+.teacher-site .quick-info {
+  gap: 8px;
+}
+
+.teacher-site .quick-row {
+  border-radius: 13px;
+  background: rgba(234, 240, 233, 0.72);
+}
+
+.teacher-site main.container {
+  padding-bottom: 100px;
+}
+
+.teacher-site main section {
+  padding-top: clamp(48px, 7vw, 84px);
+  scroll-margin-top: 100px;
+}
+
+.teacher-site .section-head {
+  position: relative;
+  margin-bottom: 24px;
+  padding-left: 18px;
+}
+
+.teacher-site .section-head::before {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: 3px;
+  border-radius: 9px;
+  background: var(--brand-2);
+  content: "";
+}
+
+.teacher-site .section-kicker {
+  color: var(--brand);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+
+.teacher-site .section-head h2 {
+  font-size: clamp(30px, 3.8vw, 48px);
+  letter-spacing: -0.06em;
+}
+
+.teacher-site .section-desc {
+  line-height: 1.7;
+}
+
+.teacher-site .card,
+.teacher-site .photo-card {
+  border-color: rgba(219, 227, 220, 0.84);
+  background: rgba(255, 254, 250, 0.84);
+  box-shadow: 0 16px 42px rgba(27, 43, 39, 0.055);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.teacher-site .card {
+  padding: clamp(20px, 2.5vw, 30px);
+}
+
+.teacher-site .card:hover,
+.teacher-site .photo-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(23, 107, 87, 0.24);
+  box-shadow: 0 24px 54px rgba(27, 43, 39, 0.1);
+}
+
+.teacher-site .card h3 {
+  letter-spacing: -0.035em;
+}
+
+.teacher-site table {
+  border: 1px solid var(--line);
+}
+
+.teacher-site th {
+  background: rgba(234, 240, 233, 0.72);
+}
+
+.teacher-site .doc {
+  border-radius: 15px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.teacher-site .doc:hover {
+  transform: translateY(-2px);
+  border-color: rgba(23, 107, 87, 0.35);
+  box-shadow: 0 10px 24px rgba(27, 43, 39, 0.08);
+}
+
+.teacher-site .doc-type {
+  background: var(--brand);
+}
+
+.teacher-site .doc-action {
+  color: var(--brand);
+}
+
+.teacher-site .metric {
+  border-radius: 17px;
+  background: rgba(255, 254, 250, 0.82);
+}
+
+.teacher-site .metric strong {
+  color: var(--brand);
+  font-size: 30px;
+  letter-spacing: -0.06em;
+}
+
+.teacher-site figure.photo-card {
+  border-radius: 19px;
+}
+
+.teacher-site .photo-card img {
+  transition: transform 0.5s ease;
+}
+
+.teacher-site .photo-card:hover img {
+  transform: scale(1.025);
+}
+
+.teacher-site .contact-line,
+.teacher-site .guest-message {
+  border-color: var(--line);
+  border-radius: 14px;
+  background: rgba(234, 240, 233, 0.62);
+}
+
+.teacher-site .field input:focus,
+.teacher-site .field textarea:focus {
+  border-color: rgba(23, 107, 87, 0.65);
+  box-shadow: 0 0 0 4px rgba(23, 107, 87, 0.1);
+}
+
+.teacher-site .footer {
+  background: rgba(255, 254, 250, 0.72);
+}
+
+.teacher-site .to-top {
+  border-radius: 999px;
+}
+
+@media (max-width: 1100px) {
+  .teacher-site .brand-title {
+    font-size: 14px;
+  }
+
+  .teacher-site .brand-subtitle {
+    font-size: 11px;
+  }
+
+  .teacher-site .nav {
+    gap: 2px;
+  }
+
+  .teacher-site .nav a {
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 980px) {
+  .teacher-site .hero-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(270px, 0.9fr);
+    align-items: start;
+  }
+
+  .teacher-site .profile-card {
+    margin-top: 24px;
+  }
+
+  .teacher-site .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .teacher-site .nav-wrap {
+    min-height: 68px;
+  }
+
+  .teacher-site .brand {
+    min-width: 0;
+    gap: 9px;
+  }
+
+  .teacher-site .brand-title {
+    max-width: 185px;
+    font-size: 12px;
+  }
+
+  .teacher-site .brand-subtitle {
+    font-size: 10px;
+  }
+
+  .teacher-site .brand-mark {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 14px;
+  }
+
+  .teacher-site .menu-toggle {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    color: var(--brand);
+    font-size: 13px;
+  }
+
+  .teacher-site .nav {
+    top: 68px;
+    padding: 10px;
+    border-radius: 18px;
+    background: rgba(255, 254, 250, 0.98);
+  }
+
+  .teacher-site .nav a {
+    padding: 11px 13px;
+  }
+
+  .teacher-site .hero {
+    padding-top: 36px;
+  }
+
+  .teacher-site .hero-grid,
+  .teacher-site .grid-2,
+  .teacher-site .grid-3,
+  .teacher-site .contact-layout,
+  .teacher-site .award-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .teacher-site .hero-grid > div:first-child {
+    padding: 12px 0 0;
+  }
+
+  .teacher-site h1 {
+    font-size: clamp(42px, 11vw, 62px);
+  }
+
+  .teacher-site .hero-actions {
+    gap: 9px;
+  }
+
+  .teacher-site .btn {
+    min-height: 44px;
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .teacher-site .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .teacher-site .stat {
+    padding: 13px 10px;
+  }
+
+  .teacher-site .stat strong {
+    font-size: 24px;
+  }
+
+  .teacher-site .stat span {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .teacher-site .profile-card {
+    margin-top: 18px;
+  }
+
+  .teacher-site .portrait-frame img {
+    max-height: 520px;
+    aspect-ratio: 1.05;
+  }
+
+  .teacher-site .gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .teacher-site main.container {
+    padding-bottom: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teacher-site *,
+  .teacher-site *::before,
+  .teacher-site *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

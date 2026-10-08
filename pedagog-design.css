@@ -237,6 +237,184 @@ body.teacher-site {
   color: var(--brand);
 }
 
+.teacher-site .teacher-materials-intro {
+  max-width: 760px;
+  margin: -10px 0 22px;
+}
+
+.teacher-site .teacher-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.teacher-site .teacher-upload-block {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: rgba(255, 254, 250, 0.72);
+}
+
+.teacher-site .teacher-upload-block h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 16px;
+  letter-spacing: -0.02em;
+}
+
+.teacher-site .teacher-upload-block .upload-list {
+  margin-top: 8px;
+}
+
+.teacher-site .teacher-upload-dropzone {
+  margin-top: 16px;
+  padding: 24px 16px;
+  border-color: rgba(23, 107, 87, 0.3);
+  border-radius: 13px;
+  background: rgba(234, 240, 233, 0.5);
+}
+
+.teacher-site .teacher-upload-dropzone p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.teacher-site .teacher-upload-dropzone .upload-icon {
+  margin-bottom: 8px;
+  color: var(--brand);
+  font-size: 30px;
+}
+
+.teacher-site .teacher-upload-dropzone .upload-button {
+  padding: 11px 17px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: none;
+}
+
+.teacher-site .upload-list {
+  list-style: none;
+  padding: 0;
+}
+
+.teacher-site .upload-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.teacher-site .upload-item:hover {
+  padding-right: 6px;
+  padding-left: 6px;
+  border-color: rgba(23, 107, 87, 0.26);
+  background: rgba(23, 107, 87, 0.035);
+}
+
+.teacher-site .upload-item .document-content {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.teacher-site .upload-item a {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.teacher-site .upload-item .document-download {
+  width: fit-content;
+  margin-top: 0;
+  padding: 5px 10px;
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.08);
+  font-size: 10px;
+}
+
+.teacher-site .upload-item .document-download:hover {
+  color: #fff;
+  background: var(--brand);
+}
+
+.teacher-site .upload-item .upload-remove {
+  flex: 0 0 32px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.teacher-site .upload-item .upload-remove:hover {
+  color: #fff;
+  background: #a33d36;
+}
+
+.teacher-site .upload-status,
+.teacher-site .cloud-status {
+  color: var(--brand);
+  font: 12px/1.6 'DM Mono', monospace;
+}
+
+.teacher-site .teacher-owner-access {
+  margin-top: 22px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: rgba(234, 240, 233, 0.44);
+}
+
+.teacher-site .teacher-owner-access summary {
+  color: var(--brand);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.teacher-site .teacher-owner-access > p {
+  max-width: 680px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.teacher-site .teacher-owner-access .cloud-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.teacher-site .teacher-owner-access .cloud-form input {
+  min-width: min(100%, 260px);
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--paper);
+}
+
+.teacher-site .teacher-owner-access .cloud-form button,
+.teacher-site .teacher-owner-access .cloud-logout {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--brand);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.teacher-site .teacher-owner-access [hidden],
+.teacher-site .owner-only[hidden] {
+  display: none !important;
+}
+
 .teacher-site .metric {
   border-radius: 17px;
   background: rgba(255, 254, 250, 0.82);
@@ -418,6 +596,26 @@ body.teacher-site {
 
   .teacher-site .gallery {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .teacher-site .teacher-upload-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .teacher-site .teacher-upload-block {
+    padding: 14px;
+  }
+
+  .teacher-site .teacher-upload-dropzone {
+    padding: 22px 12px;
+  }
+
+  .teacher-site .teacher-owner-access .cloud-form {
+    display: grid;
+  }
+
+  .teacher-site .teacher-owner-access .cloud-form button {
+    width: 100%;
   }
 
   .teacher-site main.container {

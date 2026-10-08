@@ -161,6 +161,7 @@
       .photo-card img { height: 240px; }
     }
   </style>
+  <link rel="stylesheet" href="upload-center.css" />
   <link rel="stylesheet" href="pedagog-design.css" />
 </head>
 <body class="teacher-site">
@@ -298,16 +299,41 @@
       </div>
       <article class="card" style="margin-top:18px;">
         <h3>Материалы для просмотра</h3>
-        <div class="doc-list">
-          <a class="doc" href="#" download>
-            <span class="doc-left"><span class="doc-type">DOC</span><span><b>Технологическая карта открытого урока</b><span>скачиваемый документ</span></span></span>
-            <span class="doc-action">Скачать</span>
-          </a>
-          <a class="doc" href="#" target="_blank">
-            <span class="doc-left"><span class="doc-type">HTML</span><span><b>Презентация «Обеспечение безопасности веб-приложений»</b><span>открыть в браузере</span></span></span>
-            <span class="doc-action">Открыть</span>
-          </a>
+        <p class="section-desc teacher-materials-intro">Документы и сертификаты доступны всем посетителям; публиковать и удалять файлы может только владелец сайта.</p>
+        <div class="teacher-upload-grid">
+          <div class="teacher-upload-block">
+            <h4>Методические материалы</h4>
+            <ul class="doc-list upload-list" id="upload-list" aria-live="polite"></ul>
+            <div class="upload-dropzone teacher-upload-dropzone owner-only" id="upload-dropzone">
+              <span class="upload-icon" aria-hidden="true">📄</span>
+              <p>Перетащите документ сюда или выберите файл.</p>
+              <label class="upload-button" for="document-input">Выбрать документы</label>
+              <input id="document-input" type="file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.odt,.rtf,.md" multiple hidden />
+            </div>
+          </div>
+          <div class="teacher-upload-block">
+            <h4>Сертификаты</h4>
+            <ul class="certificate-list upload-list" id="certificate-list" aria-live="polite"></ul>
+            <div class="upload-dropzone teacher-upload-dropzone owner-only">
+              <span class="upload-icon" aria-hidden="true">🎓</span>
+              <p>Добавьте изображение или PDF сертификата.</p>
+              <label class="upload-button" for="certificate-input">Выбрать сертификаты</label>
+              <input id="certificate-input" class="owner-only" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf" multiple hidden />
+            </div>
+          </div>
         </div>
+        <p class="upload-status" id="upload-status" role="status" aria-live="polite">Загружаю опубликованные материалы…</p>
+        <details class="teacher-owner-access">
+          <summary>Вход владельца для публикации файлов</summary>
+          <p>Используйте fine-grained token только для репозитория Portfolio-Jiraf с правом Contents: Read and write. Токен хранится только в этой вкладке.</p>
+          <form class="cloud-form" id="cloud-form">
+            <label class="github-token-label" for="github-token">GitHub fine-grained token</label>
+            <input id="github-token" type="password" placeholder="github_pat_..." autocomplete="off" spellcheck="false" required />
+            <button type="submit">Подключить GitHub</button>
+          </form>
+          <span class="cloud-status" id="cloud-status" role="status" aria-live="polite"></span>
+          <button class="cloud-logout" id="cloud-logout" type="button" hidden>Выйти и очистить токен</button>
+        </details>
       </article>
     </section>
 
@@ -490,5 +516,7 @@
       form.reset();
     });
   </script>
+  <script src="github-upload-config.js" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
+  <script src="github-uploader.js" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

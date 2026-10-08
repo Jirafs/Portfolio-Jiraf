@@ -98,6 +98,32 @@
     return responseJson(response);
   }
 
+  function isManifestConflict(error) {
+    return error.status === 409
+      || (error.status === 422 && /does not match|sha/i.test(error.message));
+  }
+
+  async function updateManifest(updateFiles, message) {
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const manifest = await getManifest();
+      const nextFiles = updateFiles(manifest.files);
+      if (JSON.stringify(nextFiles) === JSON.stringify(manifest.files)) return nextFiles;
+
+      try {
+        await saveManifest(nextFiles, manifest.sha, message);
+        return nextFiles;
+      } catch (error) {
+        if (!isManifestConflict(error)) throw error;
+        if (attempt === maxAttempts - 1) {
+          error.message = `Список файлов несколько раз обновился одновременно. Обновите страницу и повторите действие. ${error.message}`;
+          throw error;
+        }
+      }
+    }
+    throw new Error('Не удалось обновить список файлов после нескольких конфликтов.');
+  }
+
   function encodePath(path) {
     return path.split('/').map(encodeURIComponent).join('/');
   }
@@ -258,14 +284,17 @@
     if (file.size > config.maxFileSize) throw new Error('Максимальный размер файла — 10 МБ.');
     const extension = file.name.toLowerCase().split('.').pop();
     if (!allowedExtensions[type]?.has(extension)) throw new Error('Этот формат файла не поддерживается.');
-    const manifest = await getManifest();
     const safeName = file.name.replace(/[\\/]/g, '_');
     const path = `${config.uploadDirectory}/${type}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
     const uploaded = await putFile(file, path);
     const entry = { type, name: file.name, path, size: file.size, sha: uploaded.content.sha };
+    let nextFiles;
 
     try {
-      await saveManifest([...manifest.files, entry], manifest.sha, `Опубликован файл: ${file.name}`);
+      nextFiles = await updateManifest(
+        (files) => files.some((item) => item.path === path) ? files : [...files, entry],
+        `Опубликован файл: ${file.name}`
+      );
     } catch (error) {
       try {
         await deleteFile(entry);
@@ -276,7 +305,7 @@
       throw error;
     }
 
-    uploadManifest = [...manifest.files, entry];
+    uploadManifest = nextFiles;
     renderManifest(uploadManifest, true);
     showStatus(`Файл «${file.name}» загружен в GitHub и опубликован.`);
   }
@@ -301,15 +330,18 @@
       return;
     }
     try {
-      const manifest = await getManifest();
-      const nextFiles = manifest.files.filter((entry) => entry.path !== file.path);
-      await saveManifest(nextFiles, manifest.sha, `Удалён файл: ${file.name}`);
+      const nextFiles = await updateManifest(
+        (files) => files.filter((entry) => entry.path !== file.path),
+        `Удалён файл: ${file.name}`
+      );
       try {
         await deleteFile(file);
       } catch (error) {
         try {
-          const latest = await getManifest();
-          await saveManifest([...latest.files, file], latest.sha, `Восстановлена запись файла: ${file.name}`);
+          await updateManifest(
+            (files) => files.some((entry) => entry.path === file.path) ? files : [...files, file],
+            `Восстановлена запись файла: ${file.name}`
+          );
         } catch (rollbackError) {
           error.message += ' Не удалось восстановить файл в списке; проверьте uploads.json в GitHub.';
           console.error('Ошибка восстановления манифеста после неудачного удаления:', rollbackError);

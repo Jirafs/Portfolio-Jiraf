@@ -429,7 +429,40 @@
     frame.referrerPolicy = 'no-referrer';
 
     if (extension === 'pdf') {
-      frame.src = githubPagesFileUrl(file.path);
+      const pagesUrl = githubPagesFileUrl(file.path);
+      const placeholder = document.createElement('div');
+      placeholder.className = 'pdf-preview-placeholder';
+      placeholder.textContent = 'Загрузка предпросмотра PDF…';
+      preview.append(placeholder);
+      let loaded = false;
+      return {
+        element: preview,
+        open: async () => {
+          if (loaded) return;
+          loaded = true;
+          placeholder.textContent = '';
+          try {
+            const headResp = await fetch(pagesUrl, { method: 'HEAD', cache: 'no-store' });
+            const ct = headResp.headers.get('content-type') || '';
+            const cd = headResp.headers.get('content-disposition') || '';
+            if (ct.includes('application/pdf') && !/attachment/i.test(cd)) {
+              const obj = document.createElement('object');
+              obj.type = 'application/pdf';
+              obj.data = pagesUrl;
+              obj.width = '100%';
+              obj.height = '600px';
+              obj.className = 'upload-pdf-object';
+              preview.append(obj);
+              return;
+            }
+          } catch (e) {
+            // head may be blocked by CORS or fail; fall back to viewer below
+          }
+          // fallback to Google Docs viewer when Pages serves attachment or HEAD failed
+          frame.src = `https://docs.google.com/gview?url=${encodeURIComponent(pagesUrl)}&embedded=true`;
+          preview.append(frame);
+        }
+      };
     } else if (extension === 'txt' || extension === 'md') {
       frame.src = url;
     } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {

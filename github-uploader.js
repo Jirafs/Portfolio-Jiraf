@@ -15,6 +15,7 @@
   let accessToken = '';
   let uploadManifest = [];
   let xlsxLibraryPromise;
+  let pdfLibraryPromise;
   let summaryRenderId = 0;
   const summaryCache = new Map();
   const allowedExtensions = {
@@ -175,6 +176,34 @@
       document.head.append(script);
     });
     return xlsxLibraryPromise;
+  }
+
+  function loadPdfLibrary() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if (pdfLibraryPromise) return pdfLibraryPromise;
+
+    pdfLibraryPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.integrity = 'sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==';
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      script.onload = () => {
+        if (!window.pdfjsLib) {
+          pdfLibraryPromise = undefined;
+          reject(new Error('Загрузилась библиотека PDF, но её API недоступно.'));
+          return;
+        }
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      };
+      script.onerror = () => {
+        pdfLibraryPromise = undefined;
+        reject(new Error('Не удалось загрузить библиотеку для просмотра PDF.'));
+      };
+      document.head.append(script);
+    });
+    return pdfLibraryPromise;
   }
 
   function cellText(value) {
@@ -430,37 +459,116 @@
 
     if (extension === 'pdf') {
       const pagesUrl = githubPagesFileUrl(file.path);
-      const placeholder = document.createElement('div');
-      placeholder.className = 'pdf-preview-placeholder';
-      placeholder.textContent = 'Загрузка предпросмотра PDF…';
-      preview.append(placeholder);
-      let loaded = false;
+      const toolbar = document.createElement('div');
+      toolbar.className = 'pdf-preview-toolbar';
+      const previousButton = document.createElement('button');
+      previousButton.type = 'button';
+      previousButton.textContent = 'Предыдущая';
+      previousButton.disabled = true;
+      const pageLabel = document.createElement('span');
+      pageLabel.className = 'pdf-preview-page';
+      pageLabel.textContent = 'Загрузка PDF…';
+      const nextButton = document.createElement('button');
+      nextButton.type = 'button';
+      nextButton.textContent = 'Следующая';
+      nextButton.disabled = true;
+      const message = document.createElement('p');
+      message.className = 'pdf-preview-message';
+      message.setAttribute('role', 'status');
+      const openLink = document.createElement('a');
+      openLink.href = pagesUrl;
+      openLink.target = '_blank';
+      openLink.rel = 'noopener noreferrer';
+      openLink.textContent = 'Открыть PDF отдельно';
+      openLink.hidden = true;
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pdf-preview-canvas';
+      canvas.setAttribute('aria-label', `Страница PDF: ${file.name}`);
+      toolbar.append(previousButton, pageLabel, nextButton);
+      preview.append(toolbar, message, openLink, canvas);
+
+      let pdfDocument;
+      let pdfLoadPromise;
+      let currentPage = 1;
+      let rendering = false;
+      let renderPending = false;
+
+      async function renderPage() {
+        if (!pdfDocument || rendering) {
+          renderPending = Boolean(pdfDocument);
+          return;
+        }
+        rendering = true;
+        renderPending = false;
+        previousButton.disabled = currentPage <= 1;
+        nextButton.disabled = currentPage >= pdfDocument.numPages;
+        pageLabel.textContent = `Страница ${currentPage} из ${pdfDocument.numPages}`;
+        message.textContent = 'Отрисовка страницы…';
+        try {
+          const page = await pdfDocument.getPage(currentPage);
+          const baseViewport = page.getViewport({ scale: 1 });
+          const availableWidth = Math.max(280, preview.clientWidth - 24);
+          const scale = Math.min(1.75, availableWidth / baseViewport.width);
+          const viewport = page.getViewport({ scale });
+          const outputScale = Math.min(window.devicePixelRatio || 1, 2);
+          const context = canvas.getContext('2d');
+          canvas.width = Math.floor(viewport.width * outputScale);
+          canvas.height = Math.floor(viewport.height * outputScale);
+          canvas.style.width = `${Math.floor(viewport.width)}px`;
+          canvas.style.height = `${Math.floor(viewport.height)}px`;
+          await page.render({
+            canvasContext: context,
+            viewport,
+            transform: outputScale === 1 ? null : [outputScale, 0, 0, outputScale, 0, 0]
+          }).promise;
+          message.textContent = '';
+        } catch (error) {
+          message.textContent = `Не удалось отобразить страницу PDF: ${error.message}`;
+          console.error(`Ошибка предпросмотра PDF «${file.name}»:`, error);
+        } finally {
+          rendering = false;
+          if (renderPending) renderPage();
+        }
+      }
+
+      previousButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage -= 1;
+          renderPage();
+        }
+      });
+      nextButton.addEventListener('click', () => {
+        if (pdfDocument && currentPage < pdfDocument.numPages) {
+          currentPage += 1;
+          renderPage();
+        }
+      });
+      window.addEventListener('resize', renderPage);
+
       return {
         element: preview,
-        open: async () => {
-          if (loaded) return;
-          loaded = true;
-          placeholder.textContent = '';
-          try {
-            const headResp = await fetch(pagesUrl, { method: 'HEAD', cache: 'no-store' });
-            const ct = headResp.headers.get('content-type') || '';
-            const cd = headResp.headers.get('content-disposition') || '';
-            if (ct.includes('application/pdf') && !/attachment/i.test(cd)) {
-              const obj = document.createElement('object');
-              obj.type = 'application/pdf';
-              obj.data = pagesUrl;
-              obj.width = '100%';
-              obj.height = '600px';
-              obj.className = 'upload-pdf-object';
-              preview.append(obj);
-              return;
+        open: () => {
+          if (pdfDocument || pdfLoadPromise) return pdfLoadPromise;
+          message.textContent = 'Загрузка PDF…';
+          pdfLoadPromise = (async () => {
+            try {
+              const [pdfjsLib, response] = await Promise.all([
+                loadPdfLibrary(),
+                fetch(pagesUrl, { cache: 'no-store' })
+              ]);
+              if (!response.ok) throw new Error(`Не удалось загрузить файл (${response.status}).`);
+              pdfDocument = await pdfjsLib.getDocument({ data: await response.arrayBuffer() }).promise;
+              previousButton.disabled = false;
+              nextButton.disabled = false;
+              await renderPage();
+            } catch (error) {
+              pdfLoadPromise = undefined;
+              message.textContent = `Не удалось открыть PDF: ${error.message}`;
+              openLink.hidden = false;
+              console.error(`Ошибка загрузки PDF «${file.name}»:`, error);
             }
-          } catch (e) {
-            // head may be blocked by CORS or fail; fall back to viewer below
-          }
-          // fallback to Google Docs viewer when Pages serves attachment or HEAD failed
-          frame.src = `https://docs.google.com/gview?url=${encodeURIComponent(pagesUrl)}&embedded=true`;
-          preview.append(frame);
+          })();
+          return pdfLoadPromise;
         }
       };
     } else if (extension === 'txt' || extension === 'md') {

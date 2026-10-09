@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=12" />
+  <link rel="stylesheet" href="pedagog-design.css?v=13" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -394,6 +394,11 @@
           <button class="performance-add-button owner-only" id="performance-add-group" type="button" hidden>Добавить группу</button>
         </div>
         <p class="performance-status" id="performance-status" role="status" aria-live="polite"></p>
+        <details class="performance-chart" id="performance-chart-details" hidden>
+          <summary>Показать диаграмму по группам</summary>
+          <p class="performance-chart-description">Сравнение успеваемости, качества знаний и обученности. Значения рассчитаны по опубликованным сводным данным.</p>
+          <div id="performance-chart" class="performance-chart-list" aria-label="Сравнение показателей групп"></div>
+        </details>
         <div class="performance-table-scroll" role="region" aria-label="Сводная таблица результатов по группам" tabindex="0">
           <table aria-label="Результаты по группам">
             <thead>
@@ -663,6 +668,6 @@
     });
   </script>
   <script src="github-upload-config.js?v=3" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="github-uploader.js?v=11" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="github-uploader.js?v=12" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

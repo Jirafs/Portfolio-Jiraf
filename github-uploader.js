@@ -27,6 +27,8 @@
   const groupAttendanceSummary = document.querySelector('#group-attendance-summary');
   const performanceTableBody = document.querySelector('#performance-table-body');
   const performanceTableFoot = document.querySelector('#performance-table-foot');
+  const performanceChartDetails = document.querySelector('#performance-chart-details');
+  const performanceChart = document.querySelector('#performance-chart');
   const performanceAddButton = document.querySelector('#performance-add-group');
   const performanceActionsHeading = document.querySelector('#performance-actions-heading');
   const performanceStatus = document.querySelector('#performance-status');
@@ -888,7 +890,9 @@
       const note = document.createElement('p');
       note.className = 'group-attendance-note';
       note.textContent = 'Опубликованы только сводные цифры; исходный Excel, ФИО и индивидуальные отметки в GitHub не загружались. «Н» считается пропуском, пустые ячейки и оценки — нет.';
-      article.append(headingRow, metrics, note);
+      const attendanceChart = createMetricBar('Посещаемость', summary.attendancePercent, `${summary.attendancePercent}%`);
+      attendanceChart.classList.add('attendance-chart');
+      article.append(headingRow, attendanceChart, metrics, note);
       groupAttendanceSummary.append(article);
     });
   }
@@ -919,6 +923,46 @@
     const cell = document.createElement('td');
     cell.textContent = value;
     return cell;
+  }
+
+  function createMetricBar(label, value, valueText = `${value}%`) {
+    const row = document.createElement('div');
+    row.className = 'comparison-metric';
+    const name = document.createElement('span');
+    name.className = 'comparison-metric-label';
+    name.textContent = label;
+    const progress = document.createElement('progress');
+    progress.max = 100;
+    progress.value = Math.min(100, Math.max(0, value));
+    progress.setAttribute('aria-label', `${label}: ${valueText}`);
+    const output = document.createElement('span');
+    output.className = 'comparison-metric-value';
+    output.textContent = valueText;
+    row.append(name, progress, output);
+    return row;
+  }
+
+  function renderPerformanceChart(groups) {
+    if (!performanceChart || !performanceChartDetails) return;
+    performanceChart.replaceChildren();
+    performanceChartDetails.hidden = groups.length === 0;
+    groups.forEach((item) => {
+      const card = document.createElement('article');
+      card.className = 'comparison-group';
+      const heading = document.createElement('h4');
+      heading.textContent = `${item.group}${item.subject ? ` — ${item.subject}` : ''}`;
+      card.append(heading);
+      card.append(
+        createMetricBar('Успеваемость', item.success),
+        createMetricBar('Качество знаний', item.quality)
+      );
+      if (item.trained != null) card.append(createMetricBar('Обученность', item.trained));
+      const average = document.createElement('p');
+      average.className = 'comparison-average';
+      average.textContent = `Средний балл: ${item.average.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} из 5`;
+      card.append(average);
+      performanceChart.append(card);
+    });
   }
 
   function performanceInput(field, value, label) {
@@ -1057,6 +1101,7 @@
     performanceTableFoot.replaceChildren();
 
     const groups = groupPerformance;
+    renderPerformanceChart(groups);
     groups.forEach((item) => {
       const row = document.createElement('tr');
       const isEditing = ownerMode && editingPerformanceGroup === performanceKey(item.group, item.subject);

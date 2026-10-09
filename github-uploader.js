@@ -22,6 +22,7 @@
   const performanceAddButton = document.querySelector('#performance-add-group');
   const performanceActionsHeading = document.querySelector('#performance-actions-heading');
   const performanceStatus = document.querySelector('#performance-status');
+  const groupAttendanceStatus = document.querySelector('#group-attendance-status');
   let accessToken = '';
   let uploadManifest = [];
   let groupPerformance = [];
@@ -37,7 +38,7 @@
   const allowedExtensions = {
     documents: new Set(['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'rtf', 'md']),
     certificates: new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf']),
-    'group-data': new Set(['xls', 'xlsx'])
+    'group-data': new Set(['xls', 'xlsx', 'pdf'])
   };
 
   if (!config) {
@@ -63,10 +64,6 @@
     if (performanceActionsHeading) performanceActionsHeading.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';
     renderGroupPerformance();
-    if (!isAuthenticated) {
-      attendanceSummaries = [];
-      renderGroupAttendanceSummary();
-    }
     if (status && isAuthenticated) status.textContent = `Вход выполнен как @${login}. Токен хранится только в этой вкладке.`;
   }
 
@@ -159,19 +156,24 @@
     const names = new Set();
     groups.forEach((item) => {
       if (!item || typeof item.group !== 'string' || !item.group.trim()
+        || (item.subject != null && typeof item.subject !== 'string')
         || !Number.isInteger(item.students) || item.students < 1
-        || !['success', 'quality', 'trained', 'average'].every((key) => Number.isFinite(item[key]))
+        || !['success', 'quality', 'average'].every((key) => Number.isFinite(item[key]))
         || item.success < 0 || item.success > 100
         || item.quality < 0 || item.quality > 100
-        || item.trained < 0 || item.trained > 100
+        || (item.trained != null && (!Number.isFinite(item.trained) || item.trained < 0 || item.trained > 100))
         || item.average < 0 || item.average > 5) {
         throw new Error('В сводке найдена группа с неверными показателями.');
       }
-      const normalizedGroup = item.group.trim().toLocaleLowerCase('ru-RU');
-      if (names.has(normalizedGroup)) throw new Error(`Группа «${item.group}» повторяется в сводке.`);
-      names.add(normalizedGroup);
+      const key = performanceKey(item.group, item.subject);
+      if (names.has(key)) throw new Error(`Группа «${item.group}» с этим предметом повторяется в сводке.`);
+      names.add(key);
     });
-    return groups;
+    return groups.map((item) => ({ ...item, subject: item.subject?.trim() || '', trained: item.trained ?? null }));
+  }
+
+  function performanceKey(group, subject = '') {
+    return `${group.trim().toLocaleLowerCase('ru-RU')}\u0000${(subject || '').trim().toLocaleLowerCase('ru-RU')}`;
   }
 
   function decodeBase64Json(content) {
@@ -224,6 +226,75 @@
       }
     }
     throw new Error('Не удалось обновить сводку после нескольких конфликтов.');
+  }
+
+  function validateGroupAttendance(summaries) {
+    if (!Array.isArray(summaries)) throw new Error('Сводка посещаемости в GitHub имеет неверный формат.');
+    summaries.forEach((item) => {
+      if (!item || typeof item.group !== 'string' || !item.group.trim()
+        || typeof item.subject !== 'string' || !item.subject.trim()
+        || (item.period != null && typeof item.period !== 'string')
+        || !Number.isInteger(item.studentCount) || item.studentCount < 1
+        || !Number.isInteger(item.sessionCount) || item.sessionCount < 1
+        || !Number.isInteger(item.dateCount) || item.dateCount < 1
+        || !Number.isInteger(item.absenceCount) || item.absenceCount < 0
+        || !Number.isFinite(item.attendancePercent) || item.attendancePercent < 0 || item.attendancePercent > 100) {
+        throw new Error('В сводке посещаемости найдена запись с неверными показателями.');
+      }
+    });
+    return summaries;
+  }
+
+  async function getGroupAttendance(token = accessToken) {
+    const path = encodePath(config.groupAttendanceFile);
+    const response = await apiFetch(`${apiRoot}/contents/${path}?ref=${encodeURIComponent(config.branch)}`, {}, token);
+    if (response.status === 404) return { sha: null, summaries: [] };
+    const data = await responseJson(response);
+    return { sha: data.sha, summaries: validateGroupAttendance(decodeBase64Json(data.content)) };
+  }
+
+  async function refreshGroupAttendance() {
+    const response = await fetch(`${rawRoot}/${encodePath(config.groupAttendanceFile)}?t=${Date.now()}`, { cache: 'no-store' });
+    if (response.status === 404) {
+      attendanceSummaries = [];
+    } else if (!response.ok) {
+      throw new Error(`Не удалось загрузить сводку посещаемости (${response.status}).`);
+    } else {
+      attendanceSummaries = validateGroupAttendance(await response.json());
+    }
+    renderGroupAttendanceSummary();
+  }
+
+  async function updateGroupAttendance(updateSummaries, message) {
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const current = await getGroupAttendance();
+      const nextSummaries = validateGroupAttendance(updateSummaries(current.summaries));
+      const bytes = new TextEncoder().encode(JSON.stringify(nextSummaries, null, 2) + '\n');
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+      }
+      const body = { message, content: btoa(binary), branch: config.branch };
+      if (current.sha) body.sha = current.sha;
+
+      try {
+        const response = await apiFetch(`${apiRoot}/contents/${encodePath(config.groupAttendanceFile)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        await responseJson(response);
+        return nextSummaries;
+      } catch (error) {
+        if (!isManifestConflict(error)) throw error;
+        if (attempt === maxAttempts - 1) {
+          error.message = `Сводка посещаемости несколько раз обновилась одновременно. Обновите страницу и повторите действие. ${error.message}`;
+          throw error;
+        }
+      }
+    }
+    throw new Error('Не удалось обновить сводку посещаемости после нескольких конфликтов.');
   }
 
   function encodePath(path) {
@@ -448,6 +519,8 @@
         ? subjectAfterGroup(headerText, headerGroupMatch)
         : '';
       const subject = filenameSubject || headerSubject || sheetName;
+      const periodMatch = fileName.match(/(?:^|[_\s-])((?:i{1,3}|iv|v|\d+)\s*полугодие)/i);
+      const period = periodMatch ? periodMatch[1].replace(/\s+/g, ' ').trim() : '';
       let absenceCount = 0;
       let recordedMarks = 0;
 
@@ -465,6 +538,7 @@
         fileName,
         group,
         subject,
+        period,
         studentCount: students.length,
         sessionCount: header.columns.length,
         dateCount: new Set(header.columns.map(({ label }) => label)).size,
@@ -484,6 +558,99 @@
     return attendanceSummariesFromWorkbook(await file.arrayBuffer(), file.name);
   }
 
+  async function extractPerformanceSummaryFromPdf(file) {
+    const pdfjs = await loadPdfLibrary();
+    const document = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    const pageItems = [];
+    for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
+      const page = await document.getPage(pageNumber);
+      const content = await page.getTextContent();
+      pageItems.push(content.items
+        .filter((item) => typeof item.str === 'string' && item.str.trim())
+        .map((item) => ({
+          page: pageNumber,
+          text: item.str.trim(),
+          x: item.transform[4],
+          y: item.transform[5]
+        })));
+    }
+
+    const groupMatch = file.name.match(/(?:^|[^0-9А-ЯЁA-Z])(\d{1,2}\s*[А-ЯЁA-Z]{2,8}\s*-\s*\d{3,5}[А-ЯЁA-Z]?)(?=$|[^0-9А-ЯЁA-Z])/i);
+    if (!groupMatch) {
+      throw new Error('Добавьте код группы в имя PDF-файла, например «Ведомость 2ИСИП-123.pdf».');
+    }
+
+    const firstPageItems = pageItems[0] || [];
+    const subjectLines = new Map();
+    firstPageItems.forEach((item) => {
+      const lineY = Math.round(item.y / 3) * 3;
+      if (!subjectLines.has(lineY)) subjectLines.set(lineY, []);
+      subjectLines.get(lineY).push(item);
+    });
+    const lines = [...subjectLines.entries()]
+      .map(([y, items]) => ({
+        y,
+        text: items.sort((left, right) => left.x - right.x).map((item) => item.text).join(' ').replace(/\s+/g, ' ').trim()
+      }))
+      .sort((left, right) => right.y - left.y);
+    const subjectLineIndex = lines.findIndex(({ text }) => /(?:учебная\s+)?дисциплина/i.test(text));
+    let subject = '';
+    if (subjectLineIndex >= 0) {
+      subject = lines[subjectLineIndex].text
+        .replace(/^.*?(?:учебная\s+)?дисциплина\s*:?\s*/i, '')
+        .trim();
+      if (!subject) {
+        const nextLine = lines
+          .filter((line, index) => index !== subjectLineIndex)
+          .filter((line) => Math.abs(line.y - lines[subjectLineIndex].y) <= 18)
+          .map((line) => line.text)
+          .find((text) => /[А-ЯЁA-Z]{3,}/i.test(text) && !/дисциплина|группа|семестр/i.test(text));
+        subject = nextLine || '';
+      }
+    }
+    if (!subject) {
+      throw new Error('В PDF не удалось определить название дисциплины из реквизита «Учебная дисциплина».');
+    }
+
+    const headers = pageItems.flat().filter((item) => normalizedHeader(item.text) === 'оценка');
+    if (!headers.length) {
+      throw new Error('В PDF не найден столбец «Оценка». Проверьте, что это ведомость с итоговыми оценками.');
+    }
+    const gradeX = headers.reduce((sum, item) => sum + item.x, 0) / headers.length;
+    const headerYs = new Map(headers.map((item) => [item.page, item.y]));
+    const gradesByRow = new Map();
+    pageItems.flat().forEach((item) => {
+      const gradeMatch = item.text.match(/^([2-5])(?:\s*\([^)]*\))?$/);
+      if (!gradeMatch || Math.abs(item.x - gradeX) > 80 || item.y < 80
+        || (headerYs.has(item.page) && Math.abs(item.y - headerYs.get(item.page)) < 20)) return;
+      const key = `${item.page}:${Math.round(item.y)}`;
+      const grade = Number(gradeMatch[1]);
+      const distance = Math.abs(item.x - gradeX);
+      const current = gradesByRow.get(key);
+      if (!current || distance < current.distance) {
+        gradesByRow.set(key, { grade, distance });
+      } else if (distance === current.distance && grade !== current.grade) {
+        throw new Error('В PDF найдены разные оценки в одной строке; не удалось однозначно разобрать ведомость.');
+      }
+    });
+
+    const grades = [...gradesByRow.values()].map(({ grade }) => grade);
+    if (!grades.length) {
+      throw new Error('Не удалось извлечь оценки 2–5 из PDF. Проверьте, что текст ведомости выделяется, а оценки указаны в столбце «Оценка».');
+    }
+    const group = groupMatch[1].replace(/\s+/g, '').toLocaleUpperCase('ru-RU');
+    const passed = grades.filter((grade) => grade >= 3).length;
+    const quality = grades.filter((grade) => grade >= 4).length;
+    return {
+      group,
+      subject,
+      students: grades.length,
+      success: Math.round((passed / grades.length) * 1000) / 10,
+      quality: Math.round((quality / grades.length) * 1000) / 10,
+      average: Math.round((grades.reduce((sum, grade) => sum + grade, 0) / grades.length) * 10) / 10
+    };
+  }
+
   function renderGroupAttendanceSummary() {
     if (!groupAttendanceSummary) return;
     groupAttendanceSummary.replaceChildren();
@@ -491,7 +658,7 @@
     if (!attendanceSummaries.length) {
       const empty = document.createElement('p');
       empty.className = 'group-subject-empty';
-      empty.textContent = 'Загрузите журнал успеваемости Excel, чтобы рассчитать посещаемость группы.';
+      empty.textContent = 'Посещаемость появится после загрузки журнала успеваемости Excel владельцем сайта.';
       groupAttendanceSummary.append(empty);
       return;
     }
@@ -502,17 +669,17 @@
       const headingRow = document.createElement('div');
       headingRow.className = 'group-attendance-heading';
       const heading = document.createElement('h4');
-      heading.textContent = `${summary.group} — ${summary.subject}`;
-      const removeButton = document.createElement('button');
-      removeButton.className = 'group-attendance-remove';
-      removeButton.type = 'button';
-      removeButton.textContent = 'Удалить из сводки';
-      removeButton.setAttribute('aria-label', `Удалить ${summary.group} — ${summary.subject} из сводки`);
-      removeButton.addEventListener('click', () => {
-        attendanceSummaries = attendanceSummaries.filter((current) => current !== summary);
-        renderGroupAttendanceSummary();
-      });
-      headingRow.append(heading, removeButton);
+      heading.textContent = `${summary.group} — ${summary.subject}${summary.period ? ` — ${summary.period}` : ''}`;
+      headingRow.append(heading);
+      if (accessToken) {
+        const removeButton = document.createElement('button');
+        removeButton.className = 'group-attendance-remove';
+        removeButton.type = 'button';
+        removeButton.textContent = 'Удалить';
+        removeButton.setAttribute('aria-label', `Удалить сводку посещаемости ${summary.group} — ${summary.subject}`);
+        removeButton.addEventListener('click', () => deleteGroupAttendance(summary));
+        headingRow.append(removeButton);
+      }
       const metrics = document.createElement('dl');
       metrics.className = 'group-attendance-metrics';
       const values = [
@@ -539,10 +706,32 @@
 
       const note = document.createElement('p');
       note.className = 'group-attendance-note';
-      note.textContent = `Файл «${summary.fileName}» обработан только в этом браузере и не загружен в GitHub. Посещаемость = (всего ячеек − «Н») / всего ячеек; оценки и пустые ячейки не считаются пропусками. Если журнал заполнен не полностью, процент может быть завышен. ФИО и отметки не публикуются.`;
+      note.textContent = 'Опубликованы только сводные цифры; исходный Excel, ФИО и индивидуальные отметки в GitHub не загружались. «Н» считается пропуском, пустые ячейки и оценки — нет.';
       article.append(headingRow, metrics, note);
       groupAttendanceSummary.append(article);
     });
+  }
+
+  async function deleteGroupAttendance(summary) {
+    if (!accessToken) return;
+    if (!window.confirm(`Удалить сводку посещаемости группы «${summary.group} — ${summary.subject}»?`)) return;
+    if (groupAttendanceStatus) groupAttendanceStatus.textContent = `Удаляю сводку группы «${summary.group}»…`;
+    try {
+      attendanceSummaries = await updateGroupAttendance(
+        (summaries) => {
+          if (!summaries.some((item) => item.group === summary.group && item.subject === summary.subject && item.period === summary.period)) {
+            throw new Error('Эта сводка уже удалена. Обновите страницу.');
+          }
+          return summaries.filter((item) => item.group !== summary.group || item.subject !== summary.subject || item.period !== summary.period);
+        },
+        `Удалена сводка посещаемости группы: ${summary.group}`
+      );
+      renderGroupAttendanceSummary();
+      if (groupAttendanceStatus) groupAttendanceStatus.textContent = `Сводка группы «${summary.group}» удалена.`;
+    } catch (error) {
+      if (groupAttendanceStatus) groupAttendanceStatus.textContent = `Не удалось удалить сводку: ${error.message}`;
+      console.error(`Не удалось удалить сводку посещаемости группы «${summary.group}»:`, error);
+    }
   }
 
   function performanceCell(value) {
@@ -553,7 +742,7 @@
 
   function performanceInput(field, value, label) {
     const input = document.createElement('input');
-    input.type = field === 'group' ? 'text' : 'number';
+    input.type = ['group', 'subject'].includes(field) ? 'text' : 'number';
     input.value = value == null ? '' : value;
     input.dataset.field = field;
     input.setAttribute('aria-label', label);
@@ -564,7 +753,7 @@
       input.min = '0';
       input.max = '5';
       input.step = '0.1';
-    } else if (field !== 'group') {
+    } else if (!['group', 'subject'].includes(field)) {
       input.min = '0';
       input.max = '100';
       input.step = '0.1';
@@ -584,25 +773,27 @@
 
   function readPerformanceRow(row) {
     const inputs = [...row.querySelectorAll('[data-field]')];
-    if (inputs.some((input) => !input.value.trim())) {
-      throw new Error('Заполните все поля группы.');
+    if (inputs.some((input) => !['subject', 'trained'].includes(input.dataset.field) && !input.value.trim())) {
+      throw new Error('Заполните группу, количество студентов и все показатели.');
     }
     const values = Object.fromEntries(inputs.map((input) => [
       input.dataset.field,
-      input.dataset.field === 'group' ? input.value.trim() : Number(input.value)
+      ['group', 'subject'].includes(input.dataset.field) ? input.value.trim()
+        : input.dataset.field === 'trained' && !input.value.trim() ? null
+          : Number(input.value)
     ]));
     if (!values.group || !Number.isInteger(values.students) || values.students < 1
-      || !['success', 'quality', 'trained', 'average'].every((key) => Number.isFinite(values[key]))
+      || !['success', 'quality', 'average'].every((key) => Number.isFinite(values[key]))
       || values.success < 0 || values.success > 100
       || values.quality < 0 || values.quality > 100
-      || values.trained < 0 || values.trained > 100
+      || (values.trained !== null && (!Number.isFinite(values.trained) || values.trained < 0 || values.trained > 100))
       || values.average < 0 || values.average > 5) {
-      throw new Error('Заполните группу, целое число студентов, проценты от 0 до 100 и средний балл от 0 до 5.');
+      throw new Error('Заполните группу, целое число студентов, успеваемость и качество от 0 до 100, и средний балл от 0 до 5. Обученность можно оставить пустой.');
     }
     return values;
   }
 
-  async function savePerformanceRow(row, originalGroup) {
+  async function savePerformanceRow(row, originalItem) {
     if (!accessToken || savingPerformance) return;
     let updated;
     let saved = false;
@@ -613,23 +804,24 @@
       if (performanceStatus) performanceStatus.textContent = 'Сохраняю сводку в GitHub…';
       renderGroupPerformance();
       groupPerformance = await updateGroupPerformance((groups) => {
-        const currentIndex = originalGroup
-          ? groups.findIndex((item) => item.group === originalGroup)
+        const currentIndex = originalItem
+          ? groups.findIndex((item) => performanceKey(item.group, item.subject) === performanceKey(originalItem.group, originalItem.subject))
           : -1;
-        if (originalGroup && currentIndex < 0) {
-          throw new Error(`Группа «${originalGroup}» уже удалена из сводки. Обновите страницу.`);
+        if (originalItem && currentIndex < 0) {
+          throw new Error(`Группа «${originalItem.group} — ${originalItem.subject || 'без предмета'}» уже удалена из сводки. Обновите страницу.`);
         }
-        if (groups.some((item, index) => index !== currentIndex && item.group.toLocaleLowerCase('ru-RU') === updated.group.toLocaleLowerCase('ru-RU'))) {
-          throw new Error(`Группа «${updated.group}» уже есть в сводке.`);
+        if (groups.some((item, index) => index !== currentIndex
+          && performanceKey(item.group, item.subject) === performanceKey(updated.group, updated.subject))) {
+          throw new Error(`Группа «${updated.group}» с предметом «${updated.subject || 'без предмета'}» уже есть в сводке.`);
         }
         if (currentIndex < 0) return [...groups, updated];
         return groups.map((item, index) => index === currentIndex ? updated : item);
-      }, `${originalGroup ? 'Изменена' : 'Добавлена'} сводка группы: ${updated.group}`);
+      }, `${originalItem ? 'Изменена' : 'Добавлена'} сводка группы: ${updated.group}${updated.subject ? ` — ${updated.subject}` : ''}`);
       saved = true;
       editingPerformanceGroup = null;
       addingPerformanceGroup = false;
       editingPerformanceDraft = null;
-      if (performanceStatus) performanceStatus.textContent = `Сводка группы «${updated.group}» сохранена в GitHub.`;
+      if (performanceStatus) performanceStatus.textContent = `Сводка группы «${updated.group}${updated.subject ? ` — ${updated.subject}` : ''}» сохранена в GitHub.`;
     } catch (error) {
       if (performanceStatus) performanceStatus.textContent = `Не удалось сохранить группу: ${error.message}`;
       console.error('Не удалось сохранить сводку по группам:', error);
@@ -640,25 +832,27 @@
     }
   }
 
-  async function deletePerformanceGroup(group) {
+  async function deletePerformanceGroup(item) {
     if (!accessToken || savingPerformance) return;
-    if (!window.confirm(`Удалить группу «${group}» из сводной таблицы?`)) return;
+    const key = performanceKey(item.group, item.subject);
+    const label = `${item.group}${item.subject ? ` — ${item.subject}` : ''}`;
+    if (!window.confirm(`Удалить группу «${label}» из сводной таблицы?`)) return;
     let deleted = false;
     try {
       savingPerformance = true;
-      if (performanceStatus) performanceStatus.textContent = `Удаляю группу «${group}» из сводки…`;
+      if (performanceStatus) performanceStatus.textContent = `Удаляю группу «${label}» из сводки…`;
       setPerformanceControlsDisabled(true);
       groupPerformance = await updateGroupPerformance((groups) => {
-        if (!groups.some((item) => item.group === group)) {
-          throw new Error(`Группа «${group}» уже отсутствует в сводке.`);
+        if (!groups.some((current) => performanceKey(current.group, current.subject) === key)) {
+          throw new Error(`Группа «${label}» уже отсутствует в сводке.`);
         }
-        return groups.filter((item) => item.group !== group);
-      }, `Удалена группа из сводки: ${group}`);
+        return groups.filter((current) => performanceKey(current.group, current.subject) !== key);
+      }, `Удалена группа из сводки: ${label}`);
       deleted = true;
-      if (performanceStatus) performanceStatus.textContent = `Группа «${group}» удалена из сводной таблицы.`;
+      if (performanceStatus) performanceStatus.textContent = `Группа «${label}» удалена из сводной таблицы.`;
     } catch (error) {
       if (performanceStatus) performanceStatus.textContent = `Не удалось удалить группу: ${error.message}`;
-      console.error(`Не удалось удалить группу «${group}» из сводки:`, error);
+      console.error(`Не удалось удалить группу «${label}» из сводки:`, error);
     } finally {
       savingPerformance = false;
       if (deleted) renderGroupPerformance();
@@ -684,11 +878,12 @@
     const groups = groupPerformance;
     groups.forEach((item) => {
       const row = document.createElement('tr');
-      const isEditing = ownerMode && editingPerformanceGroup === item.group;
+      const isEditing = ownerMode && editingPerformanceGroup === performanceKey(item.group, item.subject);
       if (isEditing) {
         const editedItem = editingPerformanceDraft || item;
         const fields = [
           ['group', editedItem.group, 'Название группы'],
+          ['subject', editedItem.subject || '', `Предмет группы ${item.group}`],
           ['students', editedItem.students, `Количество студентов в группе ${item.group}`],
           ['success', editedItem.success, `Успеваемость группы ${item.group}, процентов`],
           ['quality', editedItem.quality, `Качество знаний группы ${item.group}, процентов`],
@@ -703,7 +898,7 @@
         const actions = document.createElement('td');
         actions.className = 'performance-row-actions';
         actions.append(
-          performanceActionButton('Сохранить', 'performance-save-button', () => savePerformanceRow(row, addingPerformanceGroup ? null : item.group), savingPerformance),
+          performanceActionButton('Сохранить', 'performance-save-button', () => savePerformanceRow(row, addingPerformanceGroup ? null : item), savingPerformance),
           performanceActionButton('Отмена', 'performance-cancel-button', () => {
             editingPerformanceGroup = null;
             addingPerformanceGroup = false;
@@ -715,10 +910,11 @@
       } else {
         row.append(
           performanceCell(item.group),
+          performanceCell(item.subject || '—'),
           performanceCell(String(item.students)),
           performanceCell(`${item.success}%`),
           performanceCell(`${item.quality}%`),
-          performanceCell(`${item.trained}%`),
+          performanceCell(item.trained == null ? '—' : `${item.trained}%`),
           performanceCell(item.average.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 }))
         );
         if (ownerMode) {
@@ -726,7 +922,7 @@
           actions.className = 'performance-row-actions';
           actions.append(
             performanceActionButton('Изменить', 'performance-edit-button', () => {
-              editingPerformanceGroup = item.group;
+              editingPerformanceGroup = performanceKey(item.group, item.subject);
               addingPerformanceGroup = false;
               editingPerformanceDraft = null;
               renderGroupPerformance();
@@ -735,7 +931,7 @@
             performanceActionButton(
               'Удалить',
               'performance-delete-button',
-              () => deletePerformanceGroup(item.group),
+              () => deletePerformanceGroup(item),
               savingPerformance || editingPerformanceGroup !== null || addingPerformanceGroup
             )
           );
@@ -750,6 +946,7 @@
       const draft = editingPerformanceDraft || {};
       const fields = [
         ['group', draft.group || '', 'Название новой группы'],
+        ['subject', draft.subject || '', 'Предмет группы'],
         ['students', draft.students ?? '', 'Количество студентов в группе'],
         ['success', draft.success ?? '', 'Успеваемость группы, процентов'],
         ['quality', draft.quality ?? '', 'Качество знаний группы, процентов'],
@@ -778,7 +975,7 @@
     if (!groups.length && !addingPerformanceGroup) {
       const row = document.createElement('tr');
       const message = document.createElement('td');
-      message.colSpan = ownerMode ? 7 : 6;
+      message.colSpan = ownerMode ? 8 : 7;
       message.textContent = 'В сводной таблице пока нет групп.';
       row.append(message);
       performanceTableBody.append(row);
@@ -788,21 +985,25 @@
       result.students += item.students;
       result.success += item.success * item.students;
       result.quality += item.quality * item.students;
-      result.trained += item.trained * item.students;
+      if (item.trained != null) {
+        result.trained += item.trained * item.students;
+        result.trainedStudents += item.students;
+      }
       result.average += item.average * item.students;
       return result;
-    }, { students: 0, success: 0, quality: 0, trained: 0, average: 0 });
+    }, { students: 0, success: 0, quality: 0, trained: 0, trainedStudents: 0, average: 0 });
     const totalRow = document.createElement('tr');
     const totalValues = groups.length
       ? [
           'Итого',
+          '',
           String(totals.students),
           `${Math.floor(totals.success / totals.students)}%`,
           `${Math.floor(totals.quality / totals.students)}%`,
-          `${Math.floor(totals.trained / totals.students)}%`,
+          totals.trainedStudents ? `${Math.floor(totals.trained / totals.trainedStudents)}%` : '—',
           (totals.average / totals.students).toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
         ]
-      : ['Итого', '0', '—', '—', '—', '—'];
+      : ['Итого', '', '0', '—', '—', '—', '—'];
     totalValues.forEach((value) => {
       const cell = document.createElement('th');
       cell.scope = 'row';
@@ -1194,10 +1395,14 @@
     }
 
     const manifest = await getManifest(token);
-    const performance = await getGroupPerformance(token);
+    const [performance, attendance] = await Promise.all([
+      getGroupPerformance(token),
+      getGroupAttendance(token)
+    ]);
     accessToken = token;
     uploadManifest = manifest.files;
     groupPerformance = performance.groups;
+    attendanceSummaries = attendance.summaries;
     setAuthenticated(true, user.login);
     renderManifest(uploadManifest, true);
   }
@@ -1207,6 +1412,24 @@
     if (file.size > config.maxFileSize) throw new Error('Максимальный размер файла — 10 МБ.');
     const extension = file.name.toLowerCase().split('.').pop();
     if (!allowedExtensions[type]?.has(extension)) throw new Error('Этот формат файла не поддерживается.');
+    if (type === 'group-data' && extension === 'pdf') {
+      const imported = await extractPerformanceSummaryFromPdf(file);
+      const key = performanceKey(imported.group, imported.subject);
+      const existing = groupPerformance.find((item) => performanceKey(item.group, item.subject) === key);
+      const summary = { ...imported, trained: existing?.trained ?? null };
+      groupPerformance = await updateGroupPerformance(
+        (groups) => [
+          ...groups.filter((item) => performanceKey(item.group, item.subject) !== key),
+          summary
+        ],
+        `Обновлена успеваемость группы: ${summary.group} — ${summary.subject}`
+      );
+      renderGroupPerformance();
+      if (groupExcelStatus) {
+        groupExcelStatus.textContent = `Успеваемость «${summary.group} — ${summary.subject}» рассчитана по ${summary.students} оценкам и сохранена в сводке GitHub. PDF, ФИО и индивидуальные оценки не загружались.`;
+      }
+      return;
+    }
     let groupSubjects;
     let summaryWarning = '';
     if (extension === 'xlsx' || extension === 'xls') {
@@ -1214,13 +1437,33 @@
         try {
           const attendance = await extractAttendanceSummaries(file);
           if (attendance.length) {
-            attendanceSummaries = [
-              ...attendanceSummaries.filter((current) => current.fileName !== file.name),
-              ...attendance
-            ];
+            const publicSummaries = attendance.map(({ group, subject, period, studentCount, sessionCount, dateCount, recordedMarks, unmarkedCells, possibleMarks, absenceCount, attendancePercent }) => ({
+              group,
+              subject,
+              period,
+              studentCount,
+              sessionCount,
+              dateCount,
+              recordedMarks,
+              unmarkedCells,
+              possibleMarks,
+              absenceCount,
+              attendancePercent
+            }));
+            attendanceSummaries = await updateGroupAttendance(
+              (summaries) => [
+                ...summaries.filter((current) => !publicSummaries.some((next) =>
+                  current.group === next.group
+                  && current.subject === next.subject
+                  && current.period === next.period
+                )),
+                ...publicSummaries
+              ],
+              `Обновлена сводка посещаемости группы: ${publicSummaries.map((summary) => summary.group).join(', ')}`
+            );
             renderGroupAttendanceSummary();
             if (groupExcelStatus) {
-              groupExcelStatus.textContent = `Посещаемость рассчитана по файлу «${file.name}». Исходный журнал не загружен в GitHub.`;
+              groupExcelStatus.textContent = `Сводка посещаемости группы «${attendance.map((summary) => summary.group).join(', ')}» сохранена в GitHub. Исходный Excel, ФИО и индивидуальные отметки не загружались.`;
             }
             return;
           }
@@ -1375,5 +1618,9 @@
   refreshGroupPerformance().catch((error) => {
     if (performanceStatus) performanceStatus.textContent = `Не удалось загрузить сводку по группам: ${error.message}`;
     console.error('Не удалось загрузить сводку по группам:', error);
+  });
+  refreshGroupAttendance().catch((error) => {
+    if (groupAttendanceStatus) groupAttendanceStatus.textContent = `Не удалось загрузить сводку посещаемости: ${error.message}`;
+    console.error('Не удалось загрузить сводку посещаемости:', error);
   });
 })();

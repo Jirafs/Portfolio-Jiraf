@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=5" />
+  <link rel="stylesheet" href="pedagog-design.css?v=7" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -360,6 +360,7 @@
           <thead>
             <tr>
               <th>Группа</th>
+              <th>Предмет</th>
               <th>Кол-во студентов</th>
               <th>Успеваемость</th>
               <th>Качество</th>
@@ -369,27 +370,28 @@
             </tr>
           </thead>
           <tbody id="performance-table-body">
-            <tr><td colspan="7">Загружаю сводную таблицу…</td></tr>
+            <tr><td colspan="8">Загружаю сводную таблицу…</td></tr>
           </tbody>
           <tfoot id="performance-table-foot"></tfoot>
         </table>
       </article>
       <article class="card excel-summary-card">
-        <h3>Сводка по группам из Excel</h3>
-        <p class="section-desc">Можно загрузить таблицу групп и предметов (столбцы «Группа» и «Предмет»/«Дисциплина») или журнал успеваемости с датами занятий, списком студентов и отметками. Для журнала «Н» считается пропуском; оценки и пустые ячейки не считаются пропусками. Если журнал заполнен не полностью, процент посещаемости может быть завышен.</p>
+        <h3>Сводка по группам из Excel и PDF</h3>
+        <p class="section-desc">Загрузите Excel-таблицу групп и предметов, журнал посещаемости или PDF-ведомость с итоговыми оценками. В PDF-файле укажите код группы в имени (например, «Ведомость 2ИСИП-123.pdf»). Для ведомости успеваемость считается по оценкам 3–5, качество — по оценкам 4–5, средний балл — как среднее оценок; ФИО и отдельные оценки не публикуются. Если обученность для группы ранее не указана, поле останется пустым для ручного заполнения. Для журнала посещаемости «Н» считается пропуском; пустые ячейки не считаются пропусками, поэтому незаполненный журнал может завысить результат.</p>
         <div class="group-excel-upload">
           <ul class="upload-list group-excel-list" id="group-excel-list" aria-live="polite"></ul>
           <div class="upload-dropzone teacher-upload-dropzone owner-only" id="group-excel-dropzone" hidden>
             <span class="upload-icon" aria-hidden="true">📊</span>
-            <p>Выберите Excel-таблицу групп или журнал посещаемости.</p>
-            <label class="upload-button" for="group-excel-input">Выбрать Excel-файл</label>
-            <input id="group-excel-input" type="file" accept=".xls,.xlsx" hidden />
+            <p>Выберите Excel-таблицу групп, журнал посещаемости или PDF-ведомость успеваемости.</p>
+            <label class="upload-button" for="group-excel-input">Выбрать файл Excel/PDF</label>
+            <input id="group-excel-input" type="file" accept=".xls,.xlsx,.pdf,application/pdf" hidden />
           </div>
           <p class="upload-status group-excel-status" id="group-excel-status" role="status" aria-live="polite"></p>
+          <p class="upload-status group-excel-status" id="group-attendance-status" role="status" aria-live="polite"></p>
         </div>
         <div id="group-subject-summary" aria-live="polite">Загружаю сводку из Excel…</div>
         <div id="group-attendance-summary" aria-live="polite">
-          <p class="group-subject-empty">Посещаемость появится после обработки журнала успеваемости Excel.</p>
+          <p class="group-subject-empty">Посещаемость появится после загрузки журнала успеваемости Excel владельцем сайта.</p>
         </div>
       </article>
     </section>
@@ -537,6 +539,6 @@
     });
   </script>
   <script src="github-upload-config.js" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="github-uploader.js?v=5" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="github-uploader.js?v=8" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

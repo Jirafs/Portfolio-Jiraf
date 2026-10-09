@@ -6,6 +6,7 @@ window.githubUploadConfig = {
   pagesBaseUrl: 'https://jirafs.github.io/Portfolio-Jiraf/',
   manifest: 'uploads.json',
   groupPerformanceFile: 'group-performance.json',
+  groupAttendanceFile: 'group-attendance.json',
   uploadDirectory: 'uploads',
   maxFileSize: 10 * 1024 * 1024
 };

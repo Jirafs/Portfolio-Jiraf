@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=8" />
+  <link rel="stylesheet" href="pedagog-design.css?v=9" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -182,7 +182,7 @@
         <a href="#about">О преподавателе</a>
         <a href="#methods">Методическая копилка</a>
         <a href="#results">Результаты</a>
-        <a href="#awards">Награды</a>
+        <a href="#awards">Сертификаты</a>
         <a href="#gallery">Фотогалерея</a>
         <a href="#feedback">Обратная связь</a>
       </nav>
@@ -300,8 +300,8 @@
       </div>
       <article class="card" style="margin-top:18px;">
         <h3>Материалы для просмотра</h3>
-        <p class="section-desc teacher-materials-intro">Документы и сертификаты доступны всем посетителям; публиковать и удалять файлы может только владелец сайта.</p>
-        <div class="teacher-upload-grid">
+        <p class="section-desc teacher-materials-intro">Материалы уроков и методические разработки доступны посетителям; публиковать и удалять файлы может только владелец сайта.</p>
+        <div class="teacher-upload-grid teacher-document-grid">
           <div class="teacher-upload-block">
             <h4>Методические материалы</h4>
             <ul class="doc-list upload-list" id="upload-list" aria-live="polite"></ul>
@@ -310,16 +310,6 @@
               <p>Перетащите документ сюда или выберите файл.</p>
               <label class="upload-button" for="document-input">Выбрать документы</label>
               <input id="document-input" type="file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.odt,.rtf,.md" multiple hidden />
-            </div>
-          </div>
-          <div class="teacher-upload-block">
-            <h4>Сертификаты</h4>
-            <ul class="certificate-list upload-list" id="certificate-list" aria-live="polite"></ul>
-            <div class="upload-dropzone teacher-upload-dropzone owner-only">
-              <span class="upload-icon" aria-hidden="true">🎓</span>
-              <p>Добавьте изображение или PDF сертификата.</p>
-              <label class="upload-button" for="certificate-input">Выбрать сертификаты</label>
-              <input id="certificate-input" class="owner-only" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf" multiple hidden />
             </div>
           </div>
         </div>
@@ -401,33 +391,60 @@
     <section id="awards">
       <div class="section-head">
         <div class="section-kicker">Раздел 4</div>
-        <h2>Награды и благодарности</h2>
-        <p class="section-desc">Документы, подтверждающие участие преподавателя в профессиональной деятельности.</p>
+        <h2>Сертификаты и достижения</h2>
+        <p class="section-desc">Подтверждённые документы и профессиональные направления развития.</p>
       </div>
       <div class="grid grid-2">
+        <article class="card certification-card">
+          <div class="achievement-card-heading">
+            <span class="achievement-icon" aria-hidden="true">✦</span>
+            <div>
+              <h3>Сертификаты и удостоверения</h3>
+              <p>Опубликованные документы о повышении квалификации и профессиональном обучении.</p>
+            </div>
+          </div>
+          <ul class="certificate-list upload-list" id="certificate-list" aria-live="polite"></ul>
+          <p class="certificate-empty group-subject-empty">Сертификаты появятся здесь после публикации владельцем сайта.</p>
+          <div class="upload-dropzone teacher-upload-dropzone owner-only" id="certificate-dropzone" hidden>
+            <span class="upload-icon" aria-hidden="true">🎓</span>
+            <p>Добавьте изображение или PDF сертификата.</p>
+            <label class="upload-button" for="certificate-input">Добавить сертификат</label>
+            <input id="certificate-input" class="owner-only" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf" multiple hidden />
+          </div>
+        </article>
         <article class="card">
-          <h3>Профессиональное развитие</h3>
+          <div class="achievement-card-heading">
+            <span class="achievement-icon" aria-hidden="true">↗</span>
+            <div>
+              <h3>Профессиональное развитие</h3>
+              <p>Основные направления методической и профессиональной работы.</p>
+            </div>
+          </div>
           <p>
-            В рамках профессионального развития преподаватель участвует в конференциях, вебинарах и тренингах
-            по актуальным темам веб-разработки и информационной безопасности.
+            Развитие компетенций в веб-разработке, преподавании и информационной безопасности.
           </p>
-          <ul>
-            <li>участие в профильных конференциях и вебинарах;</li>
-            <li>повышение квалификации в области информационной безопасности;</li>
-            <li>изучение современных фреймворков и технологий веб-разработки;</li>
-            <li>публикация методических материалов.</li>
+          <ul class="achievement-list">
+            <li>изучение современных технологий веб-разработки;</li>
+            <li>подготовка и обновление методических материалов;</li>
+            <li>повышение квалификации в области информационной безопасности.</li>
           </ul>
         </article>
         <article class="card">
-          <h3>Планируемые достижения</h3>
-          <p>
-            На ближайший период запланировано участие в профессиональных конкурсах и получение дополнительных
-            сертификатов в области информационной безопасности.
-          </p>
-          <div class="highlight" style="margin-top:14px;">
-            <strong>Цели:</strong>
-            <div style="color:var(--muted); margin-top:6px;">Получение сертификатов по информационной безопасности и участие в педагогических конкурсах.</div>
+          <div class="achievement-card-heading">
+            <span class="achievement-icon" aria-hidden="true">◎</span>
+            <div>
+              <h3>Профессиональные планы</h3>
+              <p>Цели на ближайший период.</p>
+            </div>
+            <span class="achievement-status">В планах</span>
           </div>
+          <p>
+            Продолжать профессиональное обучение и делиться практическим опытом с обучающимися.
+          </p>
+          <ul class="achievement-list">
+            <li>освоение дополнительных курсов по информационной безопасности;</li>
+            <li>участие в педагогических и профессиональных мероприятиях.</li>
+          </ul>
         </article>
       </div>
     </section>
@@ -541,6 +558,6 @@
     });
   </script>
   <script src="github-upload-config.js?v=2" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="github-uploader.js?v=9" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="github-uploader.js?v=10" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
   const uploadStatus = document.querySelector('#upload-status');
   const documentInput = document.querySelector('#document-input');
   const certificateInput = document.querySelector('#certificate-input');
+  const certificateDropzone = document.querySelector('#certificate-dropzone');
   const groupExcelInput = document.querySelector('#group-excel-input');
   const groupExcelList = document.querySelector('#group-excel-list');
   const groupExcelStatus = document.querySelector('#group-excel-status');
@@ -60,6 +61,7 @@
     if (form) form.hidden = isAuthenticated;
     if (logoutButton) logoutButton.hidden = !isAuthenticated;
     if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
+    if (certificateDropzone) certificateDropzone.hidden = !isAuthenticated;
     if (performanceAddButton) performanceAddButton.hidden = !isAuthenticated;
     if (performanceActionsHeading) performanceActionsHeading.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';

@@ -477,6 +477,85 @@ body.teacher-site {
   background: rgba(255, 254, 250, 0.82);
 }
 
+.teacher-site .performance-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.teacher-site .performance-table-header h3 {
+  margin: 0;
+}
+
+.teacher-site .performance-add-button,
+.teacher-site .performance-row-actions button {
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.teacher-site .performance-add-button,
+.teacher-site .performance-save-button {
+  color: #07110f;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+}
+
+.teacher-site .performance-row-actions {
+  min-width: 172px;
+  white-space: nowrap;
+}
+
+.teacher-site .performance-row-actions button + button {
+  margin-left: 6px;
+}
+
+.teacher-site .performance-delete-button {
+  color: #ffaaa5 !important;
+  border-color: rgba(255, 128, 128, 0.3) !important;
+  background: rgba(255, 128, 128, 0.08) !important;
+}
+
+.teacher-site .performance-add-button:disabled,
+.teacher-site .performance-row-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.teacher-site .performance-status {
+  min-height: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.teacher-site .performance-status:empty {
+  display: none;
+}
+
+.teacher-site #performance-table-body input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 72px;
+  padding: 8px 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.teacher-site #performance-table-body input[data-field="group"] {
+  min-width: 100px;
+}
+
 .teacher-site .excel-summary-card {
   margin-top: 18px;
 }

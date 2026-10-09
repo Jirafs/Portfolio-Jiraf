@@ -1,0 +1,42 @@
+[
+  {
+    "group": "1023",
+    "students": 25,
+    "success": 96,
+    "quality": 84,
+    "trained": 80,
+    "average": 4.3
+  },
+  {
+    "group": "723",
+    "students": 24,
+    "success": 92,
+    "quality": 79,
+    "trained": 75,
+    "average": 4.1
+  },
+  {
+    "group": "623",
+    "students": 26,
+    "success": 98,
+    "quality": 86,
+    "trained": 82,
+    "average": 4.4
+  },
+  {
+    "group": "224",
+    "students": 23,
+    "success": 94,
+    "quality": 81,
+    "trained": 78,
+    "average": 4.2
+  },
+  {
+    "group": "124",
+    "students": 22,
+    "success": 97,
+    "quality": 83,
+    "trained": 81,
+    "average": 4.3
+  }
+]

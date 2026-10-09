@@ -17,8 +17,18 @@
   const certificateList = document.querySelector('#certificate-list');
   const groupSubjectSummary = document.querySelector('#group-subject-summary');
   const groupAttendanceSummary = document.querySelector('#group-attendance-summary');
+  const performanceTableBody = document.querySelector('#performance-table-body');
+  const performanceTableFoot = document.querySelector('#performance-table-foot');
+  const performanceAddButton = document.querySelector('#performance-add-group');
+  const performanceActionsHeading = document.querySelector('#performance-actions-heading');
+  const performanceStatus = document.querySelector('#performance-status');
   let accessToken = '';
   let uploadManifest = [];
+  let groupPerformance = [];
+  let editingPerformanceGroup = null;
+  let addingPerformanceGroup = false;
+  let editingPerformanceDraft = null;
+  let savingPerformance = false;
   let attendanceSummaries = [];
   let xlsxLibraryPromise;
   let pdfLibraryPromise;
@@ -49,7 +59,10 @@
     if (form) form.hidden = isAuthenticated;
     if (logoutButton) logoutButton.hidden = !isAuthenticated;
     if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
+    if (performanceAddButton) performanceAddButton.hidden = !isAuthenticated;
+    if (performanceActionsHeading) performanceActionsHeading.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';
+    renderGroupPerformance();
     if (!isAuthenticated) {
       attendanceSummaries = [];
       renderGroupAttendanceSummary();
@@ -139,6 +152,78 @@
       }
     }
     throw new Error('Не удалось обновить список файлов после нескольких конфликтов.');
+  }
+
+  function validateGroupPerformance(groups) {
+    if (!Array.isArray(groups)) throw new Error('Сводка по группам в GitHub имеет неверный формат.');
+    const names = new Set();
+    groups.forEach((item) => {
+      if (!item || typeof item.group !== 'string' || !item.group.trim()
+        || !Number.isInteger(item.students) || item.students < 1
+        || !['success', 'quality', 'trained', 'average'].every((key) => Number.isFinite(item[key]))
+        || item.success < 0 || item.success > 100
+        || item.quality < 0 || item.quality > 100
+        || item.trained < 0 || item.trained > 100
+        || item.average < 0 || item.average > 5) {
+        throw new Error('В сводке найдена группа с неверными показателями.');
+      }
+      const normalizedGroup = item.group.trim().toLocaleLowerCase('ru-RU');
+      if (names.has(normalizedGroup)) throw new Error(`Группа «${item.group}» повторяется в сводке.`);
+      names.add(normalizedGroup);
+    });
+    return groups;
+  }
+
+  function decodeBase64Json(content) {
+    const bytes = Uint8Array.from(atob(content.replace(/\s/g, '')), (character) => character.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
+  async function getGroupPerformance(token = accessToken) {
+    const path = encodePath(config.groupPerformanceFile);
+    const response = await apiFetch(`${apiRoot}/contents/${path}?ref=${encodeURIComponent(config.branch)}`, {}, token);
+    if (response.status === 404) return { sha: null, groups: [] };
+    const data = await responseJson(response);
+    return { sha: data.sha, groups: validateGroupPerformance(decodeBase64Json(data.content)) };
+  }
+
+  async function refreshGroupPerformance() {
+    const response = await fetch(`${rawRoot}/${encodePath(config.groupPerformanceFile)}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Не удалось загрузить сводку по группам (${response.status}).`);
+    groupPerformance = validateGroupPerformance(await response.json());
+    renderGroupPerformance();
+  }
+
+  async function updateGroupPerformance(updateGroups, message) {
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const current = await getGroupPerformance();
+      const nextGroups = validateGroupPerformance(updateGroups(current.groups));
+      const bytes = new TextEncoder().encode(JSON.stringify(nextGroups, null, 2) + '\n');
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+      }
+      const body = { message, content: btoa(binary), branch: config.branch };
+      if (current.sha) body.sha = current.sha;
+
+      try {
+        const response = await apiFetch(`${apiRoot}/contents/${encodePath(config.groupPerformanceFile)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        await responseJson(response);
+        return nextGroups;
+      } catch (error) {
+        if (!isManifestConflict(error)) throw error;
+        if (attempt === maxAttempts - 1) {
+          error.message = `Сводка несколько раз обновилась одновременно. Обновите страницу и повторите действие. ${error.message}`;
+          throw error;
+        }
+      }
+    }
+    throw new Error('Не удалось обновить сводку после нескольких конфликтов.');
   }
 
   function encodePath(path) {
@@ -459,6 +544,283 @@
       groupAttendanceSummary.append(article);
     });
   }
+
+  function performanceCell(value) {
+    const cell = document.createElement('td');
+    cell.textContent = value;
+    return cell;
+  }
+
+  function performanceInput(field, value, label) {
+    const input = document.createElement('input');
+    input.type = field === 'group' ? 'text' : 'number';
+    input.value = value == null ? '' : value;
+    input.dataset.field = field;
+    input.setAttribute('aria-label', label);
+    if (field === 'students') {
+      input.min = '1';
+      input.step = '1';
+    } else if (field === 'average') {
+      input.min = '0';
+      input.max = '5';
+      input.step = '0.1';
+    } else if (field !== 'group') {
+      input.min = '0';
+      input.max = '100';
+      input.step = '0.1';
+    }
+    return input;
+  }
+
+  function performanceActionButton(label, className, handler, disabled = false) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.textContent = label;
+    button.disabled = disabled;
+    button.addEventListener('click', handler);
+    return button;
+  }
+
+  function readPerformanceRow(row) {
+    const inputs = [...row.querySelectorAll('[data-field]')];
+    if (inputs.some((input) => !input.value.trim())) {
+      throw new Error('Заполните все поля группы.');
+    }
+    const values = Object.fromEntries(inputs.map((input) => [
+      input.dataset.field,
+      input.dataset.field === 'group' ? input.value.trim() : Number(input.value)
+    ]));
+    if (!values.group || !Number.isInteger(values.students) || values.students < 1
+      || !['success', 'quality', 'trained', 'average'].every((key) => Number.isFinite(values[key]))
+      || values.success < 0 || values.success > 100
+      || values.quality < 0 || values.quality > 100
+      || values.trained < 0 || values.trained > 100
+      || values.average < 0 || values.average > 5) {
+      throw new Error('Заполните группу, целое число студентов, проценты от 0 до 100 и средний балл от 0 до 5.');
+    }
+    return values;
+  }
+
+  async function savePerformanceRow(row, originalGroup) {
+    if (!accessToken || savingPerformance) return;
+    let updated;
+    let saved = false;
+    try {
+      updated = readPerformanceRow(row);
+      editingPerformanceDraft = updated;
+      savingPerformance = true;
+      if (performanceStatus) performanceStatus.textContent = 'Сохраняю сводку в GitHub…';
+      renderGroupPerformance();
+      groupPerformance = await updateGroupPerformance((groups) => {
+        const currentIndex = originalGroup
+          ? groups.findIndex((item) => item.group === originalGroup)
+          : -1;
+        if (originalGroup && currentIndex < 0) {
+          throw new Error(`Группа «${originalGroup}» уже удалена из сводки. Обновите страницу.`);
+        }
+        if (groups.some((item, index) => index !== currentIndex && item.group.toLocaleLowerCase('ru-RU') === updated.group.toLocaleLowerCase('ru-RU'))) {
+          throw new Error(`Группа «${updated.group}» уже есть в сводке.`);
+        }
+        if (currentIndex < 0) return [...groups, updated];
+        return groups.map((item, index) => index === currentIndex ? updated : item);
+      }, `${originalGroup ? 'Изменена' : 'Добавлена'} сводка группы: ${updated.group}`);
+      saved = true;
+      editingPerformanceGroup = null;
+      addingPerformanceGroup = false;
+      editingPerformanceDraft = null;
+      if (performanceStatus) performanceStatus.textContent = `Сводка группы «${updated.group}» сохранена в GitHub.`;
+    } catch (error) {
+      if (performanceStatus) performanceStatus.textContent = `Не удалось сохранить группу: ${error.message}`;
+      console.error('Не удалось сохранить сводку по группам:', error);
+    } finally {
+      savingPerformance = false;
+      if (saved) renderGroupPerformance();
+      else setPerformanceControlsDisabled(false);
+    }
+  }
+
+  async function deletePerformanceGroup(group) {
+    if (!accessToken || savingPerformance) return;
+    if (!window.confirm(`Удалить группу «${group}» из сводной таблицы?`)) return;
+    let deleted = false;
+    try {
+      savingPerformance = true;
+      if (performanceStatus) performanceStatus.textContent = `Удаляю группу «${group}» из сводки…`;
+      setPerformanceControlsDisabled(true);
+      groupPerformance = await updateGroupPerformance((groups) => {
+        if (!groups.some((item) => item.group === group)) {
+          throw new Error(`Группа «${group}» уже отсутствует в сводке.`);
+        }
+        return groups.filter((item) => item.group !== group);
+      }, `Удалена группа из сводки: ${group}`);
+      deleted = true;
+      if (performanceStatus) performanceStatus.textContent = `Группа «${group}» удалена из сводной таблицы.`;
+    } catch (error) {
+      if (performanceStatus) performanceStatus.textContent = `Не удалось удалить группу: ${error.message}`;
+      console.error(`Не удалось удалить группу «${group}» из сводки:`, error);
+    } finally {
+      savingPerformance = false;
+      if (deleted) renderGroupPerformance();
+      else setPerformanceControlsDisabled(false);
+    }
+  }
+
+  function setPerformanceControlsDisabled(disabled) {
+    performanceTableBody?.querySelectorAll('button, input').forEach((control) => {
+      control.disabled = disabled;
+    });
+    if (performanceAddButton) performanceAddButton.disabled = disabled;
+  }
+
+  function renderGroupPerformance() {
+    if (!performanceTableBody || !performanceTableFoot) return;
+    const ownerMode = Boolean(accessToken);
+    if (performanceAddButton) performanceAddButton.hidden = !ownerMode || addingPerformanceGroup || editingPerformanceGroup !== null;
+    if (performanceActionsHeading) performanceActionsHeading.hidden = !ownerMode;
+    performanceTableBody.replaceChildren();
+    performanceTableFoot.replaceChildren();
+
+    const groups = groupPerformance;
+    groups.forEach((item) => {
+      const row = document.createElement('tr');
+      const isEditing = ownerMode && editingPerformanceGroup === item.group;
+      if (isEditing) {
+        const editedItem = editingPerformanceDraft || item;
+        const fields = [
+          ['group', editedItem.group, 'Название группы'],
+          ['students', editedItem.students, `Количество студентов в группе ${item.group}`],
+          ['success', editedItem.success, `Успеваемость группы ${item.group}, процентов`],
+          ['quality', editedItem.quality, `Качество знаний группы ${item.group}, процентов`],
+          ['trained', editedItem.trained, `Обученность группы ${item.group}, процентов`],
+          ['average', editedItem.average, `Средний балл группы ${item.group}`]
+        ];
+        fields.forEach(([field, value, label]) => {
+          const cell = document.createElement('td');
+          cell.append(performanceInput(field, value, label));
+          row.append(cell);
+        });
+        const actions = document.createElement('td');
+        actions.className = 'performance-row-actions';
+        actions.append(
+          performanceActionButton('Сохранить', 'performance-save-button', () => savePerformanceRow(row, addingPerformanceGroup ? null : item.group), savingPerformance),
+          performanceActionButton('Отмена', 'performance-cancel-button', () => {
+            editingPerformanceGroup = null;
+            addingPerformanceGroup = false;
+            editingPerformanceDraft = null;
+            renderGroupPerformance();
+          }, savingPerformance)
+        );
+        row.append(actions);
+      } else {
+        row.append(
+          performanceCell(item.group),
+          performanceCell(String(item.students)),
+          performanceCell(`${item.success}%`),
+          performanceCell(`${item.quality}%`),
+          performanceCell(`${item.trained}%`),
+          performanceCell(item.average.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 }))
+        );
+        if (ownerMode) {
+          const actions = document.createElement('td');
+          actions.className = 'performance-row-actions';
+          actions.append(
+            performanceActionButton('Изменить', 'performance-edit-button', () => {
+              editingPerformanceGroup = item.group;
+              addingPerformanceGroup = false;
+              editingPerformanceDraft = null;
+              renderGroupPerformance();
+              performanceTableBody.querySelector('[data-field="group"]')?.focus();
+            }, savingPerformance || editingPerformanceGroup !== null || addingPerformanceGroup),
+            performanceActionButton(
+              'Удалить',
+              'performance-delete-button',
+              () => deletePerformanceGroup(item.group),
+              savingPerformance || editingPerformanceGroup !== null || addingPerformanceGroup
+            )
+          );
+          row.append(actions);
+        }
+      }
+      performanceTableBody.append(row);
+    });
+
+    if (ownerMode && addingPerformanceGroup) {
+      const row = document.createElement('tr');
+      const draft = editingPerformanceDraft || {};
+      const fields = [
+        ['group', draft.group || '', 'Название новой группы'],
+        ['students', draft.students ?? '', 'Количество студентов в группе'],
+        ['success', draft.success ?? '', 'Успеваемость группы, процентов'],
+        ['quality', draft.quality ?? '', 'Качество знаний группы, процентов'],
+        ['trained', draft.trained ?? '', 'Обученность группы, процентов'],
+        ['average', draft.average ?? '', 'Средний балл группы']
+      ];
+      fields.forEach(([field, value, label]) => {
+        const cell = document.createElement('td');
+        cell.append(performanceInput(field, value, label));
+        row.append(cell);
+      });
+      const actions = document.createElement('td');
+      actions.className = 'performance-row-actions';
+      actions.append(
+        performanceActionButton('Сохранить', 'performance-save-button', () => savePerformanceRow(row, null), savingPerformance),
+        performanceActionButton('Отмена', 'performance-cancel-button', () => {
+          addingPerformanceGroup = false;
+          editingPerformanceDraft = null;
+          renderGroupPerformance();
+        }, savingPerformance)
+      );
+      row.append(actions);
+      performanceTableBody.append(row);
+    }
+
+    if (!groups.length && !addingPerformanceGroup) {
+      const row = document.createElement('tr');
+      const message = document.createElement('td');
+      message.colSpan = ownerMode ? 7 : 6;
+      message.textContent = 'В сводной таблице пока нет групп.';
+      row.append(message);
+      performanceTableBody.append(row);
+    }
+
+    const totals = groups.reduce((result, item) => {
+      result.students += item.students;
+      result.success += item.success * item.students;
+      result.quality += item.quality * item.students;
+      result.trained += item.trained * item.students;
+      result.average += item.average * item.students;
+      return result;
+    }, { students: 0, success: 0, quality: 0, trained: 0, average: 0 });
+    const totalRow = document.createElement('tr');
+    const totalValues = groups.length
+      ? [
+          'Итого',
+          String(totals.students),
+          `${Math.floor(totals.success / totals.students)}%`,
+          `${Math.floor(totals.quality / totals.students)}%`,
+          `${Math.floor(totals.trained / totals.students)}%`,
+          (totals.average / totals.students).toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+        ]
+      : ['Итого', '0', '—', '—', '—', '—'];
+    totalValues.forEach((value) => {
+      const cell = document.createElement('th');
+      cell.scope = 'row';
+      cell.textContent = value;
+      totalRow.append(cell);
+    });
+    if (ownerMode) totalRow.append(document.createElement('th'));
+    performanceTableFoot.append(totalRow);
+  }
+
+  performanceAddButton?.addEventListener('click', () => {
+    if (!accessToken || savingPerformance) return;
+    editingPerformanceGroup = null;
+    addingPerformanceGroup = true;
+    editingPerformanceDraft = null;
+    renderGroupPerformance();
+    performanceTableBody.querySelector('[data-field="group"]')?.focus();
+  });
 
   function mergeGroupSubjects(files) {
     const merged = new Map();
@@ -832,8 +1194,10 @@
     }
 
     const manifest = await getManifest(token);
+    const performance = await getGroupPerformance(token);
     accessToken = token;
     uploadManifest = manifest.files;
+    groupPerformance = performance.groups;
     setAuthenticated(true, user.login);
     renderManifest(uploadManifest, true);
   }
@@ -1008,4 +1372,8 @@
   });
 
   refreshManifest().catch((error) => showStatus(`Не удалось загрузить список файлов: ${error.message}`, error));
+  refreshGroupPerformance().catch((error) => {
+    if (performanceStatus) performanceStatus.textContent = `Не удалось загрузить сводку по группам: ${error.message}`;
+    console.error('Не удалось загрузить сводку по группам:', error);
+  });
 })();

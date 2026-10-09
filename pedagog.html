@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=3" />
+  <link rel="stylesheet" href="pedagog-design.css?v=5" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -351,7 +351,11 @@
         <div class="metric"><strong>4,3</strong><span>средний балл</span></div>
       </div>
       <article class="card" style="margin-top:18px;">
-        <h3>Сводная таблица по группам</h3>
+        <div class="performance-table-header">
+          <h3>Сводная таблица по группам</h3>
+          <button class="performance-add-button owner-only" id="performance-add-group" type="button" hidden>Добавить группу</button>
+        </div>
+        <p class="performance-status" id="performance-status" role="status" aria-live="polite"></p>
         <table aria-label="Результаты по группам">
           <thead>
             <tr>
@@ -361,16 +365,13 @@
               <th>Качество</th>
               <th>Обученность</th>
               <th>Средний балл</th>
+              <th class="owner-only" id="performance-actions-heading" hidden>Действия</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td>1023</td><td>25</td><td>96%</td><td>84%</td><td>80%</td><td>4,3</td></tr>
-            <tr><td>723</td><td>24</td><td>92%</td><td>79%</td><td>75%</td><td>4,1</td></tr>
-            <tr><td>623</td><td>26</td><td>98%</td><td>86%</td><td>82%</td><td>4,4</td></tr>
-            <tr><td>224</td><td>23</td><td>94%</td><td>81%</td><td>78%</td><td>4,2</td></tr>
-            <tr><td>124</td><td>22</td><td>97%</td><td>83%</td><td>81%</td><td>4,3</td></tr>
-            <tr><td><b>Итого</b></td><td><b>120</b></td><td><b>95%</b></td><td><b>82%</b></td><td><b>79%</b></td><td><b>4,3</b></td></tr>
+          <tbody id="performance-table-body">
+            <tr><td colspan="7">Загружаю сводную таблицу…</td></tr>
           </tbody>
+          <tfoot id="performance-table-foot"></tfoot>
         </table>
       </article>
       <article class="card excel-summary-card">
@@ -536,6 +537,6 @@
     });
   </script>
   <script src="github-upload-config.js" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="github-uploader.js?v=3" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="github-uploader.js?v=5" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

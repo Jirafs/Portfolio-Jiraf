@@ -579,6 +579,18 @@
     if (!groupMatch) {
       throw new Error('Добавьте код группы в имя PDF-файла, например «Ведомость 2ИСИП-123.pdf».');
     }
+    const group = groupMatch[1].replace(/\s+/g, '').toLocaleUpperCase('ru-RU');
+    const documentGroups = [...new Set(pageItems.flat().flatMap((item) =>
+      [...item.text.matchAll(/(?:^|[^0-9А-ЯЁA-Z])(\d{1,2}\s*[А-ЯЁA-Z]{2,8}\s*-\s*\d{3,5}[А-ЯЁA-Z]?)(?=$|[^0-9А-ЯЁA-Z])/gi)]
+        .map((match) => match[1].replace(/\s+/g, '').toLocaleUpperCase('ru-RU'))
+    ))];
+    const groupSuffix = group.match(/-(\d{3,5})[А-ЯЁA-Z]?$/)?.[1];
+    const conflictingGroup = documentGroups.find((candidate) =>
+      candidate !== group && candidate.match(/-(\d{3,5})[А-ЯЁA-Z]?$/)?.[1] === groupSuffix
+    );
+    const groupWarning = conflictingGroup
+      ? `Имя файла указывает на группу «${group}», но в PDF указана группа «${conflictingGroup}». Проверьте ведомость.`
+      : '';
 
     const firstPageItems = pageItems[0] || [];
     const subjectLines = new Map();
@@ -638,12 +650,12 @@
     if (!grades.length) {
       throw new Error('Не удалось извлечь оценки 2–5 из PDF. Проверьте, что текст ведомости выделяется, а оценки указаны в столбце «Оценка».');
     }
-    const group = groupMatch[1].replace(/\s+/g, '').toLocaleUpperCase('ru-RU');
     const passed = grades.filter((grade) => grade >= 3).length;
     const quality = grades.filter((grade) => grade >= 4).length;
     return {
       group,
       subject,
+      groupWarning,
       students: grades.length,
       success: Math.round((passed / grades.length) * 1000) / 10,
       quality: Math.round((quality / grades.length) * 1000) / 10,
@@ -1414,9 +1426,21 @@
     if (!allowedExtensions[type]?.has(extension)) throw new Error('Этот формат файла не поддерживается.');
     if (type === 'group-data' && extension === 'pdf') {
       const imported = await extractPerformanceSummaryFromPdf(file);
+      if (imported.groupWarning && !window.confirm(`${imported.groupWarning}\n\nПродолжить, используя группу из имени файла?`)) {
+        if (groupExcelStatus) groupExcelStatus.textContent = 'Загрузка сводки PDF отменена. Проверьте код группы в имени файла и самой ведомости.';
+        return;
+      }
       const key = performanceKey(imported.group, imported.subject);
       const existing = groupPerformance.find((item) => performanceKey(item.group, item.subject) === key);
-      const summary = { ...imported, trained: existing?.trained ?? null };
+      const summary = {
+        group: imported.group,
+        subject: imported.subject,
+        students: imported.students,
+        success: imported.success,
+        quality: imported.quality,
+        average: imported.average,
+        trained: existing?.trained ?? null
+      };
       groupPerformance = await updateGroupPerformance(
         (groups) => [
           ...groups.filter((item) => performanceKey(item.group, item.subject) !== key),

@@ -342,15 +342,27 @@
 
       const headerText = rows.slice(0, header.index).flat().map(cellText).find((value) => groupPattern.test(value))
         || fileName;
-      const groupMatch = headerText.match(groupPattern);
+      const fileTitle = fileName.replace(/\.[^.]+$/, '').replace(/^\d{4}-\d{4}[_\s-]*/, '').replace(/_/g, ' ').trim();
+      const fileGroupMatch = fileTitle.match(groupPattern);
+      const headerGroupMatch = headerText.match(groupPattern);
+      const groupMatch = fileGroupMatch || headerGroupMatch;
       if (!groupMatch) continue;
       const group = groupMatch[1];
-      const titleIndex = headerText.indexOf(group) + group.length;
-      const subject = headerText.slice(titleIndex)
-        .replace(/^[\s:—–-]+/, '')
-        .replace(/\s*\([^)]*\)/g, '')
-        .replace(/\s*[-—–]\s*(?:i{1,3}|iv|v|\d+)\s*полугодие.*$/i, '')
-        .trim();
+      function subjectAfterGroup(title, match) {
+        const titleIndex = title.indexOf(match[1]) + match[1].length;
+        return title.slice(titleIndex)
+          .replace(/^[\s:—–-]+/, '')
+          .replace(/\s*\([^)]*\)/g, '')
+          .replace(/[\s_-]*(?:i{1,3}|iv|v|\d+)\s*полугодие.*$/i, '')
+          .trim();
+      }
+      const filenameSubject = fileGroupMatch
+        ? subjectAfterGroup(fileTitle, fileGroupMatch)
+        : '';
+      const headerSubject = headerGroupMatch
+        ? subjectAfterGroup(headerText, headerGroupMatch)
+        : '';
+      const subject = filenameSubject || headerSubject || sheetName;
       let absenceCount = 0;
       let recordedMarks = 0;
 
@@ -367,7 +379,7 @@
       summaries.push({
         fileName,
         group,
-        subject: subject || sheetName,
+        subject,
         studentCount: students.length,
         sessionCount: header.columns.length,
         dateCount: new Set(header.columns.map(({ label }) => label)).size,
@@ -402,8 +414,20 @@
     attendanceSummaries.forEach((summary) => {
       const article = document.createElement('article');
       article.className = 'group-attendance-result';
+      const headingRow = document.createElement('div');
+      headingRow.className = 'group-attendance-heading';
       const heading = document.createElement('h4');
       heading.textContent = `${summary.group} — ${summary.subject}`;
+      const removeButton = document.createElement('button');
+      removeButton.className = 'group-attendance-remove';
+      removeButton.type = 'button';
+      removeButton.textContent = 'Удалить из сводки';
+      removeButton.setAttribute('aria-label', `Удалить ${summary.group} — ${summary.subject} из сводки`);
+      removeButton.addEventListener('click', () => {
+        attendanceSummaries = attendanceSummaries.filter((current) => current !== summary);
+        renderGroupAttendanceSummary();
+      });
+      headingRow.append(heading, removeButton);
       const metrics = document.createElement('dl');
       metrics.className = 'group-attendance-metrics';
       const values = [
@@ -431,7 +455,7 @@
       const note = document.createElement('p');
       note.className = 'group-attendance-note';
       note.textContent = `Файл «${summary.fileName}» обработан только в этом браузере и не загружен в GitHub. Посещаемость = (всего ячеек − «Н») / всего ячеек; оценки и пустые ячейки не считаются пропусками. Если журнал заполнен не полностью, процент может быть завышен. ФИО и отметки не публикуются.`;
-      article.append(heading, metrics, note);
+      article.append(headingRow, metrics, note);
       groupAttendanceSummary.append(article);
     });
   }

@@ -753,6 +753,43 @@ body.teacher-site {
   width: min(100%, 520px);
 }
 
+.teacher-site .development-manifesto {
+  display: grid;
+  min-width: 0;
+  gap: 0;
+  margin: 0 0 20px;
+  padding: clamp(18px, 4vw, 42px);
+  overflow: hidden;
+  border: 1px solid rgba(227, 241, 237, 0.08);
+  border-radius: 20px;
+  color: #e5efed;
+  background: #111b1e;
+  line-height: 0.95;
+}
+
+.teacher-site .development-manifesto span {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.teacher-site .development-manifesto span:first-child {
+  font-size: clamp(44px, 8vw, 124px);
+  font-weight: 800;
+  letter-spacing: -0.085em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.teacher-site .development-manifesto span:last-child {
+  color: #78dfc0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(36px, 8.7vw, 136px);
+  font-style: italic;
+  letter-spacing: -0.075em;
+  overflow-wrap: anywhere;
+}
+
 .teacher-site .metric strong {
   color: var(--brand);
   font-size: 30px;
@@ -1222,6 +1259,21 @@ body.teacher-site {
 
   .teacher-site #awards .grid-2 {
     gap: 14px;
+  }
+
+  .teacher-site .development-manifesto {
+    margin-bottom: 16px;
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  .teacher-site .development-manifesto span:first-child {
+    font-size: clamp(40px, 12vw, 66px);
+  }
+
+  .teacher-site .development-manifesto span:last-child {
+    font-size: clamp(34px, 10.5vw, 58px);
+    letter-spacing: -0.07em;
   }
 
   .teacher-site #awards .card {

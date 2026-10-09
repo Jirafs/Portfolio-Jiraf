@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "group": "4ИСИП-1023",
+    "subject": "Обеспечение безопасности веб приложений",
+    "period": "I полугодие",
+    "studentCount": 27,
+    "sessionCount": 32,
+    "dateCount": 16,
+    "recordedMarks": 570,
+    "unmarkedCells": 294,
+    "possibleMarks": 864,
+    "absenceCount": 468,
+    "attendancePercent": 45.8
+  }
+]

@@ -70,6 +70,7 @@
     document.body.classList.toggle('github-authenticated', isAuthenticated);
     if (form) form.hidden = isAuthenticated;
     if (logoutButton) logoutButton.hidden = !isAuthenticated;
+    if (dropzone) dropzone.hidden = !isAuthenticated;
     if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
     if (certificateDropzone) certificateDropzone.hidden = !isAuthenticated;
     if (performanceAddButton) performanceAddButton.hidden = !isAuthenticated;

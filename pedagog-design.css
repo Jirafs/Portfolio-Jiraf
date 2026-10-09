@@ -242,6 +242,161 @@ body.teacher-site {
   margin: -10px 0 22px;
 }
 
+.teacher-site .accessibility-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 34px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+}
+
+.teacher-site .accessibility-tools-title {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.teacher-site .accessibility-tools button {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 8px 12px;
+  color: var(--text);
+  background: var(--paper-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.teacher-site .accessibility-tools button:hover,
+.teacher-site .accessibility-tools button[aria-pressed="true"] {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.teacher-site .accessibility-tools button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.teacher-site .accessibility-status {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.teacher-site.reader-large .hero p,
+.teacher-site.reader-large main p,
+.teacher-site.reader-large main li,
+.teacher-site.reader-large main td,
+.teacher-site.reader-large main th,
+.teacher-site.reader-large main label,
+.teacher-site.reader-large main input,
+.teacher-site.reader-large main textarea,
+.teacher-site.reader-large main select,
+.teacher-site.reader-large main button,
+.teacher-site.reader-large .nav a {
+  font-size: 1.08em;
+}
+
+.teacher-site.reader-larger .hero p,
+.teacher-site.reader-larger main p,
+.teacher-site.reader-larger main li,
+.teacher-site.reader-larger main td,
+.teacher-site.reader-larger main th,
+.teacher-site.reader-larger main label,
+.teacher-site.reader-larger main input,
+.teacher-site.reader-larger main textarea,
+.teacher-site.reader-larger main select,
+.teacher-site.reader-larger main button,
+.teacher-site.reader-larger .nav a {
+  font-size: 1.16em;
+}
+
+.teacher-site.high-contrast {
+  --bg: #000;
+  --paper: #090909;
+  --paper-2: #181818;
+  --text: #fff;
+  --muted: #f0f0f0;
+  --brand: #a5ffdf;
+  --brand-2: #c7ff81;
+  --line: #fff;
+  color-scheme: dark;
+  color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .site-header,
+.teacher-site.high-contrast .announcement-item,
+.teacher-site.high-contrast .teacher-upload-block,
+.teacher-site.high-contrast .stat,
+.teacher-site.high-contrast .card,
+.teacher-site.high-contrast .photo-card,
+.teacher-site.high-contrast .profile-card,
+.teacher-site.high-contrast .metric,
+.teacher-site.high-contrast .teacher-owner-access,
+.teacher-site.high-contrast .highlight,
+.teacher-site.high-contrast .quick-row {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+  box-shadow: none;
+}
+
+.teacher-site.high-contrast table,
+.teacher-site.high-contrast th,
+.teacher-site.high-contrast td,
+.teacher-site.high-contrast .portrait-frame,
+.teacher-site.high-contrast .teacher-upload-dropzone,
+.teacher-site.high-contrast .material-filters input,
+.teacher-site.high-contrast .material-filters select,
+.teacher-site.high-contrast .announcement-editor input,
+.teacher-site.high-contrast .announcement-editor textarea {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .btn-primary,
+.teacher-site.high-contrast .teacher-upload-dropzone .upload-button {
+  color: #000;
+  background: #c7ff81;
+}
+
+.teacher-site.high-contrast .accessibility-tools button {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .accessibility-tools button[aria-pressed="true"] {
+  color: #000;
+  background: #c7ff81;
+}
+
+.teacher-site.high-contrast a,
+.teacher-site.high-contrast .announcement-date,
+.teacher-site.high-contrast .section-desc,
+.teacher-site.high-contrast .quick-row span,
+.teacher-site.high-contrast .stat span,
+.teacher-site.high-contrast .accessibility-tools-title,
+.teacher-site.high-contrast .accessibility-status {
+  color: #fff;
+}
+
+.teacher-site.high-contrast :is(button, input, textarea, select, summary):focus-visible,
+.teacher-site :is(button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid #f5ff00;
+  outline-offset: 3px;
+}
+
 .teacher-site .announcements-card {
   display: grid;
   gap: 18px;
@@ -1288,6 +1443,21 @@ body.teacher-site {
   .teacher-site .container {
     padding-right: 14px;
     padding-left: 14px;
+  }
+
+  .teacher-site .accessibility-tools {
+    gap: 7px;
+    margin-top: 26px;
+    padding: 11px;
+  }
+
+  .teacher-site .accessibility-tools-title {
+    flex-basis: 100%;
+  }
+
+  .teacher-site .accessibility-tools button {
+    flex: 1 1 auto;
+    padding-inline: 9px;
   }
 
   .teacher-site .nav-wrap {

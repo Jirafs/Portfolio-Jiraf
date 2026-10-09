@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=11" />
+  <link rel="stylesheet" href="pedagog-design.css?v=12" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -227,6 +227,13 @@
   </section>
 
   <main class="container">
+    <div class="accessibility-tools" role="group" aria-label="Настройки отображения">
+      <span class="accessibility-tools-title">Удобство чтения</span>
+      <button type="button" id="text-size-decrease" aria-label="Уменьшить размер текста">А−</button>
+      <button type="button" id="text-size-increase" aria-label="Увеличить размер текста">А+</button>
+      <button type="button" id="contrast-toggle" aria-pressed="false">Повышенный контраст</button>
+      <span id="accessibility-status" class="accessibility-status" aria-live="polite"></span>
+    </div>
     <section id="about">
       <div class="section-head">
         <div class="section-kicker">Раздел 1</div>
@@ -559,6 +566,59 @@
   </footer>
 
   <script>
+    const accessibilityStatus = document.getElementById('accessibility-status');
+    const textSizeDecrease = document.getElementById('text-size-decrease');
+    const textSizeIncrease = document.getElementById('text-size-increase');
+    const contrastToggle = document.getElementById('contrast-toggle');
+    const textSizes = ['normal', 'large', 'larger'];
+    let textSize = 'normal';
+    let highContrast = false;
+
+    try {
+      const savedTextSize = localStorage.getItem('teacher-site-text-size');
+      textSize = textSizes.includes(savedTextSize) ? savedTextSize : 'normal';
+      highContrast = localStorage.getItem('teacher-site-high-contrast') === 'true';
+    } catch (error) {
+      console.warn('Не удалось прочитать настройки отображения:', error);
+    }
+
+    function applyAccessibilitySettings() {
+      document.body.classList.toggle('reader-large', textSize === 'large');
+      document.body.classList.toggle('reader-larger', textSize === 'larger');
+      document.body.classList.toggle('high-contrast', highContrast);
+      textSizeDecrease.disabled = textSize === 'normal';
+      textSizeIncrease.disabled = textSize === 'larger';
+      contrastToggle.setAttribute('aria-pressed', String(highContrast));
+    }
+
+    function saveAccessibilitySettings() {
+      try {
+        localStorage.setItem('teacher-site-text-size', textSize);
+        localStorage.setItem('teacher-site-high-contrast', String(highContrast));
+        accessibilityStatus.textContent = '';
+      } catch (error) {
+        accessibilityStatus.textContent = 'Настройки действуют до закрытия этой вкладки.';
+        console.warn('Не удалось сохранить настройки отображения:', error);
+      }
+    }
+
+    textSizeDecrease.addEventListener('click', () => {
+      textSize = textSizes[Math.max(0, textSizes.indexOf(textSize) - 1)];
+      applyAccessibilitySettings();
+      saveAccessibilitySettings();
+    });
+    textSizeIncrease.addEventListener('click', () => {
+      textSize = textSizes[Math.min(textSizes.length - 1, textSizes.indexOf(textSize) + 1)];
+      applyAccessibilitySettings();
+      saveAccessibilitySettings();
+    });
+    contrastToggle.addEventListener('click', () => {
+      highContrast = !highContrast;
+      applyAccessibilitySettings();
+      saveAccessibilitySettings();
+    });
+    applyAccessibilitySettings();
+
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.nav');
     const navLinks = [...document.querySelectorAll('.nav a')];

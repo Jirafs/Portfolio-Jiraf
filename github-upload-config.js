@@ -5,6 +5,7 @@ window.githubUploadConfig = {
   branch: 'main',
   pagesBaseUrl: 'https://jirafs.github.io/Portfolio-Jiraf/',
   manifest: 'uploads.json',
+  announcementsFile: 'announcements.json',
   groupPerformanceFile: 'group-performance.json',
   groupAttendanceFile: 'group-attendance.json',
   uploadDirectory: 'uploads',

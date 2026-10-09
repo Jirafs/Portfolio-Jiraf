@@ -16,6 +16,13 @@
   const dropzone = document.querySelector('#upload-dropzone');
   const documentList = document.querySelector('#upload-list');
   const certificateList = document.querySelector('#certificate-list');
+  const materialSearch = document.querySelector('#material-search');
+  const materialTypeFilter = document.querySelector('#material-type-filter');
+  const materialResultsCount = document.querySelector('#material-results-count');
+  const materialEmpty = document.querySelector('#material-empty');
+  const announcementList = document.querySelector('#announcement-list');
+  const announcementStatus = document.querySelector('#announcement-status');
+  const announcementForm = document.querySelector('#announcement-form');
   const groupSubjectSummary = document.querySelector('#group-subject-summary');
   const groupAttendanceSummary = document.querySelector('#group-attendance-summary');
   const performanceTableBody = document.querySelector('#performance-table-body');
@@ -26,6 +33,7 @@
   const groupAttendanceStatus = document.querySelector('#group-attendance-status');
   let accessToken = '';
   let uploadManifest = [];
+  let announcements = [];
   let groupPerformance = [];
   let editingPerformanceGroup = null;
   let addingPerformanceGroup = false;
@@ -64,8 +72,10 @@
     if (certificateDropzone) certificateDropzone.hidden = !isAuthenticated;
     if (performanceAddButton) performanceAddButton.hidden = !isAuthenticated;
     if (performanceActionsHeading) performanceActionsHeading.hidden = !isAuthenticated;
+    if (announcementForm) announcementForm.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';
     renderGroupPerformance();
+    renderAnnouncements(isAuthenticated);
     if (status && isAuthenticated) status.textContent = `Вход выполнен как @${login}. Токен хранится только в этой вкладке.`;
   }
 
@@ -267,6 +277,163 @@
     renderGroupAttendanceSummary();
   }
 
+  function validateAnnouncements(items) {
+    if (!Array.isArray(items)) throw new Error('Список объявлений в GitHub имеет неверный формат.');
+    items.forEach((item) => {
+      const date = typeof item?.date === 'string' ? new Date(`${item.date}T00:00:00Z`) : null;
+      if (!item || typeof item.id !== 'string' || !item.id.trim()
+        || typeof item.title !== 'string' || !item.title.trim() || item.title.length > 100
+        || typeof item.message !== 'string' || !item.message.trim() || item.message.length > 1000
+        || !date || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== item.date) {
+        throw new Error('В списке объявлений найдена запись с неверными данными.');
+      }
+    });
+    return items;
+  }
+
+  function renderAnnouncements(ownerMode = Boolean(accessToken)) {
+    if (!announcementList) return;
+    announcementList.replaceChildren();
+    const sorted = [...announcements].sort((a, b) => b.date.localeCompare(a.date));
+    sorted.forEach((announcement) => {
+      const item = document.createElement('article');
+      item.className = 'announcement-item';
+      const heading = document.createElement('div');
+      heading.className = 'announcement-heading';
+      const title = document.createElement('h3');
+      title.textContent = announcement.title;
+      heading.append(title);
+      if (ownerMode) {
+        const remove = document.createElement('button');
+        remove.className = 'announcement-remove';
+        remove.type = 'button';
+        remove.textContent = 'Удалить';
+        remove.setAttribute('aria-label', `Удалить объявление «${announcement.title}»`);
+        remove.addEventListener('click', () => removeAnnouncement(announcement, remove));
+        heading.append(remove);
+      }
+      const date = document.createElement('time');
+      date.className = 'announcement-date';
+      date.dateTime = announcement.date;
+      date.textContent = new Date(`${announcement.date}T00:00:00`).toLocaleDateString('ru-RU');
+      const message = document.createElement('p');
+      message.className = 'announcement-message';
+      message.textContent = announcement.message;
+      item.append(heading, date, message);
+      announcementList.append(item);
+    });
+    if (announcementStatus) {
+      announcementStatus.hidden = sorted.length > 0;
+      announcementStatus.textContent = 'Объявлений пока нет.';
+    }
+  }
+
+  async function getAnnouncements(token = accessToken) {
+    const path = encodePath(config.announcementsFile);
+    const response = await apiFetch(`${apiRoot}/contents/${path}?ref=${encodeURIComponent(config.branch)}`, {}, token);
+    if (response.status === 404) return { sha: null, items: [] };
+    const data = await responseJson(response);
+    return { sha: data.sha, items: validateAnnouncements(decodeBase64Json(data.content)) };
+  }
+
+  async function refreshAnnouncements() {
+    const response = await fetch(`${rawRoot}/${encodePath(config.announcementsFile)}?t=${Date.now()}`, { cache: 'no-store' });
+    if (response.status === 404) {
+      announcements = [];
+    } else if (!response.ok) {
+      throw new Error(`Не удалось загрузить объявления (${response.status}).`);
+    } else {
+      announcements = validateAnnouncements(await response.json());
+    }
+    renderAnnouncements();
+  }
+
+  async function updateAnnouncements(updateItems, message) {
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const current = await getAnnouncements();
+      const nextItems = validateAnnouncements(updateItems(current.items));
+      const bytes = new TextEncoder().encode(JSON.stringify(nextItems, null, 2) + '\n');
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+      }
+      try {
+        const response = await apiFetch(`${apiRoot}/contents/${encodePath(config.announcementsFile)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            content: btoa(binary),
+            branch: config.branch,
+            ...(current.sha ? { sha: current.sha } : {})
+          })
+        });
+        await responseJson(response);
+        return nextItems;
+      } catch (error) {
+        if (!isManifestConflict(error)) throw error;
+        if (attempt === maxAttempts - 1) {
+          error.message = `Объявления несколько раз обновились одновременно. Обновите страницу и повторите действие. ${error.message}`;
+          throw error;
+        }
+      }
+    }
+    throw new Error('Не удалось обновить объявления после нескольких конфликтов.');
+  }
+
+  async function removeAnnouncement(announcement, button) {
+    if (!accessToken || !window.confirm(`Удалить объявление «${announcement.title}»?`)) return;
+    button.disabled = true;
+    try {
+      announcements = await updateAnnouncements(
+        (items) => items.filter((item) => item.id !== announcement.id),
+        `Удалено объявление: ${announcement.title}`
+      );
+      renderAnnouncements(true);
+    } catch (error) {
+      button.disabled = false;
+      if (announcementStatus) {
+        announcementStatus.hidden = false;
+        announcementStatus.textContent = `Не удалось удалить объявление: ${error.message}`;
+      }
+      console.error('Не удалось удалить объявление:', error);
+    }
+  }
+
+  announcementForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!accessToken) return;
+    const submitButton = announcementForm.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    const data = new FormData(announcementForm);
+    const announcement = {
+      id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      title: String(data.get('title') || '').trim(),
+      date: String(data.get('date') || ''),
+      message: String(data.get('message') || '').trim()
+    };
+    try {
+      announcements = await updateAnnouncements(
+        (items) => [announcement, ...items],
+        `Опубликовано объявление: ${announcement.title}`
+      );
+      renderAnnouncements(true);
+      announcementForm.reset();
+      if (announcementStatus) {
+        announcementStatus.hidden = false;
+        announcementStatus.textContent = 'Объявление опубликовано.';
+      }
+    } catch (error) {
+      if (announcementStatus) {
+        announcementStatus.hidden = false;
+        announcementStatus.textContent = `Не удалось опубликовать объявление: ${error.message}`;
+      }
+      console.error('Не удалось опубликовать объявление:', error);
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+    }
+  });
   async function updateGroupAttendance(updateSummaries, message) {
     const maxAttempts = 3;
     for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
@@ -1329,11 +1496,13 @@
   function renderFile(file, type, list, ownerMode) {
     const item = document.createElement('li');
     item.className = 'upload-item';
+    const extension = file.name.toLowerCase().split('.').pop();
+    item.dataset.extension = extension;
+    item.dataset.search = file.name.toLocaleLowerCase('ru-RU');
     const content = document.createElement('div');
     content.className = 'document-content';
     const link = document.createElement('a');
     const url = publicFileUrl(file.path);
-    const extension = file.name.toLowerCase().split('.').pop();
     link.href = fileViewUrl(file, url, extension);
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
@@ -1371,6 +1540,33 @@
     list.append(item);
   }
 
+  function filterDocuments() {
+    if (!documentList) return;
+    const query = materialSearch?.value.trim().toLocaleLowerCase('ru-RU') || '';
+    const selectedType = materialTypeFilter?.value || 'all';
+    const extensionsByType = {
+      pdf: ['pdf'],
+      office: ['doc', 'docx', 'odt', 'rtf', 'xls', 'xlsx'],
+      presentation: ['ppt', 'pptx'],
+      text: ['md', 'txt']
+    };
+    const items = [...documentList.querySelectorAll('.upload-item')];
+    let visible = 0;
+    items.forEach((item) => {
+      const matchesQuery = !query || item.dataset.search?.includes(query);
+      const matchesType = selectedType === 'all'
+        || extensionsByType[selectedType]?.includes(item.dataset.extension);
+      item.hidden = !(matchesQuery && matchesType);
+      if (!item.hidden) visible += 1;
+    });
+    if (materialResultsCount) {
+      materialResultsCount.textContent = items.length
+        ? `Показано ${visible} из ${items.length} материалов`
+        : '';
+    }
+    if (materialEmpty) materialEmpty.hidden = visible > 0 || items.length === 0;
+  }
+
   function renderManifest(files, ownerMode = false) {
     if (documentList) documentList.replaceChildren();
     if (certificateList) certificateList.replaceChildren();
@@ -1380,6 +1576,7 @@
       if (file.type === 'certificates' && certificateList) renderFile(file, 'certificates', certificateList, ownerMode);
       if (file.type === 'group-data' && groupExcelList) renderFile(file, 'group-data', groupExcelList, ownerMode);
     });
+    filterDocuments();
     renderGroupSubjectSummary(files);
     if (uploadStatus && !files.length) uploadStatus.textContent = 'Здесь появятся опубликованные материалы.';
   }
@@ -1628,6 +1825,8 @@
     handleFiles(event.currentTarget.files, 'group-data');
     event.currentTarget.value = '';
   });
+  materialSearch?.addEventListener('input', filterDocuments);
+  materialTypeFilter?.addEventListener('change', filterDocuments);
 
   dropzone?.addEventListener('dragover', (event) => {
     event.preventDefault();
@@ -1648,5 +1847,12 @@
   refreshGroupAttendance().catch((error) => {
     if (groupAttendanceStatus) groupAttendanceStatus.textContent = `Не удалось загрузить сводку посещаемости: ${error.message}`;
     console.error('Не удалось загрузить сводку посещаемости:', error);
+  });
+  refreshAnnouncements().catch((error) => {
+    if (announcementStatus) {
+      announcementStatus.hidden = false;
+      announcementStatus.textContent = `Не удалось загрузить объявления: ${error.message}`;
+    }
+    console.error('Не удалось загрузить объявления:', error);
   });
 })();

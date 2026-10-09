@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=10" />
+  <link rel="stylesheet" href="pedagog-design.css?v=11" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -180,6 +180,7 @@
         <a href="index.html">На главную</a>
         <a href="about.html">Обо мне</a>
         <a href="#about">О преподавателе</a>
+        <a href="#announcements">Объявления</a>
         <a href="#methods">Методическая копилка</a>
         <a href="#results">Результаты</a>
         <a href="#awards">Сертификаты</a>
@@ -266,6 +267,28 @@
       </div>
     </section>
 
+    <section id="announcements">
+      <div class="section-head">
+        <div class="section-kicker">Актуальная информация</div>
+        <h2>Объявления</h2>
+        <p class="section-desc">Важные сообщения для студентов и коллег.</p>
+      </div>
+      <article class="card announcements-card">
+        <div id="announcement-list" class="announcement-list" aria-live="polite"></div>
+        <p class="announcement-status" id="announcement-status" role="status">Загружаю объявления…</p>
+        <form id="announcement-form" class="announcement-editor owner-only" hidden>
+          <h3>Добавить объявление</h3>
+          <label for="announcement-title">Заголовок</label>
+          <input id="announcement-title" name="title" type="text" maxlength="100" required />
+          <label for="announcement-date">Дата</label>
+          <input id="announcement-date" name="date" type="date" required />
+          <label for="announcement-message">Текст объявления</label>
+          <textarea id="announcement-message" name="message" rows="4" maxlength="1000" required></textarea>
+          <button class="btn btn-primary" type="submit">Опубликовать</button>
+        </form>
+      </article>
+    </section>
+
     <section id="methods">
       <div class="section-head">
         <div class="section-kicker">Раздел 2</div>
@@ -304,6 +327,24 @@
         <div class="teacher-upload-grid teacher-document-grid">
           <div class="teacher-upload-block">
             <h4>Методические материалы</h4>
+            <div class="material-filters" role="search" aria-label="Поиск по материалам">
+              <div class="material-filter-field">
+                <label class="material-search-label" for="material-search">По названию, предмету или группе</label>
+                <input id="material-search" type="search" placeholder="Например: веб-приложений или 4ИСИП-1023" autocomplete="off" />
+              </div>
+              <div class="material-filter-field">
+                <label class="material-search-label" for="material-type-filter">Формат файла</label>
+                <select id="material-type-filter">
+                  <option value="all">Все форматы</option>
+                  <option value="pdf">PDF</option>
+                  <option value="office">Документы Office</option>
+                  <option value="presentation">Презентации</option>
+                  <option value="text">Текстовые файлы</option>
+                </select>
+              </div>
+              <p id="material-results-count" class="material-results-count" aria-live="polite"></p>
+              <p id="material-empty" class="material-empty" hidden>По вашему запросу материалы не найдены.</p>
+            </div>
             <ul class="doc-list upload-list" id="upload-list" aria-live="polite"></ul>
             <div class="upload-dropzone teacher-upload-dropzone owner-only" id="upload-dropzone">
               <span class="upload-icon" aria-hidden="true">📄</span>
@@ -562,6 +603,6 @@
     });
   </script>
   <script src="github-upload-config.js?v=2" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="github-uploader.js?v=10" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="github-uploader.js?v=11" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

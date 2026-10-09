@@ -514,6 +514,54 @@ body.teacher-site {
   font-size: 14px;
 }
 
+.teacher-site .group-attendance-result {
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.teacher-site .group-attendance-result h4 {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.teacher-site .group-attendance-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.teacher-site .group-attendance-metric {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.teacher-site .group-attendance-metric dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.teacher-site .group-attendance-metric dd {
+  margin: 5px 0 0;
+  color: var(--brand);
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.teacher-site .group-attendance-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .teacher-site .metric strong {
   color: var(--brand);
   font-size: 30px;

@@ -16,8 +16,10 @@
   const documentList = document.querySelector('#upload-list');
   const certificateList = document.querySelector('#certificate-list');
   const groupSubjectSummary = document.querySelector('#group-subject-summary');
+  const groupAttendanceSummary = document.querySelector('#group-attendance-summary');
   let accessToken = '';
   let uploadManifest = [];
+  let attendanceSummaries = [];
   let xlsxLibraryPromise;
   let pdfLibraryPromise;
   let summaryRenderId = 0;
@@ -48,6 +50,10 @@
     if (logoutButton) logoutButton.hidden = !isAuthenticated;
     if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';
+    if (!isAuthenticated) {
+      attendanceSummaries = [];
+      renderGroupAttendanceSummary();
+    }
     if (status && isAuthenticated) status.textContent = `Вход выполнен как @${login}. Токен хранится только в этой вкладке.`;
   }
 
@@ -298,6 +304,136 @@
     const xlsx = await loadXlsxLibrary();
     const bytes = await file.arrayBuffer();
     return groupSubjectsFromWorkbook(bytes);
+  }
+
+  function attendanceSummariesFromWorkbook(bytes, fileName) {
+    const workbook = window.XLSX.read(bytes, { type: 'array', cellDates: false });
+    const dateHeaderPattern = /^\d{1,2}\s*(?:янв|фев|мар|апр|ма[йя]|июн|июл|авг|сен|сент|окт|ноя|дек)\.?$/i;
+    const numericDatePattern = /^\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?$/;
+    const groupPattern = /(?:^|[^0-9А-ЯЁA-Z])([0-9А-ЯЁA-Z]{2,12}-\d{3,6}[А-ЯЁA-Z]?)(?=$|[^0-9А-ЯЁA-Z])/i;
+    const summaries = [];
+
+    for (const sheetName of workbook.SheetNames) {
+      const rows = window.XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+        header: 1,
+        defval: '',
+        raw: false
+      });
+      const dateHeaders = rows.slice(0, 30)
+        .map((row, index) => ({
+          index,
+          columns: row.reduce((columns, value, column) => {
+            const label = cellText(value);
+            if (dateHeaderPattern.test(label) || numericDatePattern.test(label)) {
+              columns.push({ column, label: normalizedHeader(label) });
+            }
+            return columns;
+          }, [])
+        }))
+        .filter(({ columns }) => columns.length >= 3)
+        .sort((left, right) => right.columns.length - left.columns.length);
+      if (!dateHeaders.length) continue;
+
+      const header = dateHeaders[0];
+      const students = rows.slice(header.index + 1).filter((row) =>
+        /^\d+$/.test(cellText(row[0])) && /\p{L}{2,}/u.test(cellText(row[1]))
+      );
+      if (students.length < 2) continue;
+
+      const headerText = rows.slice(0, header.index).flat().map(cellText).find((value) => groupPattern.test(value))
+        || fileName;
+      const groupMatch = headerText.match(groupPattern);
+      if (!groupMatch) continue;
+      const group = groupMatch[1];
+      const titleIndex = headerText.indexOf(group) + group.length;
+      const subject = headerText.slice(titleIndex)
+        .replace(/^[\s:—–-]+/, '')
+        .replace(/\s*\([^)]*\)/g, '')
+        .replace(/\s*[-—–]\s*(?:i{1,3}|iv|v|\d+)\s*полугодие.*$/i, '')
+        .trim();
+      let absenceCount = 0;
+      let recordedMarks = 0;
+
+      students.forEach((row) => {
+        header.columns.forEach(({ column }) => {
+          const mark = cellText(row[column]);
+          if (!mark) return;
+          recordedMarks += 1;
+          if (/^н$/i.test(mark)) absenceCount += 1;
+        });
+      });
+
+      if (!recordedMarks) continue;
+      summaries.push({
+        fileName,
+        group,
+        subject: subject || sheetName,
+        studentCount: students.length,
+        sessionCount: header.columns.length,
+        dateCount: new Set(header.columns.map(({ label }) => label)).size,
+        recordedMarks,
+        unmarkedCells: students.length * header.columns.length - recordedMarks,
+        possibleMarks: students.length * header.columns.length,
+        absenceCount,
+        attendancePercent: Math.round(((students.length * header.columns.length - absenceCount) / (students.length * header.columns.length)) * 1000) / 10
+      });
+    }
+
+    return summaries;
+  }
+
+  async function extractAttendanceSummaries(file) {
+    await loadXlsxLibrary();
+    return attendanceSummariesFromWorkbook(await file.arrayBuffer(), file.name);
+  }
+
+  function renderGroupAttendanceSummary() {
+    if (!groupAttendanceSummary) return;
+    groupAttendanceSummary.replaceChildren();
+
+    if (!attendanceSummaries.length) {
+      const empty = document.createElement('p');
+      empty.className = 'group-subject-empty';
+      empty.textContent = 'Загрузите журнал успеваемости Excel, чтобы рассчитать посещаемость группы.';
+      groupAttendanceSummary.append(empty);
+      return;
+    }
+
+    attendanceSummaries.forEach((summary) => {
+      const article = document.createElement('article');
+      article.className = 'group-attendance-result';
+      const heading = document.createElement('h4');
+      heading.textContent = `${summary.group} — ${summary.subject}`;
+      const metrics = document.createElement('dl');
+      metrics.className = 'group-attendance-metrics';
+      const values = [
+        ['Студентов', summary.studentCount],
+        ['Занятий в журнале', summary.sessionCount],
+        ['Дат занятий', summary.dateCount],
+        ['Всего ячеек', summary.possibleMarks],
+        ['Отметок обработано', summary.recordedMarks],
+        ['Пустых ячеек', summary.unmarkedCells],
+        ['Пропусков «Н»', summary.absenceCount],
+        ['Посещаемость', `${summary.attendancePercent}%`]
+      ];
+
+      values.forEach(([label, value]) => {
+        const metric = document.createElement('div');
+        metric.className = 'group-attendance-metric';
+        const term = document.createElement('dt');
+        term.textContent = label;
+        const description = document.createElement('dd');
+        description.textContent = value;
+        metric.append(term, description);
+        metrics.append(metric);
+      });
+
+      const note = document.createElement('p');
+      note.className = 'group-attendance-note';
+      note.textContent = `Файл «${summary.fileName}» обработан только в этом браузере и не загружен в GitHub. Посещаемость = (всего ячеек − «Н») / всего ячеек; оценки и пустые ячейки не считаются пропусками. Если журнал заполнен не полностью, процент может быть завышен. ФИО и отметки не публикуются.`;
+      article.append(heading, metrics, note);
+      groupAttendanceSummary.append(article);
+    });
   }
 
   function mergeGroupSubjects(files) {
@@ -686,11 +822,29 @@
     let groupSubjects;
     let summaryWarning = '';
     if (extension === 'xlsx' || extension === 'xls') {
+      if (type === 'group-data') {
+        try {
+          const attendance = await extractAttendanceSummaries(file);
+          if (attendance.length) {
+            attendanceSummaries = [
+              ...attendanceSummaries.filter((current) => current.fileName !== file.name),
+              ...attendance
+            ];
+            renderGroupAttendanceSummary();
+            if (groupExcelStatus) {
+              groupExcelStatus.textContent = `Посещаемость рассчитана по файлу «${file.name}». Исходный журнал не загружен в GitHub.`;
+            }
+            return;
+          }
+        } catch (error) {
+          throw new Error(`Не удалось прочитать журнал посещаемости: ${error.message}`);
+        }
+      }
       try {
         groupSubjects = await extractGroupSubjects(file);
       } catch (error) {
         if (type === 'group-data') {
-          throw new Error(`Не удалось прочитать таблицу групп и предметов: ${error.message}`);
+          throw new Error(`Формат Excel не распознан. Нужна таблица «группа → предмет» или журнал с датами занятий, номерами студентов и ФИО. ${error.message}`);
         }
         summaryWarning = ` Файл сохранён, но сводка не сформирована: ${error.message}`;
         console.error(`Не удалось сформировать сводку из ${file.name}:`, error);

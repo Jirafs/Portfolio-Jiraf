@@ -162,7 +162,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css" />
+  <link rel="stylesheet" href="pedagog-design.css?v=2" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -374,19 +374,22 @@
         </table>
       </article>
       <article class="card excel-summary-card">
-        <h3>Предметы по группам из Excel</h3>
-        <p class="section-desc">Загрузите таблицу групп отдельно от методических материалов. Поддерживаются XLS и XLSX; в таблице должны быть столбцы «Группа» и «Предмет» или «Дисциплина».</p>
+        <h3>Сводка по группам из Excel</h3>
+        <p class="section-desc">Можно загрузить таблицу групп и предметов (столбцы «Группа» и «Предмет»/«Дисциплина») или журнал успеваемости с датами занятий, списком студентов и отметками. Для журнала «Н» считается пропуском; оценки и пустые ячейки не считаются пропусками. Если журнал заполнен не полностью, процент посещаемости может быть завышен.</p>
         <div class="group-excel-upload">
           <ul class="upload-list group-excel-list" id="group-excel-list" aria-live="polite"></ul>
           <div class="upload-dropzone teacher-upload-dropzone owner-only" id="group-excel-dropzone" hidden>
             <span class="upload-icon" aria-hidden="true">📊</span>
-            <p>Выберите Excel-файл со списком групп и предметов.</p>
+            <p>Выберите Excel-таблицу групп или журнал посещаемости.</p>
             <label class="upload-button" for="group-excel-input">Выбрать Excel-файл</label>
             <input id="group-excel-input" type="file" accept=".xls,.xlsx" hidden />
           </div>
           <p class="upload-status group-excel-status" id="group-excel-status" role="status" aria-live="polite"></p>
         </div>
         <div id="group-subject-summary" aria-live="polite">Загружаю сводку из Excel…</div>
+        <div id="group-attendance-summary" aria-live="polite">
+          <p class="group-subject-empty">Посещаемость появится после обработки журнала успеваемости Excel.</p>
+        </div>
       </article>
     </section>
 
@@ -533,6 +536,6 @@
     });
   </script>
   <script src="github-upload-config.js" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="github-uploader.js" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="github-uploader.js?v=2" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

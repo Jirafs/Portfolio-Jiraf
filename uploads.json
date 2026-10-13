@@ -12,5 +12,12 @@
     "path": "uploads/documents/1791456154706-aa4fea60-55d9-40dd-a5eb-1e0c87dee113-METREC_09.02.11_React_чистый_доработан.docx",
     "size": 353442,
     "sha": "8374439d21eff8e569b8e9fe82ea6e2d5354f497"
+  },
+  {
+    "type": "documents",
+    "name": "ab3773eddc23b710c873c690a732bd21.pdf",
+    "path": "uploads/documents/1791879119168-efffa2e3-8a58-4fe3-b679-642382dba6d7-ab3773eddc23b710c873c690a732bd21.pdf",
+    "size": 80657,
+    "sha": "fb6ad01ed8de0b8dc8cf3b7c1f2d432794385367"
   }
 ]

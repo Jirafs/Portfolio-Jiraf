@@ -2209,14 +2209,238 @@ body.teacher-site {
 
 .teacher-site figure.photo-card {
   border-radius: 19px;
+  overflow: hidden;
+}
+
+.teacher-site .photo-trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.teacher-site .photo-trigger:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
 }
 
 .teacher-site .photo-card img {
   transition: transform 0.5s ease;
+  width: 100%;
+  display: block;
 }
 
-.teacher-site .photo-card:hover img {
+.teacher-site .photo-card:hover img,
+.teacher-site .photo-trigger:focus-visible img {
   transform: scale(1.025);
+}
+
+.teacher-site .skip-link {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  z-index: 10000;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  transition: top 0.2s ease;
+}
+
+.teacher-site .skip-link:focus {
+  top: 16px;
+}
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.gallery-lightbox[hidden] {
+  display: none !important;
+}
+
+.gallery-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 18, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.gallery-lightbox-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(960px, 100%);
+  max-height: calc(100vh - 48px);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.gallery-lightbox-figure {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.gallery-lightbox-figure img {
+  width: 100%;
+  max-height: min(72vh, 780px);
+  object-fit: contain;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+}
+
+.gallery-lightbox-caption {
+  color: #fff;
+  text-align: center;
+}
+
+.gallery-lightbox-caption strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.gallery-lightbox-caption span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+}
+
+.gallery-lightbox-close,
+.gallery-lightbox-nav {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.gallery-lightbox-close:hover,
+.gallery-lightbox-nav:hover,
+.gallery-lightbox-close:focus-visible,
+.gallery-lightbox-nav:focus-visible {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  outline: none;
+}
+
+.gallery-lightbox-close {
+  position: absolute;
+  top: -8px;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  font-size: 28px;
+  line-height: 1;
+  z-index: 2;
+}
+
+.gallery-lightbox-nav {
+  width: 48px;
+  height: 48px;
+  font-size: 32px;
+  line-height: 1;
+  grid-row: 2;
+}
+
+.gallery-lightbox-prev {
+  grid-column: 1;
+}
+
+.gallery-lightbox-next {
+  grid-column: 3;
+}
+
+.gallery-lightbox-counter {
+  grid-column: 2;
+  grid-row: 3;
+  margin: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.teacher-site.dark-theme .gallery-lightbox-backdrop {
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.high-contrast .gallery-lightbox-backdrop {
+  background: #000;
+}
+
+.high-contrast .gallery-lightbox-close,
+.high-contrast .gallery-lightbox-nav {
+  border-color: #fff;
+  background: #000;
+  color: #c7ff81;
+}
+
+@media (max-width: 700px) {
+  .gallery-lightbox {
+    padding: 12px;
+  }
+
+  .gallery-lightbox-dialog {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "close close"
+      "figure figure"
+      "prev next"
+      "counter counter";
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    gap: 10px;
+  }
+
+  .gallery-lightbox-close {
+    position: static;
+    grid-area: close;
+    justify-self: end;
+  }
+
+  .gallery-lightbox-figure {
+    grid-area: figure;
+  }
+
+  .gallery-lightbox-prev {
+    grid-area: prev;
+    justify-self: start;
+  }
+
+  .gallery-lightbox-next {
+    grid-area: next;
+    justify-self: end;
+  }
+
+  .gallery-lightbox-counter {
+    grid-area: counter;
+  }
+
+  .gallery-lightbox-figure img {
+    max-height: 58vh;
+  }
 }
 
 .teacher-site .contact-line,

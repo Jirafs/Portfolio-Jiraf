@@ -172,34 +172,34 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=14" />
+  <link rel="stylesheet" href="pedagog-design.css?v=15" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
+  <a class="skip-link" href="#main-content">Перейти к содержимому</a>
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="index.html">
+      <a class="brand" href="#home">
         <span class="brand-mark">МД</span>
         <span>
           <span class="brand-title">Михайлов Даниил Николаевич</span>
           <span class="brand-subtitle">преподаватель · педагогический сайт</span>
         </span>
       </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Меню</button>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Меню</button>
       <nav class="nav" id="site-nav" aria-label="Основное меню">
-        <a href="index.html">Основная Страница</a>
-         <a href="#home">На главную станицу</a>
+        <a href="index.html">Портфолио</a>
         <a href="about.html">Обо мне</a>
         <a href="#about">О преподавателе</a>
         <a href="#announcements">Объявления</a>
-        <a href="#methods">Методическая копилка</a>
+        <a href="#methods">Материалы</a>
         <a href="#results">Результаты</a>
         <a href="#awards">Сертификаты</a>
-        <a href="#student-certificates">Сертификаты студентов</a>
-        <a href="#resources">Полезные ресурсы</a>
+        <a href="#student-certificates">Студентам</a>
+        <a href="#resources">Ресурсы</a>
         <a href="#faq">FAQ</a>
-        <a href="#gallery">Фотогалерея</a>
-        <a href="#feedback">Обратная связь</a>
+        <a href="#gallery">Галерея</a>
+        <a href="#feedback">Связь</a>
       </nav>
     </div>
   </header>
@@ -207,17 +207,15 @@
   <section class="hero" id="home">
     <div class="container hero-grid">
       <div>
-        <span class="eyebrow">🎓 Персональный сайт преподавателя</span>
+        <span class="eyebrow">Персональный сайт преподавателя</span>
         <h1>Михайлов<br>Даниил Николаевич</h1>
         <p>
-          Преподаватель Финансового университета, подразделение Колледжа информатики и программирования.
-          На сайте размещены основные сведения, материалы открытого урока, результаты педагогической деятельности.
+          Преподаватель Финансового университета, Колледж информатики и программирования.
+          Материалы открытого урока, результаты педагогической деятельности и ресурсы для студентов.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#methods">Открытый урок</a>
-          <a class="btn btn-secondary" href="#gallery">Смотреть фото</a>
+          <a class="btn btn-primary" href="#methods">Открыть материалы</a>
           <a class="btn btn-secondary" href="#feedback">Написать сообщение</a>
-          <a class="btn btn-secondary" href="index.html">Портфолио</a>
         </div>
         <div class="stats">
           <div class="stat"><strong>2,2</strong><span>года общего стажа</span></div>
@@ -240,7 +238,7 @@
     </div>
   </section>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <div class="accessibility-tools" role="group" aria-label="Настройки отображения">
       <span class="accessibility-tools-title">Настройки</span>
       <button type="button" id="theme-toggle" aria-pressed="false">🌙 Тёмная тема</button>
@@ -674,21 +672,29 @@
         <h2>Фотогалерея</h2>
         <p class="section-desc">Фотографии с учебного процесса и профессиональной деятельности.</p>
       </div>
-      <div class="gallery">
+      <div class="gallery" id="photo-gallery">
         <figure class="photo-card">
-          <img src="daniil-photo.jpg" alt="Михайлов Даниил Николаевич" style="object-position:center top;" />
+          <button type="button" class="photo-trigger" data-gallery-index="0" aria-label="Открыть: Портрет преподавателя">
+            <img src="daniil-photo.jpg" alt="Михайлов Даниил Николаевич" style="object-position:center top;" loading="lazy" />
+          </button>
           <figcaption><b>Портрет преподавателя</b><span>Михайлов Даниил Николаевич</span></figcaption>
         </figure>
         <figure class="photo-card">
-          <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=85" alt="Работа с группой" />
+          <button type="button" class="photo-trigger" data-gallery-index="1" aria-label="Открыть: Работа с группой">
+            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=85" alt="Работа с группой на занятии" loading="lazy" />
+          </button>
           <figcaption><b>Работа с группой</b><span>Интерактивные методы обучения</span></figcaption>
         </figure>
         <figure class="photo-card">
-          <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=85" alt="Совещание преподавателей" />
+          <button type="button" class="photo-trigger" data-gallery-index="2" aria-label="Открыть: Совещание преподавателей">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=85" alt="Совещание преподавателей" loading="lazy" />
+          </button>
           <figcaption><b>Совещание преподавателей</b><span>Обсуждение методических вопросов</span></figcaption>
         </figure>
         <figure class="photo-card">
-          <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=85" alt="Компьютерный класс" />
+          <button type="button" class="photo-trigger" data-gallery-index="3" aria-label="Открыть: Компьютерный класс">
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=85" alt="Компьютерный класс" loading="lazy" />
+          </button>
           <figcaption><b>Компьютерный класс</b><span>Оборудованная учебная аудитория</span></figcaption>
         </figure>
       </div>
@@ -735,6 +741,23 @@
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
   <div id="loading-overlay" class="loading-overlay" hidden>
     <div class="loading-spinner" aria-label="Загрузка"></div>
+  </div>
+
+  <div id="gallery-lightbox" class="gallery-lightbox" hidden>
+    <div class="gallery-lightbox-backdrop" data-lightbox-close></div>
+    <div class="gallery-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption-title">
+      <button type="button" class="gallery-lightbox-close" data-lightbox-close aria-label="Закрыть">×</button>
+      <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" aria-label="Предыдущее фото">‹</button>
+      <figure class="gallery-lightbox-figure">
+        <img id="lightbox-image" src="" alt="" />
+        <figcaption class="gallery-lightbox-caption">
+          <strong id="lightbox-caption-title"></strong>
+          <span id="lightbox-caption-text"></span>
+        </figcaption>
+      </figure>
+      <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" aria-label="Следующее фото">›</button>
+      <p class="gallery-lightbox-counter" id="lightbox-counter" aria-live="polite"></p>
+    </div>
   </div>
 
   <script>
@@ -844,6 +867,70 @@
       item.querySelector('p').textContent = message;
       guestbook.prepend(item);
       form.reset();
+    });
+
+    const lightbox = document.getElementById('gallery-lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxTitle = document.getElementById('lightbox-caption-title');
+    const lightboxText = document.getElementById('lightbox-caption-text');
+    const lightboxCounter = document.getElementById('lightbox-counter');
+    const galleryItems = [...document.querySelectorAll('#photo-gallery .photo-card')].map((card) => {
+      const img = card.querySelector('img');
+      const title = card.querySelector('figcaption b')?.textContent?.trim() || '';
+      const text = card.querySelector('figcaption span')?.textContent?.trim() || '';
+      return {
+        src: img?.currentSrc || img?.src || '',
+        alt: img?.alt || title,
+        title,
+        text,
+        trigger: card.querySelector('.photo-trigger')
+      };
+    });
+    let lightboxIndex = 0;
+    let lastFocused = null;
+
+    function renderLightbox(index) {
+      if (!galleryItems.length) return;
+      lightboxIndex = (index + galleryItems.length) % galleryItems.length;
+      const item = galleryItems[lightboxIndex];
+      lightboxImage.src = item.src;
+      lightboxImage.alt = item.alt;
+      lightboxTitle.textContent = item.title;
+      lightboxText.textContent = item.text;
+      lightboxCounter.textContent = `${lightboxIndex + 1} / ${galleryItems.length}`;
+    }
+
+    function openLightbox(index) {
+      if (!lightbox || !galleryItems.length) return;
+      lastFocused = document.activeElement;
+      renderLightbox(index);
+      lightbox.hidden = false;
+      document.body.classList.add('lightbox-open');
+      lightbox.querySelector('.gallery-lightbox-close')?.focus();
+    }
+
+    function closeLightbox() {
+      if (!lightbox || lightbox.hidden) return;
+      lightbox.hidden = true;
+      document.body.classList.remove('lightbox-open');
+      lastFocused?.focus?.();
+    }
+
+    galleryItems.forEach((item, index) => {
+      item.trigger?.addEventListener('click', () => openLightbox(index));
+    });
+
+    lightbox?.querySelectorAll('[data-lightbox-close]').forEach((el) => {
+      el.addEventListener('click', closeLightbox);
+    });
+    lightbox?.querySelector('.gallery-lightbox-prev')?.addEventListener('click', () => renderLightbox(lightboxIndex - 1));
+    lightbox?.querySelector('.gallery-lightbox-next')?.addEventListener('click', () => renderLightbox(lightboxIndex + 1));
+
+    document.addEventListener('keydown', (event) => {
+      if (!lightbox || lightbox.hidden) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') renderLightbox(lightboxIndex - 1);
+      if (event.key === 'ArrowRight') renderLightbox(lightboxIndex + 1);
     });
   </script>
   <script src="github-upload-config.js?v=3" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>

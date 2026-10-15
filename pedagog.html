@@ -172,7 +172,7 @@
     }
   </style>
   <link rel="stylesheet" href="upload-center.css" />
-  <link rel="stylesheet" href="pedagog-design.css?v=13" />
+  <link rel="stylesheet" href="pedagog-design.css?v=14" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -197,6 +197,7 @@
         <a href="#awards">Сертификаты</a>
         <a href="#student-certificates">Сертификаты студентов</a>
         <a href="#resources">Полезные ресурсы</a>
+        <a href="#faq">FAQ</a>
         <a href="#gallery">Фотогалерея</a>
         <a href="#feedback">Обратная связь</a>
       </nav>
@@ -227,7 +228,7 @@
 
       <aside class="profile-card card">
         <div class="portrait-frame">
-          <img src="daniil-photo.jpg" alt="Портрет Михайлова Даниила Николаевича" />
+          <img src="daniil-photo.jpg" alt="Портрет Михайлова Даниила Николаевича" loading="lazy" />
         </div>
         <div class="quick-info">
           <div class="quick-row"><span class="quick-icon">🏫</span><span><b>Место работы</b><span>Финансовый университет, Колледж информатики и программирования</span></span></div>
@@ -241,10 +242,11 @@
 
   <main class="container">
     <div class="accessibility-tools" role="group" aria-label="Настройки отображения">
-      <span class="accessibility-tools-title">Удобство чтения</span>
+      <span class="accessibility-tools-title">Настройки</span>
+      <button type="button" id="theme-toggle" aria-pressed="false">🌙 Тёмная тема</button>
       <button type="button" id="text-size-decrease" aria-label="Уменьшить размер текста">А−</button>
       <button type="button" id="text-size-increase" aria-label="Увеличить размер текста">А+</button>
-      <button type="button" id="contrast-toggle" aria-pressed="false">Повышенный контраст</button>
+      <button type="button" id="contrast-toggle" aria-pressed="false">Контраст</button>
       <span id="accessibility-status" class="accessibility-status" aria-live="polite"></span>
     </div>
     <section id="about">
@@ -632,9 +634,43 @@
       </div>
     </section>
 
-    <section id="gallery">
+    <section id="faq">
       <div class="section-head">
         <div class="section-kicker">Раздел 7</div>
+        <h2>Часто задаваемые вопросы</h2>
+        <p class="section-desc">Ответы на популярные вопросы студентов и коллег.</p>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Как связаться с преподавателем?</summary>
+          <p>Вы можете оставить сообщение в форме обратной связи внизу страницы или использовать контакты, указанные в визитной карточке. Также можете написать через гостевую книгу.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Где найти методические материалы?</summary>
+          <p>Все методические материалы доступны в разделе "Методическая копилка". Там вы можете найти учебные материалы, презентации, практические задания и тесты. Материалы можно фильтровать по категориям и формату файла.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Как получить сертификат за выполненную работу?</summary>
+          <p>Сертификаты студентов публикуются в разделе "Сертификаты студентов". Если вы выполнили проект или участие в мероприятии, сертификат будет добавлен после проверки работы преподавателем.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Какие дисциплины преподаются?</summary>
+          <p>Преподаваемые дисциплины: обеспечение безопасности веб-приложений, проектирование и разработка веб-приложений, оптимизация веб-приложений, операционные системы и среды, архитектура аппаратных средств.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Какие материалы нужны для изучения веб-разработки?</summary>
+          <p>Для начала изучения веб-разработки рекомендую раздел "Полезные ресурсы". Там собраны ссылки на MDN Web Docs, W3Schools и другие авторитетные источники. Также в методической копилке есть учебные материалы.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Какие требования к проектам?</summary>
+          <p>Требования к проектам зависят от конкретной дисциплины и семестра. Подробную информацию вы можете получить на занятиях или через форму обратной связи.</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 8</div>
         <h2>Фотогалерея</h2>
         <p class="section-desc">Фотографии с учебного процесса и профессиональной деятельности.</p>
       </div>
@@ -660,7 +696,7 @@
 
     <section id="feedback">
       <div class="section-head">
-        <div class="section-kicker">Раздел 8</div>
+        <div class="section-kicker">Раздел 9</div>
         <h2>Обратная связь</h2>
         <p class="section-desc">Гостевая книга и форма сообщения на странице сайта.</p>
       </div>
@@ -706,14 +742,17 @@
     const textSizeDecrease = document.getElementById('text-size-decrease');
     const textSizeIncrease = document.getElementById('text-size-increase');
     const contrastToggle = document.getElementById('contrast-toggle');
+    const themeToggle = document.getElementById('theme-toggle');
     const textSizes = ['normal', 'large', 'larger'];
     let textSize = 'normal';
     let highContrast = false;
+    let darkTheme = false;
 
     try {
       const savedTextSize = localStorage.getItem('teacher-site-text-size');
       textSize = textSizes.includes(savedTextSize) ? savedTextSize : 'normal';
       highContrast = localStorage.getItem('teacher-site-high-contrast') === 'true';
+      darkTheme = localStorage.getItem('teacher-site-dark-theme') === 'true';
     } catch (error) {
       console.warn('Не удалось прочитать настройки отображения:', error);
     }
@@ -722,15 +761,19 @@
       document.body.classList.toggle('reader-large', textSize === 'large');
       document.body.classList.toggle('reader-larger', textSize === 'larger');
       document.body.classList.toggle('high-contrast', highContrast);
+      document.body.classList.toggle('dark-theme', darkTheme);
       textSizeDecrease.disabled = textSize === 'normal';
       textSizeIncrease.disabled = textSize === 'larger';
       contrastToggle.setAttribute('aria-pressed', String(highContrast));
+      themeToggle.setAttribute('aria-pressed', String(darkTheme));
+      themeToggle.textContent = darkTheme ? '☀️ Светлая тема' : '🌙 Тёмная тема';
     }
 
     function saveAccessibilitySettings() {
       try {
         localStorage.setItem('teacher-site-text-size', textSize);
         localStorage.setItem('teacher-site-high-contrast', String(highContrast));
+        localStorage.setItem('teacher-site-dark-theme', String(darkTheme));
         accessibilityStatus.textContent = '';
       } catch (error) {
         accessibilityStatus.textContent = 'Настройки действуют до закрытия этой вкладки.';
@@ -750,6 +793,11 @@
     });
     contrastToggle.addEventListener('click', () => {
       highContrast = !highContrast;
+      applyAccessibilitySettings();
+      saveAccessibilitySettings();
+    });
+    themeToggle.addEventListener('click', () => {
+      darkTheme = !darkTheme;
       applyAccessibilitySettings();
       saveAccessibilitySettings();
     });

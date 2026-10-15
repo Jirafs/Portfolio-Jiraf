@@ -1346,11 +1346,15 @@ body.teacher-site {
   right: 0;
   bottom: 0;
   z-index: 9999;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(4px);
+}
+
+.loading-overlay:not([hidden]) {
+  display: flex;
 }
 
 .loading-spinner {
@@ -1434,6 +1438,533 @@ body.teacher-site {
 
 .high-contrast .resource-links a:hover {
   color: #fff;
+}
+
+.teacher-site .faq-list {
+  display: grid;
+  gap: 12px;
+}
+
+.teacher-site .faq-item {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 254, 250, 0.72);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.teacher-site .faq-item:nth-child(1) { animation-delay: 0.1s; }
+.teacher-site .faq-item:nth-child(2) { animation-delay: 0.2s; }
+.teacher-site .faq-item:nth-child(3) { animation-delay: 0.3s; }
+.teacher-site .faq-item:nth-child(4) { animation-delay: 0.4s; }
+.teacher-site .faq-item:nth-child(5) { animation-delay: 0.5s; }
+.teacher-site .faq-item:nth-child(6) { animation-delay: 0.6s; }
+
+.teacher-site .faq-item:hover {
+  border-color: rgba(23, 107, 87, 0.3);
+  background: rgba(255, 254, 250, 0.88);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(27, 43, 39, 0.08);
+}
+
+.teacher-site .faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text);
+  list-style: none;
+  position: relative;
+  padding-right: 30px;
+}
+
+.teacher-site .faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.teacher-site .faq-item summary::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--brand);
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.teacher-site .faq-item[open] summary::after {
+  content: '−';
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.teacher-site .faq-item p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.high-contrast .faq-item {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.high-contrast .faq-item summary {
+  color: #fff;
+}
+
+.high-contrast .faq-item summary::after {
+  color: #c7ff81;
+  border-color: #fff;
+}
+
+.high-contrast .faq-item[open] summary::after {
+  background: #c7ff81;
+  color: #000;
+  border-color: #c7ff81;
+}
+
+.high-contrast .faq-item p {
+  color: #f0f0f0;
+}
+
+.teacher-site.dark-theme {
+  --bg: #0a0a0a;
+  --paper: #1a1a1a;
+  --paper-2: #2a2a2a;
+  --text: #ffffff;
+  --muted: #a0a0a0;
+  --brand: #d9f35a;
+  --brand-2: #c5e045;
+  --line: #333333;
+  color-scheme: dark;
+  background: #0a0a0a;
+}
+
+.teacher-site.dark-theme .site-header {
+  background: rgba(10, 10, 10, 0.95);
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .nav a {
+  color: #a0a0a0;
+}
+
+.teacher-site.dark-theme .nav a:hover,
+.teacher-site.dark-theme .nav a.active {
+  background: rgba(217, 243, 90, 0.12);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .eyebrow {
+  color: #d9f35a;
+  background: rgba(217, 243, 90, 0.12);
+  border-color: rgba(217, 243, 90, 0.2);
+}
+
+.teacher-site.dark-theme .card,
+.teacher-site.dark-theme .photo-card,
+.teacher-site.dark-theme .stat,
+.teacher-site.dark-theme .metric,
+.teacher-site.dark-theme .profile-card,
+.teacher-site.dark-theme .student-certificate-item,
+.teacher-site.dark-theme .announcement-item,
+.teacher-site.dark-theme .teacher-upload-block,
+.teacher-site.dark-theme .student-certificates-filters,
+.teacher-site.dark-theme .faq-item {
+  background: #1a1a1a;
+  border-color: #333333;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.4);
+}
+
+.teacher-site.dark-theme .card:hover,
+.teacher-site.dark-theme .photo-card:hover,
+.teacher-site.dark-theme .student-certificate-item:hover,
+.teacher-site.dark-theme .faq-item:hover {
+  border-color: rgba(217, 243, 90, 0.3);
+  box-shadow: 0 24px 54px rgba(217, 243, 90, 0.15);
+}
+
+.teacher-site.dark-theme h1,
+.teacher-site.dark-theme h2,
+.teacher-site.dark-theme h3,
+.teacher-site.dark-theme .card h3,
+.teacher-site.dark-theme .student-certificate-item h3,
+.teacher-site.dark-theme .faq-item summary {
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .hero p,
+.teacher-site.dark-theme .section-desc,
+.teacher-site.dark-theme .card p,
+.teacher-site.dark-theme .stat span,
+.teacher-site.dark-theme .metric span,
+.teacher-site.dark-theme .quick-row span,
+.teacher-site.dark-theme .announcement-date,
+.teacher-site.dark-theme .student-certificate-date,
+.teacher-site.dark-theme .student-certificate-achievement,
+.teacher-site.dark-theme .student-certificate-status,
+.teacher-site.dark-theme .student-certificate-count,
+.teacher-site.dark-theme .student-certificate-empty,
+.teacher-site.dark-theme .material-results-count,
+.teacher-site.dark-theme .material-empty,
+.teacher-site.dark-theme .faq-item p {
+  color: #a0a0a0;
+}
+
+.teacher-site.dark-theme .btn-primary {
+  background: linear-gradient(135deg, #d9f35a, #c5e045);
+  color: #0a0a0a;
+  box-shadow: 0 12px 28px rgba(217, 243, 90, 0.24);
+}
+
+.teacher-site.dark-theme .btn-secondary {
+  background: #1a1a1a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .stat strong,
+.teacher-site.dark-theme .metric strong {
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .quick-row {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .doc {
+  background: #1a1a1a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .doc:hover {
+  border-color: rgba(217, 243, 90, 0.35);
+  background: #2a2a2a;
+}
+
+.teacher-site.dark-theme .doc-type {
+  background: linear-gradient(135deg, #d9f35a, #c5e045);
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .doc-action {
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .table,
+.teacher-site.dark-theme th,
+.teacher-site.dark-theme td {
+  background: #1a1a1a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme th {
+  background: #2a2a2a;
+}
+
+.teacher-site.dark-theme td {
+  color: #a0a0a0;
+}
+
+.teacher-site.dark-theme .student-certificate-group {
+  background: rgba(217, 243, 90, 0.12);
+  color: #d9f35a;
+  border-color: rgba(217, 243, 90, 0.2);
+}
+
+.teacher-site.dark-theme .student-certificate-remove,
+.teacher-site.dark-theme .announcement-remove {
+  background: rgba(255, 128, 128, 0.12);
+  border-color: rgba(255, 128, 128, 0.3);
+  color: #ff8080;
+}
+
+.teacher-site.dark-theme .student-certificate-remove:hover,
+.teacher-site.dark-theme .announcement-remove:hover {
+  background: #ff8080;
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .student-certificate-edit {
+  background: rgba(217, 243, 90, 0.12);
+  border-color: rgba(217, 243, 90, 0.2);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .student-certificate-edit:hover {
+  background: #d9f35a;
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .student-certificate-file-link {
+  background: rgba(217, 243, 90, 0.12);
+  border-color: rgba(217, 243, 90, 0.2);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .student-certificate-file-link:hover {
+  background: #d9f35a;
+  color: #0a0a0a;
+  border-color: #d9f35a;
+}
+
+.teacher-site.dark-theme .document-category-badge {
+  background: rgba(217, 243, 90, 0.12);
+  border-color: rgba(217, 243, 90, 0.2);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .upload-category-field {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .upload-category-field select {
+  background: #1a1a1a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .resource-card {
+  background: #1a1a1a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .resource-card:hover {
+  box-shadow: 0 20px 48px rgba(217, 243, 90, 0.15);
+}
+
+.teacher-site.dark-theme .resource-links a {
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .resource-links a:hover {
+  color: #c5e045;
+}
+
+.teacher-site.dark-theme .filter-field input,
+.teacher-site.dark-theme .filter-field select,
+.teacher-site.dark-theme .announcement-editor input,
+.teacher-site.dark-theme .announcement-editor textarea,
+.teacher-site.dark-theme .material-filters input,
+.teacher-site.dark-theme .material-filters select,
+.teacher-site.dark-theme .student-certificate-form input,
+.teacher-site.dark-theme .student-certificate-form select {
+  background: #1a1a1a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .announcement-item {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .announcement-editor {
+  border-top-color: #333333;
+}
+
+.teacher-site.dark-theme .accessibility-tools {
+  background: #1a1a1a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .accessibility-tools button {
+  background: #2a2a2a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .accessibility-tools button:hover,
+.teacher-site.dark-theme .accessibility-tools button[aria-pressed="true"] {
+  border-color: #d9f35a;
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .accessibility-tools-title,
+.teacher-site.dark-theme .accessibility-status {
+  color: #a0a0a0;
+}
+
+.teacher-site.dark-theme .teacher-upload-dropzone {
+  background: rgba(42, 42, 42, 0.6);
+  border-color: rgba(217, 243, 90, 0.3);
+}
+
+.teacher-site.dark-theme .teacher-upload-dropzone .upload-button {
+  background: #d9f35a;
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .teacher-owner-access {
+  background: rgba(42, 42, 42, 0.5);
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .teacher-owner-access summary {
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .teacher-owner-access > p {
+  color: #a0a0a0;
+}
+
+.teacher-site.dark-theme .teacher-owner-access .cloud-form input {
+  background: #1a1a1a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .performance-add-button,
+.teacher-site.dark-theme .performance-row-actions button {
+  background: #2a2a2a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .performance-add-button,
+.teacher-site.dark-theme .performance-save-button {
+  background: linear-gradient(135deg, #d9f35a, #c5e045);
+  color: #0a0a0a;
+  border-color: transparent;
+}
+
+.teacher-site.dark-theme .performance-delete-button {
+  color: #ff8080 !important;
+  border-color: rgba(255, 128, 128, 0.3) !important;
+  background: rgba(255, 128, 128, 0.12) !important;
+}
+
+.teacher-site.dark-theme .performance-chart {
+  background: rgba(42, 42, 42, 0.4);
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .comparison-group {
+  background: #1a1a1a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .comparison-group h4 {
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .comparison-metric-label {
+  color: #a0a0a0;
+}
+
+.teacher-site.dark-theme .comparison-metric progress {
+  background: #2a2a2a;
+}
+
+.teacher-site.dark-theme .comparison-metric-value {
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .comparison-average {
+  color: #d9f35a;
+  border-top-color: #333333;
+}
+
+.teacher-site.dark-theme .attendance-chart {
+  background: #1a1a1a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme #performance-table-body input {
+  background: #2a2a2a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .upload-item {
+  border-bottom-color: #333333;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .upload-item:hover {
+  background: rgba(217, 243, 90, 0.05);
+  border-color: rgba(217, 243, 90, 0.2);
+}
+
+.teacher-site.dark-theme .upload-item a {
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .upload-item .document-download {
+  background: rgba(217, 243, 90, 0.12);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .upload-item .document-download:hover {
+  background: #d9f35a;
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .upload-item .document-preview-toggle {
+  background: rgba(217, 243, 90, 0.12);
+  border-color: rgba(217, 243, 90, 0.2);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .upload-item .document-preview-toggle:hover,
+.teacher-site.dark-theme .upload-item .document-preview-toggle[aria-expanded="true"] {
+  background: #d9f35a;
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .upload-item .upload-remove {
+  color: #a0a0a0;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .upload-item .upload-remove:hover {
+  background: #ff8080;
+  color: #0a0a0a;
+}
+
+.teacher-site.dark-theme .toast {
+  background: #1a1a1a;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.teacher-site.dark-theme .toast-success {
+  border-left-color: #d9f35a;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .toast-error {
+  border-left-color: #ff8080;
+  color: #ff8080;
+}
+
+.teacher-site.dark-theme .toast-info {
+  border-left-color: #c5e045;
+  color: #ffffff;
+}
+
+.teacher-site.dark-theme .loading-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.teacher-site.dark-theme .loading-spinner {
+  border-color: #333333;
+  border-top-color: #d9f35a;
 }
 
 .teacher-site #performance-table-body input[data-field="group"] {

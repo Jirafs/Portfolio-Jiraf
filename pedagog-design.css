@@ -1092,6 +1092,185 @@ body.teacher-site {
   background: #fff;
 }
 
+.teacher-site .student-certificates-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(234, 240, 233, 0.42);
+}
+
+.teacher-site .filter-field {
+  display: grid;
+  gap: 6px;
+}
+
+.teacher-site .filter-field label {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.teacher-site .filter-field input,
+.teacher-site .filter-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--paper);
+}
+
+.teacher-site .student-certificate-edit {
+  margin-right: 6px;
+  border: 1px solid rgba(23, 107, 87, 0.28);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.08);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.teacher-site .student-certificate-edit:hover {
+  color: #fff;
+  background: var(--brand);
+}
+
+.teacher-site .student-certificate-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.06);
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.teacher-site .student-certificate-file-link:hover {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+  transform: translateY(-1px);
+}
+
+.teacher-site .student-certificate-empty,
+.teacher-site .student-certificate-count {
+  margin: 10px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.teacher-site.high-contrast .student-certificates-filters,
+.teacher-site.high-contrast .filter-field input,
+.teacher-site.high-contrast .filter-field select {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .student-certificate-edit {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .student-certificate-edit:hover {
+  color: #000;
+  background: #fff;
+}
+
+.teacher-site.high-contrast .student-certificate-file-link {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .student-certificate-file-link:hover {
+  color: #000;
+  background: #fff;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toast {
+  min-width: 280px;
+  max-width: 400px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: 0 12px 32px rgba(27, 43, 39, 0.15);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.toast-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-success {
+  border-left: 4px solid var(--brand);
+  color: var(--text);
+}
+
+.toast-error {
+  border-left: 4px solid #a33d36;
+  color: #a33d36;
+}
+
+.toast-info {
+  border-left: 4px solid var(--brand-2);
+  color: var(--text);
+}
+
+@media (max-width: 760px) {
+  .toast-container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: none;
+  }
+
+  .teacher-site .performance-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .teacher-site table {
+    min-width: 600px;
+  }
+
+  .teacher-site .student-certificates-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
 .teacher-site #performance-table-body input[data-field="group"] {
   min-width: 100px;
 }

@@ -515,9 +515,23 @@
         <p class="section-desc">Достижения и сертификаты обучающихся.</p>
       </div>
       <article class="card student-certificates-card">
+        <div class="student-certificates-filters">
+          <div class="filter-field">
+            <label for="student-certificate-search">Поиск по ФИО</label>
+            <input id="student-certificate-search" type="search" placeholder="Введите ФИО студента" />
+          </div>
+          <div class="filter-field">
+            <label for="student-certificate-group-filter">Фильтр по группе</label>
+            <select id="student-certificate-group-filter">
+              <option value="all">Все группы</option>
+            </select>
+          </div>
+        </div>
         <div class="student-certificates-content">
           <div id="student-certificate-list" class="student-certificate-list" aria-live="polite"></div>
           <p class="student-certificate-status" id="student-certificate-status" role="status">Загружаю сертификаты студентов…</p>
+          <p id="student-certificate-empty" class="student-certificate-empty" hidden>По вашему запросу сертификаты не найдены.</p>
+          <p id="student-certificate-count" class="student-certificate-count" aria-live="polite"></p>
           <form id="student-certificate-form" class="student-certificate-form owner-only" hidden>
             <h3>Добавить сертификат студента</h3>
             <div class="field">
@@ -536,14 +550,12 @@
               <label for="student-date">Дата</label>
               <input id="student-date" name="date" type="date" required />
             </div>
+            <div class="field">
+              <label for="student-certificate-file">Файл сертификата (опционально)</label>
+              <input id="student-certificate-file" name="file" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf" />
+            </div>
             <button class="btn btn-primary" type="submit">Добавить сертификат</button>
           </form>
-          <div class="upload-dropzone teacher-upload-dropzone owner-only" id="student-certificate-dropzone" hidden>
-            <span class="upload-icon" aria-hidden="true">📄</span>
-            <p>Загрузите изображение или PDF сертификата студента.</p>
-            <label class="upload-button" for="student-certificate-input">Загрузить файл сертификата</label>
-            <input id="student-certificate-input" class="owner-only" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf" multiple hidden />
-          </div>
         </div>
       </article>
     </section>
@@ -611,6 +623,8 @@
       <a class="to-top" href="#home">Наверх ↑</a>
     </div>
   </footer>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
   <script>
     const accessibilityStatus = document.getElementById('accessibility-status');

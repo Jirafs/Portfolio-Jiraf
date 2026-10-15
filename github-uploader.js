@@ -9,10 +9,10 @@
   const documentInput = document.querySelector('#document-input');
   const certificateInput = document.querySelector('#certificate-input');
   const certificateDropzone = document.querySelector('#certificate-dropzone');
-  const studentCertificateInput = document.querySelector('#student-certificate-input');
-  const studentCertificateDropzone = document.querySelector('#student-certificate-dropzone');
-  const studentCertificateStatus = document.querySelector('#student-certificate-status');
   const studentCertificateForm = document.querySelector('#student-certificate-form');
+  const studentCertificateFileInput = document.querySelector('#student-certificate-file');
+  const studentCertificateSearch = document.querySelector('#student-certificate-search');
+  const studentCertificateGroupFilter = document.querySelector('#student-certificate-group-filter');
   const groupExcelInput = document.querySelector('#group-excel-input');
   const groupExcelList = document.querySelector('#group-excel-list');
   const groupExcelStatus = document.querySelector('#group-excel-status');
@@ -72,6 +72,26 @@
     if (error) console.error(message, error);
   }
 
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('toast-show');
+    }, 10);
+
+    setTimeout(() => {
+      toast.classList.remove('toast-show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
   function setAuthenticated(isAuthenticated, login = '') {
     document.body.classList.toggle('github-authenticated', isAuthenticated);
     if (form) form.hidden = isAuthenticated;
@@ -79,7 +99,6 @@
     if (dropzone) dropzone.hidden = !isAuthenticated;
     if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
     if (certificateDropzone) certificateDropzone.hidden = !isAuthenticated;
-    if (studentCertificateDropzone) studentCertificateDropzone.hidden = !isAuthenticated;
     if (studentCertificateForm) studentCertificateForm.hidden = !isAuthenticated;
     if (performanceAddButton) performanceAddButton.hidden = !isAuthenticated;
     if (performanceActionsHeading) performanceActionsHeading.hidden = !isAuthenticated;
@@ -310,7 +329,8 @@
         || typeof item.studentName !== 'string' || !item.studentName.trim() || item.studentName.length > 200
         || typeof item.group !== 'string' || !item.group.trim() || item.group.length > 50
         || typeof item.achievement !== 'string' || !item.achievement.trim() || item.achievement.length > 200
-        || typeof item.date !== 'string' || !item.date.trim()) {
+        || typeof item.date !== 'string' || !item.date.trim()
+        || (item.filePath != null && typeof item.filePath !== 'string')) {
         throw new Error('В списке сертификатов студентов найдена запись с неверными данными.');
       }
     });
@@ -484,11 +504,38 @@
   function renderStudentCertificates() {
     const list = document.querySelector('#student-certificate-list');
     const status = document.querySelector('#student-certificate-status');
+    const empty = document.querySelector('#student-certificate-empty');
+    const count = document.querySelector('#student-certificate-count');
+    const groupFilter = document.querySelector('#student-certificate-group-filter');
     if (!list) return;
     list.replaceChildren();
     const ownerMode = Boolean(accessToken);
-    const sorted = [...studentCertificates].sort((a, b) => b.date.localeCompare(a.date));
-    sorted.forEach((certificate) => {
+    const searchQuery = studentCertificateSearch?.value.trim().toLocaleLowerCase('ru-RU') || '';
+    const selectedGroup = groupFilter?.value || 'all';
+
+    // Update group filter options
+    if (groupFilter) {
+      const currentOptions = [...groupFilter.options].map(opt => opt.value);
+      const allGroups = [...new Set(studentCertificates.map(c => c.group.trim()))].sort((a, b) => a.localeCompare(b, 'ru'));
+      allGroups.forEach(group => {
+        if (!currentOptions.includes(group)) {
+          const option = document.createElement('option');
+          option.value = group;
+          option.textContent = group;
+          groupFilter.appendChild(option);
+        }
+      });
+    }
+
+    const filtered = [...studentCertificates]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .filter(cert => {
+        const matchesSearch = !searchQuery || cert.studentName.toLocaleLowerCase('ru-RU').includes(searchQuery);
+        const matchesGroup = selectedGroup === 'all' || cert.group === selectedGroup;
+        return matchesSearch && matchesGroup;
+      });
+
+    filtered.forEach((certificate) => {
       const item = document.createElement('article');
       item.className = 'student-certificate-item';
       const heading = document.createElement('div');
@@ -497,13 +544,19 @@
       studentName.textContent = certificate.studentName;
       heading.append(studentName);
       if (ownerMode) {
+        const editButton = document.createElement('button');
+        editButton.className = 'student-certificate-edit';
+        editButton.type = 'button';
+        editButton.textContent = 'Изменить';
+        editButton.setAttribute('aria-label', `Изменить сертификат студента «${certificate.studentName}»`);
+        editButton.addEventListener('click', () => editStudentCertificate(certificate, editButton));
         const remove = document.createElement('button');
         remove.className = 'student-certificate-remove';
         remove.type = 'button';
         remove.textContent = 'Удалить';
         remove.setAttribute('aria-label', `Удалить сертификат студента «${certificate.studentName}»`);
         remove.addEventListener('click', () => removeStudentCertificate(certificate, remove));
-        heading.append(remove);
+        heading.append(editButton, remove);
       }
       const meta = document.createElement('div');
       meta.className = 'student-certificate-meta';
@@ -519,11 +572,34 @@
       achievement.className = 'student-certificate-achievement';
       achievement.textContent = certificate.achievement;
       item.append(heading, meta, achievement);
+
+      // Add file link if exists
+      if (certificate.filePath) {
+        const fileLink = document.createElement('a');
+        fileLink.className = 'student-certificate-file-link';
+        fileLink.href = publicFileUrl(certificate.filePath);
+        fileLink.target = '_blank';
+        fileLink.rel = 'noopener noreferrer';
+        fileLink.textContent = '📄 Открыть файл сертификата';
+        item.append(fileLink);
+      }
+
       list.append(item);
     });
+
     if (status) {
-      status.hidden = sorted.length > 0;
+      status.hidden = studentCertificates.length > 0;
       status.textContent = 'Сертификаты студентов появятся здесь после публикации владельцем сайта.';
+    }
+
+    if (empty) {
+      empty.hidden = filtered.length > 0 || studentCertificates.length === 0;
+    }
+
+    if (count) {
+      count.textContent = filtered.length > 0
+        ? `Показано ${filtered.length} из ${studentCertificates.length} сертификатов`
+        : '';
     }
   }
 
@@ -531,11 +607,21 @@
     if (!accessToken || !window.confirm(`Удалить сертификат студента «${certificate.studentName}»?`)) return;
     button.disabled = true;
     try {
+      // Delete file if exists
+      if (certificate.filePath) {
+        try {
+          await deleteFile({ path: certificate.filePath, sha: certificate.fileSha });
+        } catch (fileError) {
+          console.warn('Не удалось удалить файл сертификата:', fileError);
+        }
+      }
+
       studentCertificates = await updateStudentCertificates(
         (items) => items.filter((item) => item.id !== certificate.id),
         `Удалён сертификат студента: ${certificate.studentName}`
       );
       renderStudentCertificates();
+      showToast('Сертификат студента удалён', 'success');
     } catch (error) {
       button.disabled = false;
       const status = document.querySelector('#student-certificate-status');
@@ -543,8 +629,40 @@
         status.hidden = false;
         status.textContent = `Не удалось удалить сертификат: ${error.message}`;
       }
+      showToast('Не удалось удалить сертификат', 'error');
       console.error('Не удалось удалить сертификат студента:', error);
     }
+  }
+
+  function editStudentCertificate(certificate, button) {
+    if (!accessToken) return;
+    const form = document.querySelector('#student-certificate-form');
+    if (!form) return;
+
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    document.querySelector('#student-name').value = certificate.studentName;
+    document.querySelector('#student-group').value = certificate.group;
+    document.querySelector('#student-achievement').value = certificate.achievement;
+    document.querySelector('#student-date').value = certificate.date;
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.textContent = 'Сохранить изменения';
+    submitButton.dataset.editingId = certificate.id;
+
+    const cancelButton = document.createElement('button');
+    cancelButton.type = 'button';
+    cancelButton.className = 'btn btn-secondary';
+    cancelButton.textContent = 'Отмена';
+    cancelButton.style.marginLeft = '10px';
+    cancelButton.addEventListener('click', () => {
+      form.reset();
+      submitButton.textContent = 'Добавить сертификат';
+      delete submitButton.dataset.editingId;
+      cancelButton.remove();
+    });
+
+    submitButton.parentNode.insertBefore(cancelButton, submitButton.nextSibling);
   }
 
   announcementForm?.addEventListener('submit', async (event) => {
@@ -587,32 +705,77 @@
     const submitButton = studentCertificateForm.querySelector('button[type="submit"]');
     if (submitButton) submitButton.disabled = true;
     const data = new FormData(studentCertificateForm);
+    const editingId = submitButton.dataset.editingId;
+    const file = studentCertificateFileInput?.files[0];
+
     const certificate = {
-      id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      id: editingId || (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`),
       studentName: String(data.get('studentName') || '').trim(),
       group: String(data.get('group') || '').trim(),
       achievement: String(data.get('achievement') || '').trim(),
       date: String(data.get('date') || '')
     };
+
     try {
+      // Upload file if provided
+      if (file) {
+        if (file.size > config.maxFileSize) throw new Error('Максимальный размер файла — 10 МБ.');
+        const extension = file.name.toLowerCase().split('.').pop();
+        if (!allowedExtensions['student-certificates']?.has(extension)) {
+          throw new Error('Этот формат файла не поддерживается.');
+        }
+
+        const safeName = file.name.replace(/[\\/]/g, '_');
+        const path = `${config.uploadDirectory}/student-certificates/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+        const uploaded = await putFile(file, path);
+        certificate.filePath = path;
+        certificate.fileSha = uploaded.content.sha;
+      }
+
       studentCertificates = await updateStudentCertificates(
-        (items) => [certificate, ...items],
-        `Добавлен сертификат студента: ${certificate.studentName}`
+        (items) => {
+          if (editingId) {
+            // Update existing
+            const existing = items.find(item => item.id === editingId);
+            if (existing) {
+              // Delete old file if new file uploaded
+              if (file && existing.filePath && existing.filePath !== certificate.filePath) {
+                try {
+                  await deleteFile({ path: existing.filePath, sha: existing.fileSha });
+                } catch (fileError) {
+                  console.warn('Не удалось удалить старый файл:', fileError);
+                }
+              }
+              return items.map(item => item.id === editingId ? { ...certificate, filePath: file ? certificate.filePath : existing.filePath, fileSha: file ? certificate.fileSha : existing.fileSha } : item);
+            }
+          }
+          // Add new
+          return [certificate, ...items];
+        },
+        editingId ? `Изменён сертификат студента: ${certificate.studentName}` : `Добавлен сертификат студента: ${certificate.studentName}`
       );
+
       renderStudentCertificates();
       studentCertificateForm.reset();
+      submitButton.textContent = 'Добавить сертификат';
+      delete submitButton.dataset.editingId;
+      const cancelButton = studentCertificateForm.querySelector('button[type="button"]');
+      if (cancelButton) cancelButton.remove();
+
       const status = document.querySelector('#student-certificate-status');
       if (status) {
         status.hidden = false;
-        status.textContent = 'Сертификат студента добавлен.';
+        status.textContent = editingId ? 'Сертификат студента изменён.' : 'Сертификат студента добавлен.';
       }
+      showToast(editingId ? 'Сертификат студента изменён' : 'Сертификат студента добавлен', 'success');
     } catch (error) {
       const status = document.querySelector('#student-certificate-status');
       if (status) {
         status.hidden = false;
-        status.textContent = `Не удалось добавить сертификат: ${error.message}`;
+        status.textContent = `Не удалось сохранить сертификат: ${error.message}`;
       }
-      console.error('Не удалось добавить сертификат студента:', error);
+      showToast('Не удалось сохранить сертификат', 'error');
+      console.error('Не удалось сохранить сертификат студента:', error);
     } finally {
       if (submitButton) submitButton.disabled = false;
     }
@@ -2049,14 +2212,12 @@
     handleFiles(event.currentTarget.files, 'certificates');
     event.currentTarget.value = '';
   });
-  studentCertificateInput?.addEventListener('change', (event) => {
-    handleFiles(event.currentTarget.files, 'student-certificates');
-    event.currentTarget.value = '';
-  });
   groupExcelInput?.addEventListener('change', (event) => {
     handleFiles(event.currentTarget.files, 'group-data');
     event.currentTarget.value = '';
   });
+  studentCertificateSearch?.addEventListener('input', renderStudentCertificates);
+  studentCertificateGroupFilter?.addEventListener('change', renderStudentCertificates);
   materialSearch?.addEventListener('input', filterDocuments);
   materialTypeFilter?.addEventListener('change', filterDocuments);
 
@@ -2069,17 +2230,6 @@
     event.preventDefault();
     dropzone.classList.remove('is-dragover');
     handleFiles(event.dataTransfer?.files, 'documents');
-  });
-
-  studentCertificateDropzone?.addEventListener('dragover', (event) => {
-    event.preventDefault();
-    studentCertificateDropzone.classList.add('is-dragover');
-  });
-  studentCertificateDropzone?.addEventListener('dragleave', () => studentCertificateDropzone.classList.remove('is-dragover'));
-  studentCertificateDropzone?.addEventListener('drop', (event) => {
-    event.preventDefault();
-    studentCertificateDropzone.classList.remove('is-dragover');
-    handleFiles(event.dataTransfer?.files, 'student-certificates');
   });
 
   refreshManifest().catch((error) => showStatus(`Не удалось загрузить список файлов: ${error.message}`, error));

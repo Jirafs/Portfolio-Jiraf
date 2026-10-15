@@ -177,13 +177,15 @@
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">☰ Меню</button>
       <nav class="nav" id="site-nav" aria-label="Основное меню">
-        <a href="index.html">На главную</a>
+        <a href="index.html">Основная Страница</a>
+         <a href="#home">На главную станицу</a>
         <a href="about.html">Обо мне</a>
         <a href="#about">О преподавателе</a>
         <a href="#announcements">Объявления</a>
         <a href="#methods">Методическая копилка</a>
         <a href="#results">Результаты</a>
         <a href="#awards">Сертификаты</a>
+        <a href="#student-certificates">Сертификаты студентов</a>
         <a href="#gallery">Фотогалерея</a>
         <a href="#feedback">Обратная связь</a>
       </nav>
@@ -504,6 +506,46 @@
           </ul>
         </article>
       </div>
+    </section>
+
+    <section id="student-certificates">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 5</div>
+        <h2>Сертификаты студентов</h2>
+        <p class="section-desc">Достижения и сертификаты обучающихся.</p>
+      </div>
+      <article class="card student-certificates-card">
+        <div class="student-certificates-content">
+          <div id="student-certificate-list" class="student-certificate-list" aria-live="polite"></div>
+          <p class="student-certificate-status" id="student-certificate-status" role="status">Загружаю сертификаты студентов…</p>
+          <form id="student-certificate-form" class="student-certificate-form owner-only" hidden>
+            <h3>Добавить сертификат студента</h3>
+            <div class="field">
+              <label for="student-name">ФИО студента</label>
+              <input id="student-name" name="studentName" type="text" maxlength="200" required />
+            </div>
+            <div class="field">
+              <label for="student-group">Группа</label>
+              <input id="student-group" name="group" type="text" maxlength="50" required />
+            </div>
+            <div class="field">
+              <label for="student-achievement">Достижение/сертификат</label>
+              <input id="student-achievement" name="achievement" type="text" maxlength="200" required />
+            </div>
+            <div class="field">
+              <label for="student-date">Дата</label>
+              <input id="student-date" name="date" type="date" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Добавить сертификат</button>
+          </form>
+          <div class="upload-dropzone teacher-upload-dropzone owner-only" id="student-certificate-dropzone" hidden>
+            <span class="upload-icon" aria-hidden="true">📄</span>
+            <p>Загрузите изображение или PDF сертификата студента.</p>
+            <label class="upload-button" for="student-certificate-input">Загрузить файл сертификата</label>
+            <input id="student-certificate-input" class="owner-only" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf" multiple hidden />
+          </div>
+        </div>
+      </article>
     </section>
 
     <section id="gallery">

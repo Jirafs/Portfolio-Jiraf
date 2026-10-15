@@ -942,6 +942,156 @@ body.teacher-site {
   background: rgba(255, 255, 255, 0.06);
 }
 
+.teacher-site .student-certificates-card {
+  display: grid;
+  gap: 18px;
+}
+
+.teacher-site .student-certificates-content {
+  display: grid;
+  gap: 14px;
+}
+
+.teacher-site .student-certificate-list {
+  display: grid;
+  gap: 12px;
+}
+
+.teacher-site .student-certificate-item {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(234, 240, 233, 0.42);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.teacher-site .student-certificate-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(23, 107, 87, 0.24);
+  box-shadow: 0 12px 28px rgba(27, 43, 39, 0.08);
+}
+
+.teacher-site .student-certificate-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.teacher-site .student-certificate-item h3 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.025em;
+}
+
+.teacher-site .student-certificate-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.teacher-site .student-certificate-group {
+  padding: 4px 10px;
+  border: 1px solid rgba(23, 107, 87, 0.2);
+  border-radius: 999px;
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.06);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.teacher-site .student-certificate-date {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.teacher-site .student-certificate-achievement {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.teacher-site .student-certificate-remove {
+  flex: 0 0 auto;
+  border: 1px solid rgba(188, 73, 65, 0.28);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #a33d36;
+  background: rgba(188, 73, 65, 0.08);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.teacher-site .student-certificate-remove:hover {
+  color: #fff;
+  background: #a33d36;
+}
+
+.teacher-site .student-certificate-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.teacher-site .student-certificate-form {
+  display: grid;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.teacher-site .student-certificate-form h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.teacher-site .student-certificate-form .field {
+  display: grid;
+  gap: 6px;
+}
+
+.teacher-site .student-certificate-form label {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.teacher-site .student-certificate-form input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--paper);
+}
+
+.teacher-site .student-certificate-form .btn {
+  justify-self: start;
+  margin-top: 5px;
+}
+
+.teacher-site.high-contrast .student-certificate-item,
+.teacher-site.high-contrast .student-certificate-group {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .student-certificate-remove {
+  color: #fff;
+  border-color: #fff;
+  background: #000;
+}
+
+.teacher-site.high-contrast .student-certificate-remove:hover {
+  color: #000;
+  background: #fff;
+}
+
 .teacher-site #performance-table-body input[data-field="group"] {
   min-width: 100px;
 }

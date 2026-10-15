@@ -9,6 +9,10 @@
   const documentInput = document.querySelector('#document-input');
   const certificateInput = document.querySelector('#certificate-input');
   const certificateDropzone = document.querySelector('#certificate-dropzone');
+  const studentCertificateInput = document.querySelector('#student-certificate-input');
+  const studentCertificateDropzone = document.querySelector('#student-certificate-dropzone');
+  const studentCertificateStatus = document.querySelector('#student-certificate-status');
+  const studentCertificateForm = document.querySelector('#student-certificate-form');
   const groupExcelInput = document.querySelector('#group-excel-input');
   const groupExcelList = document.querySelector('#group-excel-list');
   const groupExcelStatus = document.querySelector('#group-excel-status');
@@ -42,6 +46,7 @@
   let editingPerformanceDraft = null;
   let savingPerformance = false;
   let attendanceSummaries = [];
+  let studentCertificates = [];
   let xlsxLibraryPromise;
   let pdfLibraryPromise;
   let summaryRenderId = 0;
@@ -49,6 +54,7 @@
   const allowedExtensions = {
     documents: new Set(['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'rtf', 'md']),
     certificates: new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf']),
+    'student-certificates': new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf']),
     'group-data': new Set(['xls', 'xlsx', 'pdf'])
   };
 
@@ -73,12 +79,15 @@
     if (dropzone) dropzone.hidden = !isAuthenticated;
     if (groupExcelDropzone) groupExcelDropzone.hidden = !isAuthenticated;
     if (certificateDropzone) certificateDropzone.hidden = !isAuthenticated;
+    if (studentCertificateDropzone) studentCertificateDropzone.hidden = !isAuthenticated;
+    if (studentCertificateForm) studentCertificateForm.hidden = !isAuthenticated;
     if (performanceAddButton) performanceAddButton.hidden = !isAuthenticated;
     if (performanceActionsHeading) performanceActionsHeading.hidden = !isAuthenticated;
     if (announcementForm) announcementForm.hidden = !isAuthenticated;
     if (tokenInput) tokenInput.value = '';
     renderGroupPerformance();
     renderAnnouncements(isAuthenticated);
+    renderStudentCertificates();
     if (status && isAuthenticated) status.textContent = `Вход выполнен как @${login}. Токен хранится только в этой вкладке.`;
   }
 
@@ -294,6 +303,20 @@
     return items;
   }
 
+  function validateStudentCertificates(items) {
+    if (!Array.isArray(items)) throw new Error('Список сертификатов студентов в GitHub имеет неверный формат.');
+    items.forEach((item) => {
+      if (!item || typeof item.id !== 'string' || !item.id.trim()
+        || typeof item.studentName !== 'string' || !item.studentName.trim() || item.studentName.length > 200
+        || typeof item.group !== 'string' || !item.group.trim() || item.group.length > 50
+        || typeof item.achievement !== 'string' || !item.achievement.trim() || item.achievement.length > 200
+        || typeof item.date !== 'string' || !item.date.trim()) {
+        throw new Error('В списке сертификатов студентов найдена запись с неверными данными.');
+      }
+    });
+    return items;
+  }
+
   function renderAnnouncements(ownerMode = Boolean(accessToken)) {
     if (!announcementList) return;
     announcementList.replaceChildren();
@@ -385,6 +408,60 @@
     throw new Error('Не удалось обновить объявления после нескольких конфликтов.');
   }
 
+  async function getStudentCertificates(token = accessToken) {
+    const path = encodePath(config.studentCertificatesFile);
+    const response = await apiFetch(`${apiRoot}/contents/${path}?ref=${encodeURIComponent(config.branch)}`, {}, token);
+    if (response.status === 404) return { sha: null, items: [] };
+    const data = await responseJson(response);
+    return { sha: data.sha, items: validateStudentCertificates(decodeBase64Json(data.content)) };
+  }
+
+  async function refreshStudentCertificates() {
+    const response = await fetch(`${rawRoot}/${encodePath(config.studentCertificatesFile)}?t=${Date.now()}`, { cache: 'no-store' });
+    if (response.status === 404) {
+      studentCertificates = [];
+    } else if (!response.ok) {
+      throw new Error(`Не удалось загрузить сертификаты студентов (${response.status}).`);
+    } else {
+      studentCertificates = validateStudentCertificates(await response.json());
+    }
+    renderStudentCertificates();
+  }
+
+  async function updateStudentCertificates(updateItems, message) {
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const current = await getStudentCertificates();
+      const nextItems = validateStudentCertificates(updateItems(current.items));
+      const bytes = new TextEncoder().encode(JSON.stringify(nextItems, null, 2) + '\n');
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+      }
+      try {
+        const response = await apiFetch(`${apiRoot}/contents/${encodePath(config.studentCertificatesFile)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            content: btoa(binary),
+            branch: config.branch,
+            ...(current.sha ? { sha: current.sha } : {})
+          })
+        });
+        await responseJson(response);
+        return nextItems;
+      } catch (error) {
+        if (!isManifestConflict(error)) throw error;
+        if (attempt === maxAttempts - 1) {
+          error.message = `Сертификаты студентов несколько раз обновились одновременно. Обновите страницу и повторите действие. ${error.message}`;
+          throw error;
+        }
+      }
+    }
+    throw new Error('Не удалось обновить сертификаты студентов после нескольких конфликтов.');
+  }
+
   async function removeAnnouncement(announcement, button) {
     if (!accessToken || !window.confirm(`Удалить объявление «${announcement.title}»?`)) return;
     button.disabled = true;
@@ -401,6 +478,72 @@
         announcementStatus.textContent = `Не удалось удалить объявление: ${error.message}`;
       }
       console.error('Не удалось удалить объявление:', error);
+    }
+  }
+
+  function renderStudentCertificates() {
+    const list = document.querySelector('#student-certificate-list');
+    const status = document.querySelector('#student-certificate-status');
+    if (!list) return;
+    list.replaceChildren();
+    const ownerMode = Boolean(accessToken);
+    const sorted = [...studentCertificates].sort((a, b) => b.date.localeCompare(a.date));
+    sorted.forEach((certificate) => {
+      const item = document.createElement('article');
+      item.className = 'student-certificate-item';
+      const heading = document.createElement('div');
+      heading.className = 'student-certificate-heading';
+      const studentName = document.createElement('h3');
+      studentName.textContent = certificate.studentName;
+      heading.append(studentName);
+      if (ownerMode) {
+        const remove = document.createElement('button');
+        remove.className = 'student-certificate-remove';
+        remove.type = 'button';
+        remove.textContent = 'Удалить';
+        remove.setAttribute('aria-label', `Удалить сертификат студента «${certificate.studentName}»`);
+        remove.addEventListener('click', () => removeStudentCertificate(certificate, remove));
+        heading.append(remove);
+      }
+      const meta = document.createElement('div');
+      meta.className = 'student-certificate-meta';
+      const group = document.createElement('span');
+      group.className = 'student-certificate-group';
+      group.textContent = certificate.group;
+      const date = document.createElement('time');
+      date.className = 'student-certificate-date';
+      date.dateTime = certificate.date;
+      date.textContent = new Date(`${certificate.date}T00:00:00`).toLocaleDateString('ru-RU');
+      meta.append(group, date);
+      const achievement = document.createElement('p');
+      achievement.className = 'student-certificate-achievement';
+      achievement.textContent = certificate.achievement;
+      item.append(heading, meta, achievement);
+      list.append(item);
+    });
+    if (status) {
+      status.hidden = sorted.length > 0;
+      status.textContent = 'Сертификаты студентов появятся здесь после публикации владельцем сайта.';
+    }
+  }
+
+  async function removeStudentCertificate(certificate, button) {
+    if (!accessToken || !window.confirm(`Удалить сертификат студента «${certificate.studentName}»?`)) return;
+    button.disabled = true;
+    try {
+      studentCertificates = await updateStudentCertificates(
+        (items) => items.filter((item) => item.id !== certificate.id),
+        `Удалён сертификат студента: ${certificate.studentName}`
+      );
+      renderStudentCertificates();
+    } catch (error) {
+      button.disabled = false;
+      const status = document.querySelector('#student-certificate-status');
+      if (status) {
+        status.hidden = false;
+        status.textContent = `Не удалось удалить сертификат: ${error.message}`;
+      }
+      console.error('Не удалось удалить сертификат студента:', error);
     }
   }
 
@@ -433,6 +576,43 @@
         announcementStatus.textContent = `Не удалось опубликовать объявление: ${error.message}`;
       }
       console.error('Не удалось опубликовать объявление:', error);
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+    }
+  });
+
+  studentCertificateForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!accessToken) return;
+    const submitButton = studentCertificateForm.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    const data = new FormData(studentCertificateForm);
+    const certificate = {
+      id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      studentName: String(data.get('studentName') || '').trim(),
+      group: String(data.get('group') || '').trim(),
+      achievement: String(data.get('achievement') || '').trim(),
+      date: String(data.get('date') || '')
+    };
+    try {
+      studentCertificates = await updateStudentCertificates(
+        (items) => [certificate, ...items],
+        `Добавлен сертификат студента: ${certificate.studentName}`
+      );
+      renderStudentCertificates();
+      studentCertificateForm.reset();
+      const status = document.querySelector('#student-certificate-status');
+      if (status) {
+        status.hidden = false;
+        status.textContent = 'Сертификат студента добавлен.';
+      }
+    } catch (error) {
+      const status = document.querySelector('#student-certificate-status');
+      if (status) {
+        status.hidden = false;
+        status.textContent = `Не удалось добавить сертификат: ${error.message}`;
+      }
+      console.error('Не удалось добавить сертификат студента:', error);
     } finally {
       if (submitButton) submitButton.disabled = false;
     }
@@ -1652,14 +1832,16 @@
     }
 
     const manifest = await getManifest(token);
-    const [performance, attendance] = await Promise.all([
+    const [performance, attendance, studentCerts] = await Promise.all([
       getGroupPerformance(token),
-      getGroupAttendance(token)
+      getGroupAttendance(token),
+      getStudentCertificates(token)
     ]);
     accessToken = token;
     uploadManifest = manifest.files;
     groupPerformance = performance.groups;
     attendanceSummaries = attendance.summaries;
+    studentCertificates = studentCerts.items;
     setAuthenticated(true, user.login);
     renderManifest(uploadManifest, true);
   }
@@ -1867,6 +2049,10 @@
     handleFiles(event.currentTarget.files, 'certificates');
     event.currentTarget.value = '';
   });
+  studentCertificateInput?.addEventListener('change', (event) => {
+    handleFiles(event.currentTarget.files, 'student-certificates');
+    event.currentTarget.value = '';
+  });
   groupExcelInput?.addEventListener('change', (event) => {
     handleFiles(event.currentTarget.files, 'group-data');
     event.currentTarget.value = '';
@@ -1885,6 +2071,17 @@
     handleFiles(event.dataTransfer?.files, 'documents');
   });
 
+  studentCertificateDropzone?.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    studentCertificateDropzone.classList.add('is-dragover');
+  });
+  studentCertificateDropzone?.addEventListener('dragleave', () => studentCertificateDropzone.classList.remove('is-dragover'));
+  studentCertificateDropzone?.addEventListener('drop', (event) => {
+    event.preventDefault();
+    studentCertificateDropzone.classList.remove('is-dragover');
+    handleFiles(event.dataTransfer?.files, 'student-certificates');
+  });
+
   refreshManifest().catch((error) => showStatus(`Не удалось загрузить список файлов: ${error.message}`, error));
   refreshGroupPerformance().catch((error) => {
     if (performanceStatus) performanceStatus.textContent = `Не удалось загрузить сводку по группам: ${error.message}`;
@@ -1900,5 +2097,12 @@
       announcementStatus.textContent = `Не удалось загрузить объявления: ${error.message}`;
     }
     console.error('Не удалось загрузить объявления:', error);
+  });
+  refreshStudentCertificates().catch((error) => {
+    if (studentCertificateStatus) {
+      studentCertificateStatus.hidden = false;
+      studentCertificateStatus.textContent = `Не удалось загрузить сертификаты студентов: ${error.message}`;
+    }
+    console.error('Не удалось загрузить сертификаты студентов:', error);
   });
 })();

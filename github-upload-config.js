@@ -8,6 +8,7 @@ window.githubUploadConfig = {
   announcementsFile: 'announcements.json',
   groupPerformanceFile: 'group-performance.json',
   groupAttendanceFile: 'group-attendance.json',
+  studentCertificatesFile: 'student-certificates.json',
   uploadDirectory: 'uploads',
   maxFileSize: 10 * 1024 * 1024
 };

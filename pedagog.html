@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Персональный сайт преподавателя Михайлова Даниила Николаевича" />
+  <meta name="description" content="Педагогический сайт преподавателя Михайлова Даниила Николаевича. Методические материалы, результаты педагогической деятельности, сертификаты студентов и полезные ресурсы для изучения веб-разработки и информационной безопасности." />
+  <meta name="keywords" content="преподаватель, веб-разработка, информационная безопасность, методические материалы, педагогический сайт, Финансовый университет, Колледж информатики и программирования" />
+  <meta name="author" content="Михайлов Даниил Николаевич" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Михайлов Даниил Николаевич — педагогический сайт" />
+  <meta property="og:description" content="Методические материалы, результаты педагогической деятельности, сертификаты студентов и полезные ресурсы." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Михайлов Даниил Николаевич — педагогический сайт" />
+  <meta name="twitter:description" content="Методические материалы, результаты педагогической деятельности, сертификаты студентов и полезные ресурсы." />
   <title>Михайлов Даниил Николаевич — педагогический сайт</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,6 +196,7 @@
         <a href="#results">Результаты</a>
         <a href="#awards">Сертификаты</a>
         <a href="#student-certificates">Сертификаты студентов</a>
+        <a href="#resources">Полезные ресурсы</a>
         <a href="#gallery">Фотогалерея</a>
         <a href="#feedback">Обратная связь</a>
       </nav>
@@ -342,6 +353,17 @@
                 <input id="material-search" type="search" placeholder="Например: веб-приложений или 4ИСИП-1023" autocomplete="off" />
               </div>
               <div class="material-filter-field">
+                <label class="material-search-label" for="material-category-filter">Категория</label>
+                <select id="material-category-filter">
+                  <option value="all">Все категории</option>
+                  <option value="lesson">Уроки</option>
+                  <option value="methodical">Методические разработки</option>
+                  <option value="practical">Практические задания</option>
+                  <option value="test">Тесты и контрольные</option>
+                  <option value="other">Другое</option>
+                </select>
+              </div>
+              <div class="material-filter-field">
                 <label class="material-search-label" for="material-type-filter">Формат файла</label>
                 <select id="material-type-filter">
                   <option value="all">Все форматы</option>
@@ -358,6 +380,16 @@
             <div class="upload-dropzone teacher-upload-dropzone owner-only" id="upload-dropzone" hidden>
               <span class="upload-icon" aria-hidden="true">📄</span>
               <p>Перетащите документ сюда или выберите файл.</p>
+              <div class="upload-category-field">
+                <label for="document-category">Категория материала</label>
+                <select id="document-category">
+                  <option value="lesson">Уроки</option>
+                  <option value="methodical">Методические разработки</option>
+                  <option value="practical">Практические задания</option>
+                  <option value="test">Тесты и контрольные</option>
+                  <option value="other">Другое</option>
+                </select>
+              </div>
               <label class="upload-button" for="document-input">Выбрать документы</label>
               <input id="document-input" type="file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.odt,.rtf,.md" multiple hidden />
             </div>
@@ -560,9 +592,49 @@
       </article>
     </section>
 
+    <section id="resources">
+      <div class="section-head">
+        <div class="section-kicker">Раздел 6</div>
+        <h2>Полезные ресурсы</h2>
+        <p class="section-desc">Ссылки на учебные материалы и инструменты для студентов.</p>
+      </div>
+      <div class="grid grid-3">
+        <article class="card resource-card">
+          <div class="resource-icon" aria-hidden="true">📚</div>
+          <h3>Учебные материалы</h3>
+          <p>Полезные ресурсы для изучения веб-разработки и информационной безопасности.</p>
+          <ul class="resource-links">
+            <li><a href="https://developer.mozilla.org/ru/" target="_blank" rel="noopener noreferrer">MDN Web Docs</a></li>
+            <li><a href="https://www.w3schools.com/" target="_blank" rel="noopener noreferrer">W3Schools</a></li>
+            <li><a href="https://docs.python.org/3/" target="_blank" rel="noopener noreferrer">Python Documentation</a></li>
+          </ul>
+        </article>
+        <article class="card resource-card">
+          <div class="resource-icon" aria-hidden="true">🔒</div>
+          <h3>Информационная безопасность</h3>
+          <p>Ресурсы для изучения основ кибербезопасности и защиты данных.</p>
+          <ul class="resource-links">
+            <li><a href="https://owasp.org/" target="_blank" rel="noopener noreferrer">OWASP</a></li>
+            <li><a href="https://www.coursera.org/browse/cybersecurity" target="_blank" rel="noopener noreferrer">Coursera Cybersecurity</a></li>
+            <li><a href="https://portswigger.net/web-security" target="_blank" rel="noopener noreferrer">Web Security Academy</a></li>
+          </ul>
+        </article>
+        <article class="card resource-card">
+          <div class="resource-icon" aria-hidden="true">🛠️</div>
+          <h3>Инструменты разработчика</h3>
+          <p>Полезные инструменты и сервисы для программистов.</p>
+          <ul class="resource-links">
+            <li><a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer">Visual Studio Code</a></li>
+            <li><a href="https://stackoverflow.com/" target="_blank" rel="noopener noreferrer">Stack Overflow</a></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
     <section id="gallery">
       <div class="section-head">
-        <div class="section-kicker">Раздел 5</div>
+        <div class="section-kicker">Раздел 7</div>
         <h2>Фотогалерея</h2>
         <p class="section-desc">Фотографии с учебного процесса и профессиональной деятельности.</p>
       </div>
@@ -588,7 +660,7 @@
 
     <section id="feedback">
       <div class="section-head">
-        <div class="section-kicker">Раздел 6</div>
+        <div class="section-kicker">Раздел 8</div>
         <h2>Обратная связь</h2>
         <p class="section-desc">Гостевая книга и форма сообщения на странице сайта.</p>
       </div>
@@ -625,6 +697,9 @@
   </footer>
 
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
+  <div id="loading-overlay" class="loading-overlay" hidden>
+    <div class="loading-spinner" aria-label="Загрузка"></div>
+  </div>
 
   <script>
     const accessibilityStatus = document.getElementById('accessibility-status');

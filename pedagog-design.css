@@ -192,11 +192,42 @@ body.teacher-site {
   border-color: rgba(219, 227, 220, 0.84);
   background: rgba(255, 254, 250, 0.84);
   box-shadow: 0 16px 42px rgba(27, 43, 39, 0.055);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: fadeInUp 0.6s ease-out;
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.teacher-site .grid .card:nth-child(1) { animation-delay: 0.1s; }
+.teacher-site .grid .card:nth-child(2) { animation-delay: 0.2s; }
+.teacher-site .grid .card:nth-child(3) { animation-delay: 0.3s; }
+.teacher-site .grid .card:nth-child(4) { animation-delay: 0.4s; }
+.teacher-site .grid .card:nth-child(5) { animation-delay: 0.5s; }
+.teacher-site .grid .card:nth-child(6) { animation-delay: 0.6s; }
 
 .teacher-site .card {
   padding: clamp(20px, 2.5vw, 30px);
+}
+
+.teacher-site .student-certificate-item {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.teacher-site .announcement-item {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.teacher-site .group-attendance-result {
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .teacher-site .card:hover,
@@ -493,7 +524,7 @@ body.teacher-site {
 
 .teacher-site .material-filters {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.55fr);
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.4fr) minmax(140px, 0.35fr);
   gap: 8px 12px;
   margin-top: 15px;
 }
@@ -649,6 +680,43 @@ body.teacher-site {
 .teacher-site .upload-item .document-download:hover {
   color: #fff;
   background: var(--brand);
+}
+
+.teacher-site .document-category-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border: 1px solid rgba(23, 107, 87, 0.2);
+  border-radius: 999px;
+  color: var(--brand);
+  background: rgba(23, 107, 87, 0.06);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.teacher-site .upload-category-field {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper-2);
+}
+
+.teacher-site .upload-category-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.teacher-site .upload-category-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--paper);
 }
 
 .teacher-site .upload-item .document-preview-toggle {
@@ -1269,6 +1337,103 @@ body.teacher-site {
   .teacher-site .student-certificates-filters {
     grid-template-columns: 1fr;
   }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--line);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.high-contrast .loading-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.high-contrast .loading-spinner {
+  border-color: #fff;
+  border-top-color: #c7ff81;
+}
+
+.teacher-site .resource-card {
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.teacher-site .resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(27, 43, 39, 0.12);
+}
+
+.teacher-site .resource-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.teacher-site .resource-card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.teacher-site .resource-card p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.teacher-site .resource-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.teacher-site .resource-links li {
+  margin-bottom: 8px;
+}
+
+.teacher-site .resource-links a {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.teacher-site .resource-links a:hover {
+  color: var(--brand-2);
+  text-decoration: underline;
+}
+
+.high-contrast .resource-links a {
+  color: #c7ff81;
+}
+
+.high-contrast .resource-links a:hover {
+  color: #fff;
 }
 
 .teacher-site #performance-table-body input[data-field="group"] {

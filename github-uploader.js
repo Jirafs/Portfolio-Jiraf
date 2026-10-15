@@ -21,9 +21,11 @@
   const documentList = document.querySelector('#upload-list');
   const certificateList = document.querySelector('#certificate-list');
   const materialSearch = document.querySelector('#material-search');
+  const materialCategoryFilter = document.querySelector('#material-category-filter');
   const materialTypeFilter = document.querySelector('#material-type-filter');
   const materialResultsCount = document.querySelector('#material-results-count');
   const materialEmpty = document.querySelector('#material-empty');
+  const documentCategory = document.querySelector('#document-category');
   const announcementList = document.querySelector('#announcement-list');
   const announcementStatus = document.querySelector('#announcement-status');
   const announcementForm = document.querySelector('#announcement-form');
@@ -90,6 +92,11 @@
       toast.classList.remove('toast-show');
       setTimeout(() => toast.remove(), 300);
     }, 3000);
+  }
+
+  function showLoading(show = true) {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.hidden = !show;
   }
 
   function setAuthenticated(isAuthenticated, login = '') {
@@ -606,6 +613,7 @@
   async function removeStudentCertificate(certificate, button) {
     if (!accessToken || !window.confirm(`Удалить сертификат студента «${certificate.studentName}»?`)) return;
     button.disabled = true;
+    showLoading(true);
     try {
       // Delete file if exists
       if (certificate.filePath) {
@@ -631,6 +639,8 @@
       }
       showToast('Не удалось удалить сертификат', 'error');
       console.error('Не удалось удалить сертификат студента:', error);
+    } finally {
+      showLoading(false);
     }
   }
 
@@ -1888,6 +1898,7 @@
     const extension = file.name.toLowerCase().split('.').pop();
     item.dataset.extension = extension;
     item.dataset.search = file.name.toLocaleLowerCase('ru-RU');
+    item.dataset.category = file.category || 'other';
     const content = document.createElement('div');
     content.className = 'document-content';
     const link = document.createElement('a');
@@ -1897,6 +1908,19 @@
     link.rel = 'noopener noreferrer';
     link.textContent = `${file.name} (${formatSize(file.size)})`;
     content.append(link);
+
+    // Add category badge
+    const categoryNames = {
+      lesson: 'Уроки',
+      methodical: 'Методические разработки',
+      practical: 'Практические задания',
+      test: 'Тесты и контрольные',
+      other: 'Другое'
+    };
+    const categoryBadge = document.createElement('span');
+    categoryBadge.className = 'document-category-badge';
+    categoryBadge.textContent = categoryNames[file.category] || 'Другое';
+    content.append(categoryBadge);
 
     const preview = createPreview(file, url, extension);
     if (preview) {
@@ -1932,6 +1956,7 @@
   function filterDocuments() {
     if (!documentList) return;
     const query = materialSearch?.value.trim().toLocaleLowerCase('ru-RU') || '';
+    const selectedCategory = materialCategoryFilter?.value || 'all';
     const selectedType = materialTypeFilter?.value || 'all';
     const extensionsByType = {
       pdf: ['pdf'],
@@ -1943,9 +1968,10 @@
     let visible = 0;
     items.forEach((item) => {
       const matchesQuery = !query || item.dataset.search?.includes(query);
+      const matchesCategory = selectedCategory === 'all' || item.dataset.category === selectedCategory;
       const matchesType = selectedType === 'all'
         || extensionsByType[selectedType]?.includes(item.dataset.extension);
-      item.hidden = !(matchesQuery && matchesType);
+      item.hidden = !(matchesQuery && matchesCategory && matchesType);
       if (!item.hidden) visible += 1;
     });
     if (materialResultsCount) {
@@ -1985,28 +2011,33 @@
   }
 
   async function login(token) {
-    const user = await responseJson(await apiFetch('/user', {}, token));
-    if (user.login?.toLowerCase() !== config.ownerLogin.toLowerCase()) {
-      throw new Error(`Войдите в GitHub под владельцем репозитория @${config.ownerLogin}.`);
-    }
-    const repository = await responseJson(await apiFetch(`/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repository)}`, {}, token));
-    if (repository.permissions?.push === false) {
-      throw new Error('У токена нет права записи в этот репозиторий.');
-    }
+    showLoading(true);
+    try {
+      const user = await responseJson(await apiFetch('/user', {}, token));
+      if (user.login?.toLowerCase() !== config.ownerLogin.toLowerCase()) {
+        throw new Error(`Войдите в GitHub под владельцем репозитория @${config.ownerLogin}.`);
+      }
+      const repository = await responseJson(await apiFetch(`/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repository)}`, {}, token));
+      if (repository.permissions?.push === false) {
+        throw new Error('У токена нет права записи в этот репозиторий.');
+      }
 
-    const manifest = await getManifest(token);
-    const [performance, attendance, studentCerts] = await Promise.all([
-      getGroupPerformance(token),
-      getGroupAttendance(token),
-      getStudentCertificates(token)
-    ]);
-    accessToken = token;
-    uploadManifest = manifest.files;
-    groupPerformance = performance.groups;
-    attendanceSummaries = attendance.summaries;
-    studentCertificates = studentCerts.items;
-    setAuthenticated(true, user.login);
-    renderManifest(uploadManifest, true);
+      const manifest = await getManifest(token);
+      const [performance, attendance, studentCerts] = await Promise.all([
+        getGroupPerformance(token),
+        getGroupAttendance(token),
+        getStudentCertificates(token)
+      ]);
+      accessToken = token;
+      uploadManifest = manifest.files;
+      groupPerformance = performance.groups;
+      attendanceSummaries = attendance.summaries;
+      studentCertificates = studentCerts.items;
+      setAuthenticated(true, user.login);
+      renderManifest(uploadManifest, true);
+    } finally {
+      showLoading(false);
+    }
   }
 
   async function writeFile(file, type) {
@@ -2099,6 +2130,9 @@
     const path = `${config.uploadDirectory}/${type}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
     const uploaded = await putFile(file, path);
     const entry = { type, name: file.name, path, size: file.size, sha: uploaded.content.sha };
+    if (type === 'documents') {
+      entry.category = documentCategory?.value || 'other';
+    }
     if (groupSubjects) entry.groupSubjects = groupSubjects;
     let nextFiles;
 
@@ -2219,6 +2253,7 @@
   studentCertificateSearch?.addEventListener('input', renderStudentCertificates);
   studentCertificateGroupFilter?.addEventListener('change', renderStudentCertificates);
   materialSearch?.addEventListener('input', filterDocuments);
+  materialCategoryFilter?.addEventListener('change', filterDocuments);
   materialTypeFilter?.addEventListener('change', filterDocuments);
 
   dropzone?.addEventListener('dragover', (event) => {

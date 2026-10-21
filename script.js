@@ -1,23 +1,25 @@
+document.documentElement.classList.add('js');
 const menuButton = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.desktop-nav');
 const revealItems = document.querySelectorAll('.reveal');
 
 const projectData = {
-  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85', intro: 'Система управления фитнес-клубом с записью на тренировки и подписками.', task: 'Создать платформу для онлайн-записи, управления абонементами и отслеживания прогресса клиентов.', result: '+25% продаж абонементов, автоматизация работы администраторов, интеграция с CRM.', year: '2025', role: 'PHP, MySQL, Bootstrap, Stripe' },
-  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1600&q=85', intro: 'Современный сайт для косметического салона с онлайн-записью.', task: 'Разработать систему бронирования услуг, управления клиентами и портфолио работ.', result: '+30% новых клиентов через онлайн-запись, удобное управление расписанием.', year: '2025', role: 'PHP, Laravel, REST API' },
-  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=85', intro: 'Интернет-магазин мерча с каталогом товаров и корзиной покупок.', task: 'Создать полноценный e-commerce с каталогом, корзиной и интеграцией оплаты.', result: '+25% продаж через онлайн-канал, удобный интерфейс для клиентов.', year: '2025', role: 'PHP, JavaScript, MySQL, Payment Integration' }
+  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'demos/previews/fitness.svg', intro: 'Демонстрационный сайт фитнес-клуба с расписанием и выбором тренировки.', task: 'Показать расписание, направления занятий и сценарий выбора тренировки.', result: 'Фильтр расписания, выбор тренировки и подтверждение демо-записи без отправки данных.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
+  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'demos/previews/kosmetica.svg', intro: 'Демонстрационный сайт студии ухода с выбором услуги, специалиста и времени.', task: 'Показать услуги студии и сценарий выбора услуги, специалиста и времени.', result: 'Выбор услуги, специалиста и времени с расчётом стоимости демо-записи.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
+  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'demos/previews/pulse.svg', intro: 'Демонстрационный магазин мерча с каталогом, размерами и корзиной.', task: 'Показать каталог одежды, выбор размеров и расчёт корзины без реальной оплаты.', result: 'Фильтры каталога, выбор размеров, сортировка и корзина с сохранением на устройстве.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' }
 };
 
 const casePage = document.querySelector('.case-page');
 if (casePage) {
   const requestedProject = new URLSearchParams(window.location.search).get('project');
-  const projectKey = projectData[requestedProject] ? requestedProject : 'sostav';
+  const projectKey = Object.hasOwn(projectData, requestedProject) ? requestedProject : 'fitness';
   const project = projectData[projectKey];
   const projectOrder = Object.keys(projectData);
   const projectPosition = projectOrder.indexOf(projectKey);
   const previousKey = projectOrder[(projectPosition - 1 + projectOrder.length) % projectOrder.length];
   const nextKey = projectOrder[(projectPosition + 1) % projectOrder.length];
   document.title = `${project.title} — Jiraf`;
+  document.querySelector('#case-demo').href = `demos/${projectKey}/index.html`;
   document.querySelector('#case-index').textContent = project.index;
   document.querySelector('#case-category').textContent = project.category;
   document.querySelector('#case-title').textContent = project.title;

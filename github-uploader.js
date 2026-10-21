@@ -9,6 +9,7 @@
   const documentInput = document.querySelector('#document-input');
   const certificateInput = document.querySelector('#certificate-input');
   const certificateDropzone = document.querySelector('#certificate-dropzone');
+  const studentCertificateStatus = document.querySelector('#student-certificate-status');
   const studentCertificateForm = document.querySelector('#student-certificate-form');
   const studentCertificateFileInput = document.querySelector('#student-certificate-file');
   const studentCertificateSearch = document.querySelector('#student-certificate-search');
@@ -344,18 +345,64 @@
     return items;
   }
 
+  function todayIsoDate() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${now.getFullYear()}-${month}-${day}`;
+  }
+
+  function renderUpcomingDates() {
+    const upcomingList = document.querySelector('#upcoming-dates');
+    const upcomingEmpty = document.querySelector('#upcoming-dates-empty');
+    if (!upcomingList) return;
+
+    const today = todayIsoDate();
+    const upcoming = [...announcements]
+      .filter((item) => item.date >= today)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, 5);
+
+    upcomingList.replaceChildren();
+    upcoming.forEach((announcement) => {
+      const item = document.createElement('a');
+      item.className = 'upcoming-date-item';
+      item.href = '#announcements';
+      const date = document.createElement('time');
+      date.dateTime = announcement.date;
+      date.textContent = new Date(`${announcement.date}T00:00:00`).toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long'
+      });
+      const title = document.createElement('strong');
+      title.textContent = announcement.title;
+      item.append(date, title);
+      upcomingList.append(item);
+    });
+
+    if (upcomingEmpty) upcomingEmpty.hidden = upcoming.length > 0;
+  }
+
   function renderAnnouncements(ownerMode = Boolean(accessToken)) {
     if (!announcementList) return;
     announcementList.replaceChildren();
+    const today = todayIsoDate();
     const sorted = [...announcements].sort((a, b) => b.date.localeCompare(a.date));
     sorted.forEach((announcement) => {
       const item = document.createElement('article');
       item.className = 'announcement-item';
+      if (announcement.date >= today) item.classList.add('is-upcoming');
       const heading = document.createElement('div');
       heading.className = 'announcement-heading';
       const title = document.createElement('h3');
       title.textContent = announcement.title;
       heading.append(title);
+      if (announcement.date >= today) {
+        const badge = document.createElement('span');
+        badge.className = 'announcement-badge';
+        badge.textContent = 'Скоро';
+        heading.append(badge);
+      }
       if (ownerMode) {
         const remove = document.createElement('button');
         remove.className = 'announcement-remove';
@@ -379,6 +426,7 @@
       announcementStatus.hidden = sorted.length > 0;
       announcementStatus.textContent = 'Объявлений пока нет.';
     }
+    renderUpcomingDates();
   }
 
   async function getAnnouncements(token = accessToken) {
@@ -615,6 +663,10 @@
     button.disabled = true;
     showLoading(true);
     try {
+      studentCertificates = await updateStudentCertificates(
+        (items) => items.filter((item) => item.id !== certificate.id),
+        `Удалён сертификат студента: ${certificate.studentName}`
+      );
       // Delete file if exists
       if (certificate.filePath) {
         try {
@@ -624,10 +676,6 @@
         }
       }
 
-      studentCertificates = await updateStudentCertificates(
-        (items) => items.filter((item) => item.id !== certificate.id),
-        `Удалён сертификат студента: ${certificate.studentName}`
-      );
       renderStudentCertificates();
       showToast('Сертификат студента удалён', 'success');
     } catch (error) {
@@ -742,20 +790,13 @@
         certificate.fileSha = uploaded.content.sha;
       }
 
+      const previousCertificate = studentCertificates.find(item => item.id === editingId);
       studentCertificates = await updateStudentCertificates(
         (items) => {
           if (editingId) {
             // Update existing
             const existing = items.find(item => item.id === editingId);
             if (existing) {
-              // Delete old file if new file uploaded
-              if (file && existing.filePath && existing.filePath !== certificate.filePath) {
-                try {
-                  await deleteFile({ path: existing.filePath, sha: existing.fileSha });
-                } catch (fileError) {
-                  console.warn('Не удалось удалить старый файл:', fileError);
-                }
-              }
               return items.map(item => item.id === editingId ? { ...certificate, filePath: file ? certificate.filePath : existing.filePath, fileSha: file ? certificate.fileSha : existing.fileSha } : item);
             }
           }
@@ -765,6 +806,13 @@
         editingId ? `Изменён сертификат студента: ${certificate.studentName}` : `Добавлен сертификат студента: ${certificate.studentName}`
       );
 
+      if (file && previousCertificate?.filePath && previousCertificate.filePath !== certificate.filePath) {
+        try {
+          await deleteFile({ path: previousCertificate.filePath, sha: previousCertificate.fileSha });
+        } catch (error) {
+          console.warn('Сертификат сохранён, но старый файл остался в репозитории:', error);
+        }
+      }
       renderStudentCertificates();
       studentCertificateForm.reset();
       submitButton.textContent = 'Добавить сертификат';
@@ -1592,6 +1640,10 @@
     });
     if (ownerMode) totalRow.append(document.createElement('th'));
     performanceTableFoot.append(totalRow);
+    ['success', 'quality', 'trained', 'average'].forEach((key, index) => {
+      const output = document.querySelector(`[data-performance-metric="${key}"]`);
+      if (output) output.textContent = totalValues[index + 3];
+    });
   }
 
   performanceAddButton?.addEventListener('click', () => {

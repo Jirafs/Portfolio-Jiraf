@@ -331,3 +331,5 @@
     transition: none;
   }
 }
+
+body:not(.github-authenticated) .owner-only{display:none!important}

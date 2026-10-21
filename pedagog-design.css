@@ -1440,6 +1440,170 @@ body.teacher-site {
   color: #fff;
 }
 
+.teacher-site .schedule-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+}
+
+.teacher-site .schedule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.teacher-site .schedule-item {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.teacher-site .schedule-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.teacher-site .schedule-item time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(23, 107, 87, 0.1);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.teacher-site .schedule-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.teacher-site .schedule-item span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.teacher-site .upcoming-dates {
+  display: grid;
+  gap: 10px;
+}
+
+.teacher-site .upcoming-date-item {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(234, 240, 233, 0.55);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.teacher-site .upcoming-date-item:hover {
+  border-color: rgba(23, 107, 87, 0.35);
+  transform: translateY(-1px);
+}
+
+.teacher-site .upcoming-date-item time {
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.teacher-site .upcoming-dates-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.teacher-site .announcement-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(23, 107, 87, 0.12);
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.teacher-site .announcement-item.is-upcoming {
+  border-color: rgba(23, 107, 87, 0.28);
+}
+
+.teacher-site.dark-theme .schedule-item time,
+.teacher-site.dark-theme .announcement-badge {
+  background: rgba(217, 243, 90, 0.12);
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .upcoming-date-item {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+.teacher-site.dark-theme .upcoming-date-item time {
+  color: #d9f35a;
+}
+
+.teacher-site.dark-theme .schedule-item span,
+.teacher-site.dark-theme .upcoming-dates-empty {
+  color: #a0a0a0;
+}
+
+@media (max-width: 860px) {
+  .teacher-site .schedule-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-site .schedule-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .teacher-site .schedule-item time {
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teacher-site *,
+  .teacher-site *::before,
+  .teacher-site *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .teacher-site .card:hover,
+  .teacher-site .photo-card:hover,
+  .teacher-site .upcoming-date-item:hover,
+  .teacher-site .faq-item:hover {
+    transform: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+    border-top-color: var(--brand);
+  }
+}
+
 .teacher-site .faq-list {
   display: grid;
   gap: 12px;
@@ -2633,17 +2797,6 @@ body.lightbox-open {
 
   .teacher-site main.container {
     padding-bottom: 64px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .teacher-site *,
-  .teacher-site *::before,
-  .teacher-site *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }
 

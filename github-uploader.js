@@ -2158,6 +2158,7 @@
       uploadManifest = files;
     }
     renderManifest(uploadManifest, ownerMode);
+    if (!accessToken && uploadStatus) uploadStatus.textContent = '';
   }
 
   async function login(token) {

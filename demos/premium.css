@@ -1,0 +1,211 @@
+/* Three distinct art directions; shared behavior remains in each app.js. */
+body{font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:var(--onaccent)}
+.demo-bar{font-size:10px;letter-spacing:.1em;padding:8px 4%;line-height:1.5}
+.wrap{width:min(1440px,92%)}
+header{padding:25px 0;position:relative;z-index:3}
+nav{gap:26px}nav a{font-size:12px;font-weight:600;padding:8px 0;position:relative}
+nav a:after{content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .25s}
+nav a:hover:after,nav a[aria-current=page]:after{transform:scaleX(1)}
+nav [aria-current=page]{text-decoration:none}
+button,.button{transition:transform .2s,background .2s,box-shadow .2s;min-height:46px}
+button:hover:not(:disabled),.button:hover{transform:translateY(-2px)}
+.button span{display:inline-block;margin-left:30px}
+.text-link{font-weight:600;font-size:13px;border-bottom:1px solid currentColor;padding-bottom:7px;display:inline-block}
+.eyebrow{font-size:10px;letter-spacing:.16em;line-height:1.7}
+.section-aside{font-size:14px;line-height:1.7;color:var(--muted)}
+.hero-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-actions{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.card{transition:border-color .2s,transform .25s}
+a.card:hover{transform:translateY(-5px);border-color:var(--accent)}
+.page-heading{padding:72px 0 45px;max-width:920px}
+.page-heading h1{font-size:clamp(48px,6vw,86px);margin:20px 0;line-height:1.02}
+.form{gap:22px}.form label{font-size:12px;font-weight:600}
+.form input,.form select,.search-label input,.day-filter select,#sort{min-height:48px;border-radius:4px}
+.form input:focus,.form select:focus,.search-label input:focus{border-color:var(--accent)}
+.notice{line-height:1.7;font-size:14px}
+details summary{padding-right:30px;list-style:none}
+details summary:after{content:'+';float:right;font-weight:400}
+details[open] summary:after{content:'−'}
+footer{margin-top:40px;min-height:110px;align-items:center;letter-spacing:.02em}
+
+/* FITCLUB: acid yellow, athletic typography and hard editorial edges. */
+.fitness{--bg:#10120f!important;--ink:#f6f6ee!important;--muted:#a2a59a!important;--panel:#1b1e18!important;--accent:#d5f95b!important;--onaccent:#10120f!important;--line:#35382f!important}
+.fitness .logo{font-size:24px;letter-spacing:-1.5px;font-style:italic}
+.fitness .demo-bar{background:#d5f95b;color:#10120f}
+.fitness button,.fitness .button{border-radius:0;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.fitness h1,.fitness h2,.fitness h3{font-weight:900;letter-spacing:-.055em}
+.fitness .card,.fitness .session{border-radius:0}
+.hero-fit{position:relative;min-height:720px;display:flex;align-items:center;isolation:isolate;margin-top:12px;overflow:hidden}
+.hero-fit:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,12,7,.88),rgba(8,12,7,.5) 48%,rgba(8,12,7,.06));z-index:1}
+.hero-fit .hero-cover{object-position:65% center}
+.hero-content{position:relative;z-index:2;padding:64px 5%;width:100%}
+.hero-content h1{font-size:clamp(48px,6.9vw,108px);line-height:.94;max-width:1030px;margin:36px 0 28px}
+.hero-content h1 em{font-style:italic;color:var(--accent)}
+.hero-content>p:not(.eyebrow){color:#d9ddd0;font-size:16px;line-height:1.8;margin-bottom:32px}
+.hero-content .eyebrow{display:flex;align-items:center;gap:10px}
+.status-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block}
+.hero-bottom{position:absolute;bottom:25px;left:5%;right:5%;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.12em;color:#e4e6da;z-index:2}
+.sport-strip{background:var(--accent);color:#10120f;padding:22px 28px;display:flex;justify-content:space-between;gap:20px;font-weight:900;font-style:italic;font-size:clamp(14px,2vw,28px);letter-spacing:-.04em}
+.fitness .block{padding:90px 0}
+.fitness h2{font-size:clamp(32px,4.5vw,66px);line-height:1.02}
+.discipline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.discipline{background:#22291c;min-height:340px;padding:30px;position:relative;display:flex;align-items:end;overflow:hidden;transition:transform .25s}
+.discipline:hover{transform:translateY(-6px)}
+.discipline-no{position:absolute;left:30px;top:25px;font-size:11px;opacity:.65}
+.discipline-symbol{position:absolute;right:25px;top:20px;font-size:100px;line-height:1;color:var(--accent);transition:transform .4s}
+.discipline:hover .discipline-symbol{transform:rotate(12deg)}
+.discipline h3{font-size:32px;margin:12px 0 20px}
+.discipline p{font-size:9px;letter-spacing:.1em}.discipline div>span{font-size:12px}
+.discipline.light{background:#d5f95b;color:#151a0f}.discipline.light .discipline-symbol{color:#151a0f}
+.discipline.violet{background:#b8abdf;color:#211d2a}.discipline.violet .discipline-symbol{color:#211d2a}
+.club-editorial{gap:7%;align-items:center}
+.editorial-photo{position:relative;min-height:560px;overflow:hidden}
+.editorial-photo img{position:absolute;width:100%;height:100%;object-fit:cover;object-position:70% center}
+.editorial-photo span{position:absolute;bottom:30px;left:24px;font-size:34px;font-weight:900;color:#d5f95b;font-style:italic;max-width:300px;line-height:1}
+.editorial-copy>p:not(.eyebrow){color:var(--muted);line-height:1.8;max-width:440px}
+.feature-line{display:flex;gap:20px;border-top:1px solid var(--line);padding:20px 0;font-size:13px}
+.feature-line b{color:var(--accent);font-size:11px}.editorial-copy .button{margin-top:18px}
+.closing-fit{background:var(--accent);color:#14190e;padding:75px 5%;position:relative;margin:10px 0 30px}
+.closing-fit h2{font-size:clamp(40px,6.5vw,95px);max-width:1050px;margin-bottom:35px}
+.closing-fit .button{background:#151a0f;color:#d5f95b}
+.fitness .session{padding:24px;border-color:#414735;background:transparent;border-left:3px solid var(--accent)}
+.fitness .session h3{font-size:25px}.fitness .session p{font-size:12px}
+.fitness .filters button{font-size:11px;min-height:42px}.fitness .filters button[aria-pressed=true]{background:var(--accent);color:#12160f;border-color:var(--accent)}
+.fitness #plans .card:nth-child(2){background:var(--accent);color:#13190d}.fitness #plans .card:nth-child(2) p,.fitness #plans .card:nth-child(2) .chip{color:#3c4827}.fitness #plans .card:nth-child(2) .button{background:#13190d;color:var(--accent)}
+.fitness .price{font-size:36px;letter-spacing:-.05em}
+
+/* KOSMETICA: olive, ivory and quiet serif typography. */
+.kosmetica{--bg:#f8f5ee!important;--ink:#323a2b!important;--muted:#76776a!important;--panel:#efeee4!important;--accent:#404d36!important;--onaccent:#fffdf6!important;--line:#d8d9cb!important}
+.kosmetica .logo{font-family:Georgia,serif;font-size:32px;letter-spacing:-2px;font-weight:400}
+.kosmetica .demo-bar{background:#e9eadd;color:#4c5441}
+.kosmetica .button,.kosmetica button{border-radius:50px;font-size:12px;padding:16px 26px;font-weight:500}
+.kosmetica h1,.kosmetica h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.045em}
+.kosmetica h2 em,.kosmetica h1 em{font-weight:400;color:#7b816d}
+.kosmetica h2{font-size:clamp(38px,4.6vw,68px);line-height:1.12}
+.kosmetica nav a{font-weight:400}.kosmetica header{padding:24px 0 28px}
+.hero-beauty{display:grid;grid-template-columns:1fr 1.1fr;gap:5%;padding:60px 0 80px;align-items:center}
+.beauty-copy h1{font-size:clamp(65px,7.7vw,118px);line-height:.98;margin:28px 0}
+.beauty-copy .lead{font-size:15px;line-height:1.9;margin-bottom:28px}
+.beauty-caption{font-size:10px;letter-spacing:.12em;color:var(--muted);margin-top:28px}
+.beauty-image{position:relative;height:650px;border-radius:47% 47% 0 0;isolation:isolate}
+.beauty-image>img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.beauty-stamp{position:absolute;left:-35px;bottom:65px;width:160px;height:160px;background:#e6e8d6;border-radius:50%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-family:Georgia,serif;font-size:25px;line-height:1.1;transform:rotate(-9deg);border:6px solid var(--bg)}
+.beauty-stamp em{font-size:22px}.image-credit{position:absolute;bottom:20px;right:20px;font-size:8px;letter-spacing:.15em;background:rgba(248,245,238,.85);padding:8px}
+.beauty-manifesto{text-align:center;padding:75px 15% 95px;border-top:1px solid var(--line)}
+.beauty-manifesto h2{margin:28px 0}.beauty-manifesto>p:not(.eyebrow){max-width:540px;margin:0 auto 28px;color:var(--muted);font-size:15px;line-height:1.9}
+.beauty-menu{padding:65px 0 90px!important}
+.ritual-row{display:grid;grid-template-columns:45px 1fr 70px 100px 40px;gap:20px;align-items:center;border-top:1px solid var(--line);padding:30px 10px;transition:background .25s,padding .25s}
+.ritual-row:hover{background:#edefe3;padding-left:20px}
+.ritual-row h3{font-family:Georgia,serif;font-weight:400;font-size:29px;margin:0 0 8px;letter-spacing:-.04em}
+.ritual-row p{margin:0;color:var(--muted);font-size:12px}.ritual-row>span:not(.ritual-arrow){font-size:12px;color:var(--muted)}
+.ritual-row>b{font-size:15px;font-weight:500}.ritual-arrow{font-size:32px}.ritual-no{align-self:start;padding-top:5px}
+.beauty-invitation{text-align:center;padding:80px 20px;background:#e7eadb;border-radius:200px 200px 0 0;max-width:900px;margin:0 auto 50px}
+.beauty-invitation h2{font-size:clamp(55px,7vw,105px);line-height:1;margin:30px 0}.beauty-invitation .note{margin-top:30px;font-size:10px}
+.kosmetica .card{border-radius:0;background:transparent;border:0;border-top:1px solid var(--line);padding:30px 18px}
+.kosmetica .card h3{font-family:Georgia,serif;font-size:29px;font-weight:400;letter-spacing:-1px}
+.kosmetica #services .grid{gap:35px}.kosmetica #services .card{padding:130px 25px 30px;position:relative;background:linear-gradient(180deg,#e8eadd 0 90px,transparent 90px)}
+.kosmetica #services .card:before{position:absolute;top:25px;left:25px;font-family:Georgia,serif;font-size:42px;content:'01';color:#6e795e}
+.kosmetica #services .card:nth-child(2):before{content:'02'}.kosmetica #services .card:nth-child(3):before{content:'03'}
+.kosmetica #booking .form{background:#edefe2;padding:36px;border-radius:2px}
+.kosmetica .form input,.kosmetica .form select{background:#fafbf5;border-color:#d7dbca;border-radius:2px}
+.kosmetica .notice{background:#e4e9d8}.kosmetica .price{font-family:Georgia,serif;font-weight:400}
+
+/* PULSE: fashion editorial, cobalt and an actual product collection. */
+.pulse{--bg:#f6f5f1!important;--ink:#18191a!important;--muted:#71716c!important;--panel:#efeeea!important;--accent:#294dff!important;--onaccent:#fff!important;--line:#d8d8d0!important}
+.pulse .demo-bar{background:#191a1a;color:#e9e9df}
+.pulse .logo{font-size:34px;letter-spacing:-2.5px}.pulse header{padding:23px 0}
+.pulse h1,.pulse h2,.pulse h3{letter-spacing:-.055em}
+.pulse button,.pulse .button{border-radius:0;font-size:12px}
+.pulse .hero-fashion{position:relative;min-height:690px;margin:12px 0 0;overflow:hidden;isolation:isolate;color:white;background:#303133}
+.hero-fashion:before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(10,12,20,.63),rgba(10,12,20,.2) 55%,rgba(10,12,20,.02))}
+.hero-fashion .hero-cover{object-position:65% center}
+.fashion-label{position:absolute;left:4%;top:30px;font-size:9px;letter-spacing:.15em;z-index:2}
+.fashion-copy{position:relative;z-index:2;padding:220px 4% 60px}
+.fashion-copy h1{font-size:clamp(58px,7.9vw,120px);line-height:.92;font-weight:900;max-width:1000px;margin:0 0 25px}
+.fashion-copy h1 em{font-style:normal;-webkit-text-stroke:1px white;color:transparent}
+.fashion-copy p{font-size:14px;margin:0 0 30px}.fashion-copy .button{background:#fff;color:#191a1a}
+.drop-sticker{position:absolute;right:4%;top:35px;background:#294dff;padding:20px;color:#fff;z-index:2;transform:rotate(9deg);font-size:9px;text-align:center;letter-spacing:.1em;line-height:1.8}
+.drop-sticker b{font-size:32px;letter-spacing:-.06em}
+.fashion-marquee{display:flex;justify-content:space-between;padding:20px;gap:20px;background:#294dff;color:#fff;font-size:clamp(12px,1.7vw,23px);font-weight:800;letter-spacing:-.03em}
+.pulse .block{padding:75px 0}.pulse h2{font-size:clamp(35px,4vw,60px);line-height:1}
+.pulse .product-card{position:relative;padding:0;background:transparent;border:0;border-radius:0}
+.pulse .product-art{display:block;width:100%;height:auto;aspect-ratio:1;position:relative;border-radius:0;background-color:#e8e6e1;background-image:url('assets/products.png');background-size:300% 200%;background-position:var(--product-position);transition:filter .3s}
+.pulse .product-art:hover{filter:brightness(.96)}
+.pulse .product-art:after{display:none}
+.pulse .product-card h3{font-size:18px;letter-spacing:-.04em;margin:20px 0 6px;padding-right:30px}
+.pulse .product-card .price{font-size:14px;font-weight:500;margin:8px 0 18px}
+.pulse .favorite-button{font-size:11px;min-height:35px;margin:10px 0 0;border-color:#d4d4cc}
+.pulse .more-link{font-size:11px;display:inline-block;margin-top:4px}
+.pulse .product-actions{gap:8px}.pulse .product-actions select{border-radius:0;min-width:65px;font-size:12px}.pulse .product-actions button{min-height:42px}
+.pulse .filters{gap:8px}.pulse .filters button{font-size:11px;min-height:38px;padding:8px 17px}
+.pulse .filters button[aria-pressed=true]{background:#191a1a;color:#fff}
+.fashion-editorial{display:grid;grid-template-columns:1fr 1fr;background:#202326;color:#f6f5ef;align-items:center}
+.fashion-editorial>div{padding:55px 12%}.fashion-editorial h2{font-size:clamp(36px,3.8vw,58px);line-height:1.05}
+.fashion-editorial h2 em{font-style:normal;color:#a7b5ff}.fashion-editorial p:not(.eyebrow){font-size:14px;color:#b7b9bb;line-height:1.8;margin-bottom:30px}
+.fashion-editorial img{width:100%;height:560px;object-fit:cover;object-position:75% center}
+.category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.category-grid a{background:#deddd6;padding:28px;position:relative;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}
+.category-grid a:nth-child(2){background:#b7c1ef}.category-grid a:nth-child(3){background:#d6dec7}
+.category-grid span{font-size:9px;letter-spacing:.1em}.category-grid h3{font-size:32px;margin:35px 0 0}.category-grid b{position:absolute;right:25px;bottom:20px;font-size:32px;font-weight:400}
+.pulse-signoff{padding:60px 0;display:flex;justify-content:space-between;align-items:end;border-top:1px solid var(--line)}
+.pulse-signoff>span{font-size:clamp(70px,15vw,210px);line-height:.8;font-weight:900;letter-spacing:-.09em}.pulse-signoff>p{font-size:11px;text-align:right}
+.pulse #product-detail .product-card{max-width:none;padding:0;display:grid;grid-template-columns:1.2fr 1fr;column-gap:7%;align-content:start}
+.pulse #product-detail .product-art{grid-column:1;grid-row:1/8;height:auto;aspect-ratio:1}
+.pulse #product-detail h3{margin-top:20px;font-size:32px}.pulse #product-detail .price{font-size:23px;margin:16px 0 30px}
+.pulse #product-detail .product-card>p{grid-column:2;font-size:13px;line-height:1.8}
+.pulse #product-detail .product-card>.price{font-size:24px;line-height:1.3}
+.pulse .cart-row{padding:26px 0;font-size:14px}.pulse .quantity button{min-height:34px;font-size:12px}
+.pulse #checkout-form{padding:30px;background:#eeeFE8}.pulse aside.card{border:0;border-radius:0;padding:30px;background:#e8eaf1}
+.pulse #receipt{border-radius:0;border:0;border-left:4px solid #294dff;padding:40px;background:#eeefea}
+
+@media(min-width:761px) and (max-width:1100px){
+ header{align-items:start;gap:20px}nav{flex-wrap:wrap;justify-content:end;gap:12px 22px;max-width:70%}
+ .hero-fit{min-height:600px}.hero-content h1{font-size:7.6vw}
+ .beauty-image{height:550px}.beauty-copy h1{font-size:8.4vw}
+ .hero-fashion{min-height:580px}.fashion-copy{padding-top:210px}
+ .fashion-editorial>div{padding:40px 8%}.fashion-editorial img{height:480px}
+}
+@media(max-width:760px){
+ .wrap{width:92%}header{padding:20px 0;gap:15px;flex-direction:column;align-items:stretch}
+ nav{gap:7px 18px;max-width:none;justify-content:start;flex-wrap:wrap}nav a{font-size:11px;padding:5px 0}
+ .demo-bar{font-size:8px;letter-spacing:.06em;gap:18px}.demo-bar a{flex-shrink:0}
+ .page-heading{padding:40px 0 28px}.page-heading h1{font-size:43px;letter-spacing:-2px;overflow-wrap:break-word}
+ .lead{font-size:15px}.section-top{display:flex;align-items:start;flex-direction:column;gap:10px}
+ .block,.fitness .block,.pulse .block{padding:48px 0}.section-aside{font-size:12px}
+ .hero-fit{min-height:650px;margin-top:0}.hero-fit .hero-cover{object-position:68% center}
+ .hero-fit:before{background:linear-gradient(90deg,rgba(7,12,5,.75),rgba(7,12,5,.35)),linear-gradient(0deg,rgba(7,12,5,.65),transparent)}
+ .hero-content{padding:70px 6%}.hero-content h1{font-size:clamp(40px,10vw,66px);line-height:1.02;letter-spacing:-2px;margin:24px 0}
+ .hero-content>p:not(.eyebrow){font-size:13px}.hero-content .eyebrow{font-size:8px;letter-spacing:.08em}
+ .hero-actions{gap:20px}.hero-bottom{font-size:7px;gap:15px}.hero-bottom span:last-child{display:none}
+ .sport-strip{padding:16px;gap:10px;font-size:14px;flex-wrap:wrap}.sport-strip span:nth-child(3),.sport-strip span:nth-child(4){display:none}
+ .discipline-grid{grid-template-columns:1fr}.discipline{min-height:250px}.discipline-symbol{font-size:85px}.discipline h3{font-size:30px}
+ .club-editorial{gap:30px}.editorial-photo{min-height:380px}.editorial-copy h2{font-size:42px}
+ .closing-fit{padding:45px 7%}.closing-fit h2{font-size:37px;letter-spacing:-2px}
+ .fitness .session{padding:20px}.fitness .session h3{font-size:23px}
+ .hero-beauty{grid-template-columns:1fr;padding:35px 0 45px;gap:40px}
+ .beauty-copy h1{font-size:76px;margin:23px 0}.beauty-copy .eyebrow{font-size:8px}.beauty-copy .lead{font-size:14px}
+ .beauty-image{height:430px;width:94%;margin-left:6%;border-radius:45% 45% 0 0}
+ .beauty-stamp{width:120px;height:120px;left:-20px;bottom:45px;font-size:20px}.beauty-stamp em{font-size:17px}
+ .beauty-manifesto{padding:48px 5%}.beauty-manifesto h2{font-size:36px}.beauty-manifesto>p:not(.eyebrow){font-size:13px}
+ .ritual-row{grid-template-columns:25px 1fr 60px;gap:12px;padding:25px 0}.ritual-row h3{font-size:24px}.ritual-row>span:nth-child(3){grid-column:2;font-size:11px}.ritual-row>b{grid-column:3;grid-row:2;font-size:13px}.ritual-arrow{grid-column:3;grid-row:1;text-align:right}.ritual-row p{font-size:11px}
+ .beauty-invitation{padding:55px 20px;border-radius:140px 140px 0 0}.beauty-invitation h2{font-size:65px}
+ .kosmetica #booking .form{padding:25px}.kosmetica #services .grid{gap:20px}
+ .pulse .hero-fashion{min-height:630px;margin-top:0}.hero-fashion .hero-cover{object-position:60% center}
+ .hero-fashion:before{background:linear-gradient(0deg,rgba(0,0,0,.76),rgba(0,0,0,.05) 90%)}
+ .fashion-copy{padding:310px 6% 50px}.fashion-copy h1{font-size:clamp(42px,11vw,64px);letter-spacing:-2.5px;line-height:.98}.fashion-copy p{font-size:12px}
+ .fashion-label{font-size:7px;top:20px;left:6%}.drop-sticker{top:auto;bottom:30px;right:6%;padding:13px;font-size:7px}.drop-sticker b{font-size:26px}
+ .fashion-marquee{font-size:12px;padding:17px;justify-content:space-between}.fashion-marquee span:nth-child(3),.fashion-marquee span:nth-child(4){display:none}
+ .pulse #products,.pulse #featured-products,.pulse #favorites{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 12px}
+ .pulse .product-card{min-width:0}.pulse .product-card h3{font-size:15px;padding:0;margin-top:12px}.pulse .product-card .price{font-size:12px;margin:8px 0 12px}
+ .pulse .product-actions{flex-wrap:wrap;gap:5px}.pulse .product-actions select{width:100%;min-width:0;min-height:34px}.pulse .product-actions button{width:100%;flex-basis:100%;font-size:10px;min-height:37px;padding:8px}
+ .pulse .favorite-button{font-size:10px;padding:7px;min-height:34px}.pulse .more-link{font-size:10px}
+ .fashion-editorial{grid-template-columns:1fr}.fashion-editorial>div{padding:40px 8%}.fashion-editorial img{height:360px}.fashion-editorial h2{font-size:36px}
+ .category-grid{grid-template-columns:1fr}.category-grid a{min-height:180px}.category-grid h3{font-size:32px}
+ .pulse-signoff{padding:35px 0;gap:25px;align-items:start;flex-direction:column}.pulse-signoff>span{font-size:90px}.pulse-signoff>p{text-align:left}
+ .pulse #product-detail .product-card{display:block}.pulse #product-detail .product-art{height:auto;aspect-ratio:1}.pulse #product-detail h3{font-size:28px}
+ .pulse .cart-row{grid-template-columns:1fr;font-size:13px}.pulse .quantity{gap:8px}.pulse #checkout-form{padding:23px}.pulse aside.card{padding:23px}
+ .pulse #receipt{padding:25px}.pulse #receipt h2{font-size:24px;overflow-wrap:anywhere}
+ footer{margin-top:20px;align-items:start;min-height:100px;font-size:11px;gap:15px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

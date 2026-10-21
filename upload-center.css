@@ -350,3 +350,15 @@ body:not(.github-authenticated) .owner-only{display:none!important}
 .material-editor[hidden], .material-editor progress[hidden] { display: none; }
 body.github-authenticated .material-editor { display: grid; }
 @media(max-width:600px) { .material-editor { padding: 15px; } }
+
+body .material-browser.material-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0; text-align: left; }
+.material-browser .material-filter-field { display: grid; min-width: 0; gap: 7px; }
+.material-browser .material-filter-field:first-child { grid-column: 1 / -1; }
+.material-browser label { font-size: 13px; }
+body .material-browser input, body .material-browser select { box-sizing: border-box; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid var(--line, #63705a); border-radius: 10px; font: inherit; font-size: 14px; color: var(--text, var(--ink, #1c2318)); background: var(--paper, #f3f5ed); }
+.material-browser .material-results-count, .material-browser .material-empty { grid-column: 1 / -1; margin: 0; font-size: 13px; }
+.material-browser .material-reset { grid-column: 1 / -1; justify-self: start; padding: 9px 12px; border: 1px solid currentColor; border-radius: 8px; color: inherit; background: transparent; font: inherit; font-size: 13px; cursor: pointer; }
+.material-browser [hidden] { display: none !important; }
+.material-browser :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.material-file-info { margin: 5px 0; font-size: 12px; line-height: 1.6; opacity: .75; }
+@media(max-width:600px) { body .material-browser.material-filters { grid-template-columns: 1fr; } }

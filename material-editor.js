@@ -13,7 +13,26 @@ window.materialEditor = {
     return result;
   },
   search(file) {
-    return [file.name, file.title, file.description, file.subject, file.group].filter(Boolean).join(' ').toLocaleLowerCase('ru-RU');
+    return this.normalize([file.name, file.title, file.description, file.subject, file.group].filter(Boolean).join(' '));
+  },
+  normalize(value) {
+    return String(value || '').toLocaleLowerCase('ru-RU').replace(/ё/g, 'е');
+  },
+  publicationTime(file) {
+    const explicit = Date.parse(file.publishedAt || '');
+    if (Number.isFinite(explicit)) return explicit;
+    // Earlier uploads stored the upload timestamp in their generated path.
+    const match = String(file.path || '').match(/\/(\d{13})-/);
+    const timestamp = match ? Number(match[1]) : 0;
+    return Number.isFinite(new Date(timestamp).getTime()) ? timestamp : 0;
+  },
+  compare(a, b, order) {
+    const names = () => (a.title || a.name || '').localeCompare(b.title || b.name || '', 'ru', {numeric:true, sensitivity:'base'});
+    if (order === 'name') return names();
+    const first = this.publicationTime(a);
+    const second = this.publicationTime(b);
+    if (!first || !second) return first ? -1 : second ? 1 : names();
+    return (order === 'oldest' ? first - second : second - first) || names();
   },
   create(values, heading) {
     const form = document.createElement('form');

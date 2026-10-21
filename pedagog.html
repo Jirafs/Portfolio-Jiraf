@@ -196,8 +196,8 @@
       .photo-card img { height: 240px; }
     }
   </style>
-  <link rel="stylesheet" href="upload-center.css?v=15" />
-  <link rel="stylesheet" href="pedagog-design.css?v=16" />
+  <link rel="stylesheet" href="upload-center.css?v=16" />
+  <link rel="stylesheet" href="pedagog-design.css?v=17" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
 </head>
 <body class="teacher-site">
@@ -414,7 +414,7 @@
         <div class="teacher-upload-grid teacher-document-grid">
           <div class="teacher-upload-block">
             <h4>Методические материалы</h4>
-            <div class="material-filters" role="search" aria-label="Поиск по материалам">
+            <div class="material-filters material-browser" role="search" aria-label="Поиск по материалам">
               <div class="material-filter-field">
                 <label class="material-search-label" for="material-search">По названию, предмету или группе</label>
                 <input id="material-search" type="search" placeholder="Например: веб-приложений или 4ИСИП-1023" autocomplete="off" />
@@ -440,8 +440,17 @@
                   <option value="text">Текстовые файлы</option>
                 </select>
               </div>
+              <div class="material-filter-field">
+                <label class="material-search-label" for="material-sort">Порядок материалов</label>
+                <select id="material-sort">
+                  <option value="newest">Сначала новые</option>
+                  <option value="oldest">Сначала старые</option>
+                  <option value="name">По названию: А–Я</option>
+                </select>
+              </div>
+              <button id="material-reset" class="material-reset" type="button" hidden>Сбросить фильтры</button>
               <p id="material-results-count" class="material-results-count" aria-live="polite"></p>
-              <p id="material-empty" class="material-empty" hidden>По вашему запросу материалы не найдены.</p>
+              <p id="material-empty" class="material-empty" hidden>Материалы не найдены. Попробуйте изменить запрос или сбросить фильтры.</p>
             </div>
             <ul class="doc-list upload-list" id="upload-list" aria-live="polite"></ul>
             <div class="upload-dropzone teacher-upload-dropzone owner-only" id="upload-dropzone" hidden>
@@ -996,7 +1005,7 @@
     });
   </script>
   <script src="github-upload-config.js?v=3" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
-  <script src="material-editor.js?v=15"></script>
-  <script src="github-uploader.js?v=15" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
+  <script src="material-editor.js?v=16"></script>
+  <script src="github-uploader.js?v=16" onerror="console.error('Ошибка загрузки github-uploader.js')"></script>
 </body>
 </html>

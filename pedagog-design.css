@@ -1334,6 +1334,16 @@ body.teacher-site {
     min-width: 600px;
   }
 
+  .teacher-site .card > table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .teacher-site .card > table th,
+  .teacher-site .card > table td {
+    overflow-wrap: anywhere;
+  }
+
   .teacher-site .student-certificates-filters {
     grid-template-columns: 1fr;
   }

@@ -26,6 +26,8 @@
   const materialTypeFilter = document.querySelector('#material-type-filter');
   const materialResultsCount = document.querySelector('#material-results-count');
   const materialEmpty = document.querySelector('#material-empty');
+  const materialSort = document.querySelector('#material-sort');
+  const materialReset = document.querySelector('#material-reset');
   const documentCategory = document.querySelector('#document-category');
   const announcementList = document.querySelector('#announcement-list');
   const announcementStatus = document.querySelector('#announcement-status');
@@ -1980,6 +1982,8 @@
     item.dataset.extension = extension;
     item.dataset.search = window.materialEditor.search(file);
     item.dataset.category = file.category || 'other';
+    item.dataset.title = file.title || file.name;
+    item.dataset.publishedAt = String(window.materialEditor.publicationTime(file));
     const content = document.createElement('div');
     content.className = 'document-content';
     const link = document.createElement('a');
@@ -1987,10 +1991,23 @@
     link.href = fileViewUrl(file, url, extension);
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent = `${file.title || file.name} (${formatSize(file.size)})`;
+    link.textContent = type === 'documents' ? file.title || file.name : `${file.name} (${formatSize(file.size)})`;
     content.append(link);
 
     if (type === 'documents') {
+      const info = document.createElement('p');
+      info.className = 'material-file-info';
+      const published = window.materialEditor.publicationTime(file);
+      info.textContent = `${extension.toUpperCase()} · ${formatSize(file.size)} · `;
+      if (published) {
+        const date = document.createElement('time');
+        date.dateTime = new Date(published).toISOString();
+        date.textContent = `Опубликовано ${new Date(published).toLocaleDateString('ru-RU', {timeZone:'Europe/Moscow'})}`;
+        info.append(date);
+      } else {
+        info.append(document.createTextNode('Дата публикации не указана'));
+      }
+      content.append(info);
       for (const value of [file.description, [file.subject, file.group].filter(Boolean).join(' · '), file.title ? file.name : '']) {
         if (!value) continue;
         const detail = document.createElement('p');
@@ -2078,7 +2095,8 @@
 
   function filterDocuments() {
     if (!documentList) return;
-    const query = materialSearch?.value.trim().toLocaleLowerCase('ru-RU') || '';
+    const query = window.materialEditor.normalize(materialSearch?.value).trim();
+    const terms = query.split(/\s+/).filter(Boolean);
     const selectedCategory = materialCategoryFilter?.value || 'all';
     const selectedType = materialTypeFilter?.value || 'all';
     const extensionsByType = {
@@ -2090,7 +2108,7 @@
     const items = [...documentList.querySelectorAll('.upload-item')];
     let visible = 0;
     items.forEach((item) => {
-      const matchesQuery = !query || item.dataset.search?.includes(query);
+      const matchesQuery = terms.every((term) => item.dataset.search?.includes(term));
       const matchesCategory = selectedCategory === 'all' || item.dataset.category === selectedCategory;
       const matchesType = selectedType === 'all'
         || extensionsByType[selectedType]?.includes(item.dataset.extension);
@@ -2100,9 +2118,18 @@
     if (materialResultsCount) {
       materialResultsCount.textContent = items.length
         ? `Показано ${visible} из ${items.length} материалов`
-        : '';
+        : 'Материалов пока нет.';
     }
     if (materialEmpty) materialEmpty.hidden = visible > 0 || items.length === 0;
+    if (materialReset) materialReset.hidden = !query && selectedCategory === 'all' && selectedType === 'all';
+    const order = materialSort?.value || 'newest';
+    const previousOrder = [...items];
+    items.sort((first, second) => window.materialEditor.compare(
+      { title: first.dataset.title, publishedAt: Number(first.dataset.publishedAt) ? new Date(Number(first.dataset.publishedAt)).toISOString() : '' },
+      { title: second.dataset.title, publishedAt: Number(second.dataset.publishedAt) ? new Date(Number(second.dataset.publishedAt)).toISOString() : '' },
+      order
+    ));
+    if (items.some((item, index) => item !== previousOrder[index])) documentList.append(...items);
   }
 
   function renderManifest(files, ownerMode = false) {
@@ -2434,6 +2461,14 @@
   materialSearch?.addEventListener('input', filterDocuments);
   materialCategoryFilter?.addEventListener('change', filterDocuments);
   materialTypeFilter?.addEventListener('change', filterDocuments);
+  materialSort?.addEventListener('change', filterDocuments);
+  materialReset?.addEventListener('click', () => {
+    if (materialSearch) materialSearch.value = '';
+    if (materialCategoryFilter) materialCategoryFilter.value = 'all';
+    if (materialTypeFilter) materialTypeFilter.value = 'all';
+    filterDocuments();
+    materialSearch?.focus();
+  });
 
   dropzone?.addEventListener('dragover', (event) => {
     event.preventDefault();

@@ -115,7 +115,7 @@
     renderGroupPerformance();
     renderAnnouncements(isAuthenticated);
     renderStudentCertificates();
-    if (status && isAuthenticated) status.textContent = `Вход выполнен как @${login}. Токен хранится только в этой вкладке.`;
+    if (isAuthenticated) showStatus(`Вход выполнен как @${login}. Токен хранится только в этой вкладке.`);
   }
 
   function apiFetch(path, options = {}, token = accessToken) {
@@ -1803,13 +1803,42 @@
     preview.className = 'upload-preview';
     preview.hidden = true;
 
+    if (extension === 'txt' || extension === 'md') {
+      const text = document.createElement('pre');
+      text.setAttribute('aria-label', `Предпросмотр файла ${file.name}`);
+      text.setAttribute('role', 'status');
+      Object.assign(text.style, {
+        whiteSpace: 'pre-wrap', overflowWrap: 'anywhere',
+        padding: '16px', margin: '0', maxHeight: '480px', overflow: 'auto'
+      });
+      preview.append(text);
+      let textPromise;
+      return {
+        element: preview,
+        open() {
+          if (textPromise) return textPromise;
+          text.textContent = 'Загрузка текста…';
+          textPromise = fetch(url, { cache: 'no-store' })
+            .then(async (response) => {
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              text.textContent = await response.text();
+            })
+            .catch((error) => {
+              text.textContent = `Не удалось прочитать файл: ${error.message}. Закройте просмотр и откройте снова или используйте ссылку на файл.`;
+              textPromise = undefined;
+            });
+          return textPromise;
+        }
+      };
+    }
+
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
       const image = document.createElement('img');
       image.alt = `Предпросмотр файла ${file.name}`;
       image.loading = 'lazy';
       image.hidden = true;
       preview.append(image);
-      return { element: preview, open: () => { image.src = url; } };
+      return { element: preview, open: () => { image.hidden = false; image.src = url; } };
     }
 
     const frame = document.createElement('iframe');
@@ -1932,8 +1961,6 @@
           return pdfLoadPromise;
         }
       };
-    } else if (extension === 'txt' || extension === 'md') {
-      frame.src = url;
     } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
       frame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
     } else {

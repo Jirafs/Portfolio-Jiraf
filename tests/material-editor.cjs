@@ -15,7 +15,7 @@ function element(tag) {
   };
 }
 const document = { createElement: element, createTextNode: text=>({textContent:text}), querySelector: () => null };
-const window = {};
+const window = {materialActions:{create:()=>element('div'),shareUrl:()=>''}};
 vm.runInNewContext(fs.readFileSync(path.join(root, 'material-editor.js'), 'utf8'), { window, document });
 const editor = window.materialEditor;
 assert.equal(editor.metadata({title:'  Тест  ', category:'test'}).title, 'Тест');

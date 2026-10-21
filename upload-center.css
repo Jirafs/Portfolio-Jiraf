@@ -362,3 +362,14 @@ body .material-browser input, body .material-browser select { box-sizing: border
 .material-browser :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .material-file-info { margin: 5px 0; font-size: 12px; line-height: 1.6; opacity: .75; }
 @media(max-width:600px) { body .material-browser.material-filters { grid-template-columns: 1fr; } }
+
+.material-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 12px 0; }
+.material-actions button { padding: 10px 13px; border: 1px solid currentColor; border-radius: 9px; color: inherit; background: transparent; font: inherit; font-size: 13px; cursor: pointer; }
+.material-actions button:disabled { opacity: .6; cursor: wait; }
+.material-actions :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.material-actions .material-action-status { width: 100%; margin: 0; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.material-actions .material-action-status:empty { display: none; }
+.material-actions input { box-sizing: border-box; width: 100%; min-width: 0; padding: 10px; border: 1px solid currentColor; border-radius: 8px; color: inherit; background: transparent; font: inherit; font-size: 13px; }
+.material-actions [hidden] { display: none !important; }
+.upload-item.material-shared { outline: 2px solid var(--brand, #b0e878); outline-offset: 4px; scroll-margin-top: 110px; }
+.material-shared-notice { margin: 12px 0 20px; font-size: 14px; line-height: 1.6; }

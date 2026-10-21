@@ -1984,6 +1984,7 @@
     item.dataset.category = file.category || 'other';
     item.dataset.title = file.title || file.name;
     item.dataset.publishedAt = String(window.materialEditor.publicationTime(file));
+    item.dataset.path = file.path;
     const content = document.createElement('div');
     content.className = 'document-content';
     const link = document.createElement('a');
@@ -2029,6 +2030,10 @@
     categoryBadge.className = 'document-category-badge';
     categoryBadge.textContent = categoryNames[file.category] || 'Другое';
     content.append(categoryBadge);
+
+    if (type === 'documents') {
+      content.append(window.materialActions.create(file, url, window.materialActions.shareUrl(file, config.pagesBaseUrl)));
+    }
 
     const preview = createPreview(file, url, extension);
     if (preview) {
@@ -2159,6 +2164,29 @@
     }
     renderManifest(uploadManifest, ownerMode);
     if (!accessToken && uploadStatus) uploadStatus.textContent = '';
+    revealSharedMaterial();
+  }
+
+  let sharedMaterialOpened = false;
+  function revealSharedMaterial() {
+    if (sharedMaterialOpened || !documentList) return;
+    const path = new URLSearchParams(window.location.search).get('material');
+    if (!path) return;
+    sharedMaterialOpened = true;
+    const item = [...documentList.querySelectorAll('.upload-item')].find((entry) => entry.dataset.path === path);
+    const notice = document.createElement('p');
+    notice.className = 'material-shared-notice';
+    notice.setAttribute('role', 'status');
+    if (item) {
+      notice.textContent = 'Материал по вашей ссылке выделен в списке.';
+      item.classList.add('material-shared');
+      item.tabIndex = -1;
+      item.focus({ preventScroll: true });
+      item.scrollIntoView({ block: 'center', behavior: 'instant' });
+    } else {
+      notice.textContent = 'Материал по этой ссылке не найден. Возможно, он удалён. Остальные материалы доступны ниже.';
+    }
+    documentList.before(notice);
   }
 
   async function login(token) {

@@ -785,7 +785,9 @@
 
         const safeName = file.name.replace(/[\\/]/g, '_');
         const path = `${config.uploadDirectory}/student-certificates/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
-        const uploaded = await putFile(file, path);
+        onStage('Передача файла в GitHub…');
+    const uploaded = await putFile(file, path);
+    onStage('Файл передан. Сохранение описания и публикация…');
         certificate.filePath = path;
         certificate.fileSha = uploaded.content.sha;
       }
@@ -1976,7 +1978,7 @@
     item.className = 'upload-item';
     const extension = file.name.toLowerCase().split('.').pop();
     item.dataset.extension = extension;
-    item.dataset.search = file.name.toLocaleLowerCase('ru-RU');
+    item.dataset.search = window.materialEditor.search(file);
     item.dataset.category = file.category || 'other';
     const content = document.createElement('div');
     content.className = 'document-content';
@@ -1985,8 +1987,18 @@
     link.href = fileViewUrl(file, url, extension);
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent = `${file.name} (${formatSize(file.size)})`;
+    link.textContent = `${file.title || file.name} (${formatSize(file.size)})`;
     content.append(link);
+
+    if (type === 'documents') {
+      for (const value of [file.description, [file.subject, file.group].filter(Boolean).join(' · '), file.title ? file.name : '']) {
+        if (!value) continue;
+        const detail = document.createElement('p');
+        detail.className = 'material-detail';
+        detail.textContent = value;
+        content.append(detail);
+      }
+    }
 
     // Add category badge
     const categoryNames = {
@@ -2019,6 +2031,38 @@
     }
 
     if (ownerMode) {
+      if (type === 'documents') {
+        const edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'document-preview-toggle owner-only';
+        edit.textContent = 'Редактировать сведения';
+        edit.addEventListener('click', () => {
+          if (content.querySelector('.material-editor')) return;
+          const editor = window.materialEditor.create({ ...file, title: file.title || file.name }, 'Сведения о материале');
+          editor.cancel.addEventListener('click', () => { editor.form.remove(); edit.focus(); });
+          editor.form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!accessToken) { editor.status.textContent = 'Сначала войдите в GitHub.'; return; }
+            try {
+              const metadata = editor.read();
+              editor.busy(true);
+              editor.status.textContent = 'Сохранение сведений в GitHub…';
+              uploadManifest = await updateManifest((files) => {
+                if (!files.some((entry) => entry.path === file.path)) throw new Error('Материал уже удалён. Обновите страницу.');
+                return files.map((entry) => entry.path === file.path ? { ...entry, ...metadata, updatedAt: new Date().toISOString() } : entry);
+              }, `Обновлены сведения: ${metadata.title}`);
+              renderManifest(uploadManifest, Boolean(accessToken));
+              showStatus('Сведения сохранены. Файл остался прежним.');
+            } catch (error) {
+              editor.status.textContent = `Не удалось сохранить: ${error.message}`;
+              editor.busy(false);
+            }
+          });
+          content.append(editor.form);
+          editor.focus();
+        });
+        content.append(edit);
+      }
       const remove = document.createElement('button');
       remove.className = 'upload-remove owner-only';
       remove.type = 'button';
@@ -2119,11 +2163,14 @@
     }
   }
 
-  async function writeFile(file, type) {
+  async function writeFile(file, type, metadata, onStage = () => {}) {
     if (!accessToken) throw new Error('Сначала войдите в GitHub.');
     if (file.size > config.maxFileSize) throw new Error('Максимальный размер файла — 10 МБ.');
     const extension = file.name.toLowerCase().split('.').pop();
     if (!allowedExtensions[type]?.has(extension)) throw new Error('Этот формат файла не поддерживается.');
+    const materialMetadata = type === 'documents'
+      ? window.materialEditor.metadata(metadata || { title: file.name, category: documentCategory?.value })
+      : null;
     if (type === 'group-data' && extension === 'pdf') {
       const imported = await extractPerformanceSummaryFromPdf(file);
       if (imported.groupWarning && !window.confirm(`${imported.groupWarning}\n\nПродолжить, используя группу из имени файла?`)) {
@@ -2207,10 +2254,12 @@
     }
     const safeName = file.name.replace(/[\\/]/g, '_');
     const path = `${config.uploadDirectory}/${type}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+    onStage('Передача файла в GitHub…');
     const uploaded = await putFile(file, path);
+    onStage('Файл передан. Сохранение описания и публикация…');
     const entry = { type, name: file.name, path, size: file.size, sha: uploaded.content.sha };
     if (type === 'documents') {
-      entry.category = documentCategory?.value || 'other';
+      Object.assign(entry, materialMetadata, { publishedAt: new Date().toISOString() });
     }
     if (groupSubjects) entry.groupSubjects = groupSubjects;
     let nextFiles;
@@ -2235,6 +2284,57 @@
     const successMessage = `Файл «${file.name}» загружен в GitHub и опубликован.${summaryWarning}`;
     if (type === 'group-data' && groupExcelStatus) groupExcelStatus.textContent = successMessage;
     else showStatus(successMessage);
+  }
+
+  let documentDraft = null;
+  function prepareDocuments(files) {
+    if (!accessToken) { showStatus('Для загрузки войдите в GitHub.'); return; }
+    if (documentDraft) { showStatus('Сначала опубликуйте или отмените выбранные материалы.'); documentDraft.focus(); return; }
+    const queue = Array.from(files || []);
+    if (!queue.length) return;
+    let index = 0;
+    function next() {
+      if (index >= queue.length) {
+        documentDraft = null;
+        showStatus(`Публикация завершена. Сохранено файлов: ${queue.length}.`);
+        document.querySelector('label[for="document-input"]')?.focus();
+        return;
+      }
+      const file = queue[index];
+      const extension = file.name.toLowerCase().split('.').pop();
+      if (file.size > config.maxFileSize || !allowedExtensions.documents.has(extension)) {
+        showStatus(`Файл «${file.name}» не добавлен: разрешены документы до 10 МБ. Выберите файлы заново.`);
+        documentDraft = null;
+        return;
+      }
+      const editor = window.materialEditor.create({ title: file.name, category: documentCategory?.value }, `Файл ${index + 1} из ${queue.length}: ${file.name}`);
+      documentDraft = editor;
+      editor.save.textContent = 'Опубликовать материал';
+      editor.cancel.textContent = 'Отменить оставшиеся';
+      editor.cancel.addEventListener('click', () => {
+        editor.form.remove();
+        documentDraft = null;
+        showStatus(`Публикация отменена. Уже сохранено файлов: ${index}.`);
+      });
+      editor.form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        try {
+          const metadata = editor.read();
+          editor.busy(true);
+          editor.status.textContent = 'Подготовка файла…';
+          await writeFile(file, 'documents', metadata, (message) => { editor.status.textContent = message; });
+          editor.form.remove();
+          index += 1;
+          next();
+        } catch (error) {
+          editor.status.textContent = `Не удалось опубликовать: ${error.message}. Сведения сохранены в форме — можно повторить попытку.`;
+          editor.busy(false);
+        }
+      });
+      dropzone.after(editor.form);
+      editor.focus();
+    }
+    next();
   }
 
   async function handleFiles(files, type) {
@@ -2318,7 +2418,7 @@
   });
 
   documentInput?.addEventListener('change', (event) => {
-    handleFiles(event.currentTarget.files, 'documents');
+    prepareDocuments(event.currentTarget.files);
     event.currentTarget.value = '';
   });
   certificateInput?.addEventListener('change', (event) => {
@@ -2343,7 +2443,7 @@
   dropzone?.addEventListener('drop', (event) => {
     event.preventDefault();
     dropzone.classList.remove('is-dragover');
-    handleFiles(event.dataTransfer?.files, 'documents');
+    prepareDocuments(event.dataTransfer?.files);
   });
 
   refreshManifest().catch((error) => showStatus(`Не удалось загрузить список файлов: ${error.message}`, error));

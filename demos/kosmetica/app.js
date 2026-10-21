@@ -1,5 +1,10 @@
 const services={hydration:{name:'Ритуал увлажнения',price:3200,minutes:60},massage:{name:'Массаж лица',price:2600,minutes:45},consult:{name:'Консультация по уходу',price:1500,minutes:30}};
-const service=document.querySelector('#service'),date=document.querySelector('#date');const today=new Date();const localDate=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;date.min=localDate;date.value=localDate;
+document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{location.href=`booking.html?service=${encodeURIComponent(b.dataset.service)}`});
+const service=document.querySelector('#service'),date=document.querySelector('#date');
+if(service&&date){
+const requested=new URLSearchParams(location.search).get('service');if(Object.hasOwn(services,requested))service.value=requested;
+const today=new Date();const localDate=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;date.min=localDate;date.value=localDate;
 function summary(){const s=services[service.value];document.querySelector('#summary').textContent=`${s.name} · ${s.minutes} минут · ${s.price.toLocaleString('ru-RU')} ₽`;document.querySelector('#confirmation').hidden=true}
 document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{service.value=b.dataset.service;summary();document.querySelector('#booking').scrollIntoView();service.focus()});service.onchange=summary;
 document.querySelector('#booking-form').onsubmit=e=>{e.preventDefault();if(date.value<localDate){date.setCustomValidity('Выберите сегодняшний или будущий день.');date.reportValidity();return}date.setCustomValidity('');const out=document.querySelector('#confirmation');out.hidden=false;out.textContent=`Демо: ${services[service.value].name}, ${date.value.split('-').reverse().join('.')}, ${document.querySelector('#time').value}. Специалист: ${document.querySelector('#specialist').value}. Запись в студию не отправлена.`};date.oninput=()=>date.setCustomValidity('');summary();
+}

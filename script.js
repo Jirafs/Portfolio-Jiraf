@@ -4,9 +4,9 @@ const nav = document.querySelector('.desktop-nav');
 const revealItems = document.querySelectorAll('.reveal');
 
 const projectData = {
-  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'demos/previews/fitness.svg', intro: 'Демонстрационный сайт фитнес-клуба с расписанием и выбором тренировки.', task: 'Показать расписание, направления занятий и сценарий выбора тренировки.', result: 'Фильтр расписания, выбор тренировки и подтверждение демо-записи без отправки данных.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
-  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'demos/previews/kosmetica.svg', intro: 'Демонстрационный сайт студии ухода с выбором услуги, специалиста и времени.', task: 'Показать услуги студии и сценарий выбора услуги, специалиста и времени.', result: 'Выбор услуги, специалиста и времени с расчётом стоимости демо-записи.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
-  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'demos/previews/pulse.svg', intro: 'Демонстрационный магазин мерча с каталогом, размерами и корзиной.', task: 'Показать каталог одежды, выбор размеров и расчёт корзины без реальной оплаты.', result: 'Фильтры каталога, выбор размеров, сортировка и корзина с сохранением на устройстве.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' }
+  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'demos/previews/fitness.svg', intro: 'Многостраничный сервис фитнес-клуба: 5 страниц, фильтры расписания и личный план тренировок.', task: 'Показать расписание, направления занятий и сценарий выбора тренировки.', result: 'Фильтры по дню и направлению, переход от тренера к занятиям и сохранение личного плана.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
+  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'demos/previews/kosmetica.svg', intro: 'Простой сайт студии ухода: 4 страницы, услуги, знакомство со студией и демо-запись.', task: 'Показать услуги студии и сценарий выбора услуги, специалиста и времени.', result: 'Выбор услуги, специалиста и времени с расчётом стоимости демо-записи.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
+  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'demos/previews/pulse.svg', intro: 'Магазин из 7 страниц: каталог, карточка товара, избранное, корзина, оформление и демо-квитанция.', task: 'Показать каталог одежды, выбор размеров и расчёт корзины без реальной оплаты.', result: 'Поиск, фильтры, избранное, выбор размера, сохранение корзины, промокод, доставка и демо-оформление.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' }
 };
 
 const casePage = document.querySelector('.case-page');
@@ -41,6 +41,7 @@ if (casePage) {
   document.querySelector('#case-result').textContent = project.result;
   document.querySelector('#case-year').textContent = project.year;
   document.querySelector('#case-role').textContent = project.role;
+  document.querySelector('#case-level').textContent = ({fitness:'Средняя · 5 страниц · сохраняемый план',kosmetica:'Базовая · 4 страницы · сайт услуг',pulse:'Повышенная · 7 страниц · магазин'})[projectKey];
 }
 
 const yearElement = document.querySelector('#year');

@@ -6,7 +6,9 @@ const source = fs.readFileSync(path.join(__dirname, '..', 'github-uploader.js'),
 const start = source.indexOf('  function createPreview(');
 const end = source.indexOf('  function renderFile(', start);
 function element(tag) {
-  return {tag, style:{}, children:[], setAttribute(){}, append(...items){this.children.push(...items)}};
+  const result = {tag, style:{}, children:[],listeners:{}, setAttribute(){}, addEventListener(event,callback){this.listeners[event]=callback}, append(...items){this.children.push(...items)}};
+  if (tag === 'iframe') Object.defineProperty(result,'src',{get(){return this.savedSrc},set(value){this.savedSrc=value;this.srcWrites=(this.srcWrites||0)+1}});
+  return result;
 }
 async function run() {
   let requests = 0;
@@ -34,6 +36,16 @@ async function run() {
   const image = create({name:'test.png'}, 'https://example.invalid/test.png', 'png');
   image.open();
   assert.equal(image.element.children[0].hidden, false);
-  console.log('PASS: safe text rendering, cached preview, error retry, image visibility');
+  const office = create({name:'lesson.docx'}, 'https://example.invalid/lesson.docx?a=1&b=2', 'docx');
+  const frame = office.element.children.find(child=>child.tag==='iframe');
+  assert.equal(frame.src,undefined,'No Office URL before an explicit preview request');
+  office.open();
+  assert.ok(frame.src.includes(encodeURIComponent('https://example.invalid/lesson.docx?a=1&b=2')));
+  assert.equal(frame.srcWrites,1);
+  office.open();
+  assert.equal(frame.srcWrites,1,'Closing and reopening must not reload the viewer');
+  office.element.children.find(child=>child.className==='office-preview-actions').children[0].listeners.click();
+  assert.equal(frame.srcWrites,2,'Explicit retry reloads the viewer');
+  console.log('PASS: safe text, preview retry, image visibility, lazy Office load and explicit reload');
 }
 run().catch(error => {console.error(error);process.exitCode=1});

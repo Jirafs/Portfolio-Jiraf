@@ -44,6 +44,7 @@
   const groupAttendanceStatus = document.querySelector('#group-attendance-status');
   let accessToken = '';
   let uploadManifest = [];
+  let manifestVersion = 0;
   let announcements = [];
   let groupPerformance = [];
   let editingPerformanceGroup = null;
@@ -1966,7 +1967,29 @@
         }
       };
     } else if (['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'].includes(extension)) {
-      frame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+      const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+      const help = document.createElement('p');
+      help.className = 'office-preview-help';
+      help.textContent = 'Просмотр через Microsoft Office. Если документ не отображается, повторите загрузку просмотра или откройте его отдельно.';
+      const actions = document.createElement('div');
+      actions.className = 'office-preview-actions';
+      const reload = document.createElement('button');
+      reload.type = 'button';
+      reload.textContent = 'Загрузить просмотр заново';
+      reload.addEventListener('click', () => { frame.src = viewerUrl; });
+      const external = document.createElement('a');
+      external.href = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+      external.target = '_blank';
+      external.rel = 'noopener noreferrer';
+      external.textContent = 'Открыть просмотр отдельно ↗';
+      actions.append(reload, external);
+      preview.append(help, actions, frame);
+      let opened = false;
+      return { element: preview, open() {
+        if (opened) return;
+        opened = true;
+        frame.src = viewerUrl;
+      } };
     } else {
       return null;
     }
@@ -2138,6 +2161,9 @@
   }
 
   function renderManifest(files, ownerMode = false) {
+    manifestVersion += 1;
+    materialLoadState.hidden = true;
+    documentList?.setAttribute('aria-busy', 'false');
     if (documentList) documentList.replaceChildren();
     if (certificateList) certificateList.replaceChildren();
     if (groupExcelList) groupExcelList.replaceChildren();
@@ -2151,20 +2177,66 @@
     if (uploadStatus && !files.length) uploadStatus.textContent = 'Здесь появятся опубликованные материалы.';
   }
 
-  async function refreshManifest(ownerMode = false) {
-    const response = await fetch(`${rawRoot}/${encodePath(config.manifest)}?t=${Date.now()}`, { cache: 'no-store' });
-    if (response.status === 404) {
-      uploadManifest = [];
-    } else if (!response.ok) {
-      throw new Error(`Не удалось прочитать список файлов (${response.status}).`);
+  async function refreshManifest() {
+    const version = manifestVersion;
+    const token = accessToken;
+    let files;
+    if (token) {
+      files = (await getManifest(token)).files;
     } else {
-      const files = await response.json();
-      if (!Array.isArray(files)) throw new Error('Список файлов в GitHub имеет неверный формат.');
-      uploadManifest = files;
+      const response = await fetch(`${rawRoot}/${encodePath(config.manifest)}?t=${Date.now()}`, { cache: 'no-store' });
+      if (response.status === 404) files = [];
+      else if (!response.ok) throw new Error(`Не удалось прочитать список файлов (${response.status}).`);
+      else files = await response.json();
     }
-    renderManifest(uploadManifest, ownerMode);
+    // A slow public response must not overwrite a newer login or publication.
+    if (version !== manifestVersion || token !== accessToken) return;
+    if (!Array.isArray(files)) throw new Error('Список файлов в GitHub имеет неверный формат.');
+    uploadManifest = files;
+    renderManifest(uploadManifest, Boolean(accessToken));
     if (!accessToken && uploadStatus) uploadStatus.textContent = '';
     revealSharedMaterial();
+  }
+
+  let materialLoadPromise;
+  const materialLoadState = document.createElement('div');
+  materialLoadState.className = 'material-load-state';
+  materialLoadState.hidden = true;
+  const materialLoadMessage = document.createElement('p');
+  materialLoadMessage.setAttribute('role', 'status');
+  const materialRetry = document.createElement('button');
+  materialRetry.type = 'button';
+  materialRetry.textContent = 'Повторить загрузку материалов';
+  materialRetry.hidden = true;
+  materialRetry.addEventListener('click', loadMaterials);
+  materialLoadState.append(materialLoadMessage, materialRetry);
+  documentList?.before(materialLoadState);
+
+  function loadMaterials() {
+    if (materialLoadPromise) return materialLoadPromise;
+    const version = manifestVersion;
+    materialLoadState.hidden = false;
+    materialLoadMessage.textContent = 'Загружаю опубликованные материалы…';
+    materialRetry.hidden = true;
+    documentList?.setAttribute('aria-busy', 'true');
+    if (!accessToken && uploadStatus) uploadStatus.textContent = '';
+    materialLoadPromise = (async () => {
+      try {
+        await refreshManifest();
+        materialLoadState.hidden = true;
+      } catch (error) {
+        if (version !== manifestVersion) {
+          materialLoadState.hidden = true;
+          return;
+        }
+        materialLoadMessage.textContent = `Не удалось загрузить материалы: ${error.message}. Проверьте соединение и повторите попытку.`;
+        materialRetry.hidden = false;
+      } finally {
+        documentList?.setAttribute('aria-busy', 'false');
+        materialLoadPromise = undefined;
+      }
+    })();
+    return materialLoadPromise;
   }
 
   let sharedMaterialOpened = false;
@@ -2510,7 +2582,7 @@
     prepareDocuments(event.dataTransfer?.files);
   });
 
-  refreshManifest().catch((error) => showStatus(`Не удалось загрузить список файлов: ${error.message}`, error));
+  loadMaterials();
   refreshGroupPerformance().catch((error) => {
     if (performanceStatus) performanceStatus.textContent = `Не удалось загрузить сводку по группам: ${error.message}`;
     console.error('Не удалось загрузить сводку по группам:', error);

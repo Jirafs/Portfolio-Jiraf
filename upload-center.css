@@ -373,3 +373,12 @@ body .material-browser input, body .material-browser select { box-sizing: border
 .material-actions [hidden] { display: none !important; }
 .upload-item.material-shared { outline: 2px solid var(--brand, #b0e878); outline-offset: 4px; scroll-margin-top: 110px; }
 .material-shared-notice { margin: 12px 0 20px; font-size: 14px; line-height: 1.6; }
+
+.material-load-state { margin: 16px 0; padding: 14px; border: 1px solid currentColor; border-radius: 12px; }
+.material-load-state p, .office-preview-help { margin: 0 0 10px; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.material-load-state[hidden] { display: none !important; }
+.material-load-state button, .office-preview-actions button { padding: 10px 13px; border: 1px solid currentColor; border-radius: 8px; background: transparent; color: inherit; font: inherit; font-size: 13px; cursor: pointer; }
+.material-load-state [hidden] { display: none !important; }
+.office-preview-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0 16px; }
+.office-preview-actions a { font-size: 13px; }
+.material-load-state button:focus-visible, .office-preview-actions :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }

@@ -4,9 +4,113 @@ const nav = document.querySelector('.desktop-nav');
 const revealItems = document.querySelectorAll('.reveal');
 
 const projectData = {
-  fitness: { title: 'FitClub Pro', index: '01 / 03', category: 'Спортивный комплекс', image: 'demos/assets/fitness.png', intro: 'Многостраничный сервис фитнес-клуба: 5 страниц, фильтры расписания и личный план тренировок.', task: 'Показать расписание, направления занятий и сценарий выбора тренировки.', result: 'Фильтры по дню и направлению, переход от тренера к занятиям и сохранение личного плана.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
-  kosmetica: { title: 'Kosmetica', index: '02 / 03', category: 'Косметический салон', image: 'demos/assets/kosmetica.png', intro: 'Простой сайт студии ухода: 4 страницы, услуги, знакомство со студией и демо-запись.', task: 'Показать услуги студии и сценарий выбора услуги, специалиста и времени.', result: 'Выбор услуги, специалиста и времени с расчётом стоимости демо-записи.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' },
-  pulse: { title: 'Pulse Merch', index: '03 / 03', category: 'Интернет-магазин одежды', image: 'demos/assets/pulse.png', intro: 'Магазин из 7 страниц: каталог, карточка товара, избранное, корзина, оформление и демо-квитанция.', task: 'Показать каталог одежды, выбор размеров и расчёт корзины без реальной оплаты.', result: 'Поиск, фильтры, избранное, выбор размера, сохранение корзины, промокод, доставка и демо-оформление.', year: '2026', role: 'HTML, CSS, JavaScript · интерактивное демо' }
+  "kosmetica": {
+    "title": "Kosmetica",
+    "index": "01 / 04",
+    "category": "Сайт студии ухода",
+    "level": "01 · Базовый",
+    "pages": "4 страницы",
+    "image": "demos/screens/kosmetica-desktop.jpg",
+    "intro": "Сайт услуг с ясной структурой: знакомство со студией, выбор процедуры и демонстрационная запись.",
+    "task": "Помочь посетителю выбрать услугу и перейти к записи без лишних шагов.",
+    "result": "Каталог услуг, информация о студии и форма выбора услуги, специалиста и времени.",
+    "role": "HTML · CSS · JavaScript",
+    "system": "Семантические страницы, адаптивная сетка, переиспользуемые стили и обработка формы.",
+    "next": "Подключение реального расписания и отправки заявок на сервер.",
+    "features": [
+      "Адаптивная вёрстка четырёх страниц",
+      "Переход от услуги к заполненной форме",
+      "Выбор специалиста и времени",
+      "Расчёт стоимости демо-записи"
+    ],
+    "detail": "services.html",
+    "detailTitle": "Страница услуг",
+    "mobilePage": "booking.html",
+    "mobileTitle": "Запись на телефоне",
+    "boundary": "Форма демонстрирует сценарий записи. Заявки не отправляются, реальное расписание не подключено.",
+    "year": "2026"
+  },
+  "fitness": {
+    "title": "FitClub Pro",
+    "index": "02 / 04",
+    "category": "Сервис фитнес-клуба",
+    "level": "02 · Средний",
+    "pages": "5 страниц",
+    "image": "demos/screens/fitness-desktop.jpg",
+    "intro": "Из презентационного сайта — в сервис: расписание тренировок, фильтры и личный план занятий.",
+    "task": "Объединить выбор направления, тренера и расписания в один последовательный сценарий.",
+    "result": "Посетитель фильтрует занятия, переходит от тренера к расписанию и сохраняет тренировки в свой план.",
+    "role": "HTML · CSS · JavaScript · localStorage",
+    "system": "Общее состояние личного плана между страницами и фильтрация расписания по нескольким условиям.",
+    "next": "Серверное расписание, учёт свободных мест и подтверждение реальной записи.",
+    "features": [
+      "Фильтры по дню и направлению",
+      "Переход от тренера к его занятиям",
+      "Сохранение личного плана тренировок",
+      "Удаление занятий из плана"
+    ],
+    "detail": "schedule.html",
+    "detailTitle": "Расписание с фильтрами",
+    "mobilePage": "schedule.html",
+    "mobileTitle": "Расписание на телефоне",
+    "boundary": "Личный план сохраняется в браузере. Места в настоящем клубе не бронируются.",
+    "year": "2026"
+  },
+  "pulse": {
+    "title": "Pulse Merch",
+    "index": "03 / 04",
+    "category": "Интернет-магазин",
+    "level": "03 · Продвинутый",
+    "pages": "7 страниц",
+    "image": "demos/screens/pulse-desktop.jpg",
+    "intro": "Полный клиентский сценарий магазина: от поиска вещи и выбора размера до корзины и демо-квитанции.",
+    "task": "Связать каталог, избранное, размеры, корзину, промокод и оформление заказа.",
+    "result": "Корзина пересчитывает стоимость, скидку и доставку; выбранные товары доступны после обновления страницы.",
+    "role": "HTML · CSS · JavaScript · Web Storage",
+    "system": "Состояние товаров между страницами, идентификация позиций по размеру и производные расчёты корзины.",
+    "next": "Подключение каталога, склада, серверных заказов и платёжного провайдера.",
+    "features": [
+      "Поиск и фильтры каталога",
+      "Избранное и выбор размера",
+      "Корзина с количеством и пересчётом суммы",
+      "Промокод PULSE10 и доставка",
+      "Оформление без платежей и демо-квитанция"
+    ],
+    "detail": "catalog.html",
+    "detailTitle": "Каталог и выбор товаров",
+    "mobilePage": "catalog.html",
+    "mobileTitle": "Каталог на телефоне",
+    "boundary": "Это демонстрационный магазин. Оплата, отправка заказа и реальные остатки отсутствуют.",
+    "year": "2026"
+  },
+  "orbit": {
+    "title": "Orbit Workspace",
+    "index": "04 / 04",
+    "category": "Управление проектами",
+    "level": "04 · Сложный",
+    "pages": "5 разделов",
+    "image": "demos/screens/orbit-desktop.jpg",
+    "intro": "Приложение для команды: задачи, канбан-доска, чек-листы, сроки и аналитика из общего набора данных.",
+    "task": "Спроектировать связанное приложение с несколькими сущностями и согласованным состоянием на пяти экранах.",
+    "result": "Создание, редактирование и удаление задач, перенос между статусами, расчёт показателей, импорт и экспорт пространства.",
+    "role": "HTML · CSS · JavaScript · DOM API · Web Storage",
+    "system": "Отдельная модель данных с валидацией, вычисляемая аналитика, журнал действий и синхронизация вкладок через storage events.",
+    "next": "Серверная база, аккаунты, права доступа и совместная работа в реальном времени.",
+    "features": [
+      "CRUD задач и канбан с перетаскиванием",
+      "Исполнители, приоритеты, сроки и чек-листы",
+      "Поиск и пять совместимых фильтров",
+      "Аналитика по текущим задачам",
+      "Создание проектов и участников",
+      "Проверяемый импорт и экспорт JSON"
+    ],
+    "detail": "board.html",
+    "detailTitle": "Канбан-доска",
+    "mobilePage": "board.html",
+    "mobileTitle": "Редактирование задачи на телефоне",
+    "boundary": "Сложное клиентское демо. Данные хранятся локально; серверная синхронизация, авторизация и права доступа не реализованы.",
+    "year": "2026"
+  }
 };
 
 const casePage = document.querySelector('.case-page');
@@ -25,13 +129,13 @@ if (casePage) {
   document.querySelector('#case-title').textContent = project.title;
   document.querySelector('#case-image').src = project.image;
   document.querySelector('#case-image').alt = project.title;
-  document.querySelector('#case-gallery-one').src = project.image;
-  document.querySelector('#case-gallery-one').alt = `${project.title} — основной визуальный материал`;
-  document.querySelector('#case-gallery-two').src = project.image.replace('w=1600', 'w=900&h=1100');
-  document.querySelector('#case-gallery-two').alt = `${project.title} — деталь проекта`;
+  document.querySelector('#case-gallery-one').src = `demos/screens/${projectKey}-detail.jpg`;
+  document.querySelector('#case-gallery-one').alt = `${project.title} — ${project.detailTitle}`;
+  document.querySelector('#case-gallery-two').src = `demos/screens/${projectKey}-mobile.jpg`;
+  document.querySelector('#case-gallery-two').alt = `${project.title} — ${project.mobileTitle}`;
   document.querySelector('#case-intro').textContent = project.intro;
   document.querySelector('#case-statement').innerHTML = `${project.title} как цельный <em>опыт.</em>`;
-  document.querySelector('#case-direction').textContent = `Работа с направлением «${project.category}», чтобы сделать задачу понятной и заметной.`;
+  document.querySelector('#case-direction').textContent = project.task;
   document.querySelector('#case-launch').textContent = project.result;
   document.querySelector('#case-prev').href = `project.html?project=${previousKey}`;
   document.querySelector('#case-prev').lastChild.textContent = projectData[previousKey].title;
@@ -41,7 +145,16 @@ if (casePage) {
   document.querySelector('#case-result').textContent = project.result;
   document.querySelector('#case-year').textContent = project.year;
   document.querySelector('#case-role').textContent = project.role;
-  document.querySelector('#case-level').textContent = ({fitness:'Средняя · 5 страниц · сохраняемый план',kosmetica:'Базовая · 4 страницы · сайт услуг',pulse:'Повышенная · 7 страниц · магазин'})[projectKey];
+  document.querySelector('#case-level').textContent = `${project.level} · ${project.pages}`;
+  document.querySelector('#case-system').textContent = project.system;
+  document.querySelector('#case-next-step').textContent = project.next;
+  document.querySelector('#case-boundary').textContent = project.boundary;
+  document.querySelector('#case-functions').textContent = project.features.map(feature => '✓ ' + feature).join('\n');
+  document.querySelector('#case-screen-one-label').textContent = project.detailTitle;
+  document.querySelector('#case-screen-two-label').textContent = project.mobileTitle;
+  document.querySelector('#case-screen-one-link').href = `demos/${projectKey}/${project.detail}`;
+  document.querySelector('#case-screen-two-link').href = `demos/${projectKey}/${project.mobilePage}`;
+
 }
 
 const yearElement = document.querySelector('#year');

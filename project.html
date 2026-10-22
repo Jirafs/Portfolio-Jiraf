@@ -22,6 +22,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jirafs.github.io/Portfolio-Jiraf/project.html" />
 <meta property="og:image" content="https://jirafs.github.io/Portfolio-Jiraf/daniil-photo.jpg" />
+<link rel="stylesheet" href="portfolio-projects.css?v=1">
 </head>
 <body>
   <div class="site-shell case-page">
@@ -33,7 +34,7 @@
     </header>
     <main>
       <section class="case-hero">
-        <div class="case-kicker"><span id="case-index">01 / 03</span><span id="case-category">Интерактивное демо</span></div>
+        <div class="case-kicker"><span id="case-index">01 / 04</span><span id="case-category">Интерактивное демо</span></div>
         <h1 id="case-title">Проект</h1>
         <a class="case-demo-link" id="case-demo" href="demos/fitness/index.html">Открыть интерактивное демо ↗</a>
         <div class="case-hero-image"><img id="case-image" src="demos/assets/fitness.png" alt="Схема демо FitClub Pro" /></div>
@@ -51,12 +52,13 @@
         <h2 id="case-statement">Проект как цельный <em>опыт.</em></h2>
         <div class="case-process">
           <article><span>01 / Направление</span><h3>Смысл</h3><p id="case-direction"></p></article>
-          <article><span>02 / Система</span><h3>Форма</h3><p>Адаптивные страницы, понятная навигация и интерактивные сценарии на JavaScript.</p></article>
+          <article><span>02 / Система</span><h3>Форма</h3><p id="case-system"></p></article>
           <article><span>03 / Запуск</span><h3>Результат</h3><p id="case-launch"></p></article>
-          <article><span>04 / После</span><h3>В развитие</h3><p>Следующий этап — подключение серверной части, реальных данных и необходимых бизнес-интеграций.</p></article>
+          <article><span>04 / После</span><h3>В развитие</h3><p id="case-next-step"></p></article>
         </div>
       </section>
-      <p class="case-illustration-note" style="padding:24px 8vw;margin:0">Визуальные материалы концепции. Рабочие страницы и функции доступны по ссылке «Открыть интерактивное демо».</p><section class="case-gallery" aria-label="Иллюстрации к направлению проекта"><img id="case-gallery-one" src="demos/assets/fitness.png" alt="Схема демо FitClub Pro" /><img id="case-gallery-two" src="demos/assets/fitness.png" alt="Схема демо FitClub Pro" /></section>
+      <section class="case-functions"><div><p class="eyebrow">ПРОВЕРЬТЕ В ДЕМО</p><h2>Что действительно<br>работает.</h2></div><p id="case-functions"></p><p class="case-boundary" id="case-boundary"></p></section>
+      <section class="case-gallery real-screens" aria-label="Реальные экраны проекта"><figure><a id="case-screen-one-link" href="demos/fitness/schedule.html"><img id="case-gallery-one" src="demos/screens/fitness-detail.jpg" alt="Расписание фитнес-клуба" loading="lazy"></a><figcaption id="case-screen-one-label"></figcaption></figure><figure class="mobile-screen"><a id="case-screen-two-link" href="demos/fitness/schedule.html"><img id="case-gallery-two" src="demos/screens/fitness-mobile.jpg" alt="Расписание на телефоне" loading="lazy"></a><figcaption id="case-screen-two-label"></figcaption></figure></section>
       <section class="case-cta"><h2>Есть идея?<br><em>Обсудим.</em></h2><a href="index.html#contact">Начать разговор ↗</a></section>
       <nav class="case-switcher" aria-label="Навигация по проектам">
         <a id="case-prev" href="index.html#work"><small>Предыдущий</small>Все проекты</a>
@@ -65,6 +67,6 @@
     </main>
     <footer class="case-footer"><a href="index.html#work">← Вернуться к проектам</a><span>Jiraf / Selected work</span><a href="index.html#contact">Обсудить проект ↗</a></footer>
   </div>
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>

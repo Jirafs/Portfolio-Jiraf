@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jirafs.github.io/Portfolio-Jiraf/sitemap.xml

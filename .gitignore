@@ -2,3 +2,5 @@
 firebase-config.js
 firebase-storage.js
 supabase-storage.js
+node_modules/
+test-artifacts/

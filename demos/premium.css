@@ -130,7 +130,7 @@ footer{margin-top:40px;min-height:110px;align-items:center;letter-spacing:.02em}
 .fashion-marquee{display:flex;justify-content:space-between;padding:20px;gap:20px;background:#294dff;color:#fff;font-size:clamp(12px,1.7vw,23px);font-weight:800;letter-spacing:-.03em}
 .pulse .block{padding:75px 0}.pulse h2{font-size:clamp(35px,4vw,60px);line-height:1}
 .pulse .product-card{position:relative;padding:0;background:transparent;border:0;border-radius:0}
-.pulse .product-art{display:block;width:100%;height:auto;aspect-ratio:1;position:relative;border-radius:0;background-color:#e8e6e1;background-image:url('assets/products.png');background-size:300% 200%;background-position:var(--product-position);transition:filter .3s}
+.pulse .product-art{display:block;width:100%;height:auto;aspect-ratio:1;position:relative;border-radius:0;background-color:#e8e6e1;background-image:url('assets/products.webp');background-size:300% 200%;background-position:var(--product-position);transition:filter .3s}
 .pulse .product-art:hover{filter:brightness(.96)}
 .pulse .product-art:after{display:none}
 .pulse .product-card h3{font-size:18px;letter-spacing:-.04em;margin:20px 0 6px;padding-right:30px}

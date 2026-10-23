@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <base href="../">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Приложение для команды: задачи, канбан-доска, чек-листы, сроки и аналитика из общего набора данных.">
+  <title>Orbit Workspace — кейс Jiraf</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦒</text></svg>">
+  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="redesign.css" />
+  <style>
+    .case-page{background:var(--paper);min-height:100vh}.case-topbar{border-color:var(--line)}.case-back{font:11px var(--mono);text-transform:uppercase}.case-back:hover{color:var(--acid)}.case-hero{padding:8vw 8vw 5vw}.case-kicker{display:flex;justify-content:space-between;gap:20px;font:11px var(--mono);text-transform:uppercase;color:var(--acid);margin:0 0 55px}.case-hero h1{font-size:clamp(70px,14vw,220px);line-height:.82;letter-spacing:-.1em;margin:0;color:var(--ink);font-weight:600}.case-hero h1 em{font-family:Georgia,serif;color:var(--orange);font-weight:400}.case-hero-image{margin-top:8vw;aspect-ratio:16/8;overflow:hidden;background:var(--acid)}.case-hero-image img,.case-gallery img{width:100%;height:100%;object-fit:cover;display:block}.case-info{display:grid;grid-template-columns:1fr 1fr;gap:8vw;padding:7vw 8vw;border-top:1px solid var(--line)}.case-intro{font-size:clamp(22px,3vw,42px);line-height:1.08;max-width:560px;margin:0}.case-details{display:grid;grid-template-columns:1fr 1fr;gap:30px;border-top:1px solid var(--line);padding-top:20px}.case-details dt{font:10px var(--mono);text-transform:uppercase;color:var(--orange);margin-bottom:9px}.case-details dd{margin:0;font-size:14px;line-height:1.45}.case-story{display:grid;grid-template-columns:1fr 1fr;gap:8vw;padding:7vw 8vw;background:var(--acid);color:var(--paper)}.case-story h2{font-size:clamp(34px,5vw,72px);line-height:.92;letter-spacing:-.07em;margin:0;max-width:520px}.case-story h2 em{font-family:Georgia,serif;color:var(--orange);font-weight:400}.case-process{display:grid;grid-template-columns:1fr 1fr;gap:0 25px}.case-process article{border-top:1px solid rgba(23,37,34,.4);padding:18px 0 28px}.case-process span{font:10px var(--mono);color:var(--orange)}.case-process h3{font-size:20px;margin:16px 0 8px}.case-process p{font-size:13px;line-height:1.5;margin:0;max-width:240px}.case-gallery{display:grid;grid-template-columns:1.25fr .75fr;gap:12px;padding:8vw;background:var(--paper)}.case-gallery img{min-height:360px;background:var(--orange)}.case-gallery img:last-child{margin-top:8vw}.case-cta{padding:8vw;background:var(--orange);color:var(--paper);display:flex;justify-content:space-between;align-items:end;gap:30px}.case-cta h2{font-size:clamp(44px,8vw,120px);line-height:.85;letter-spacing:-.09em;margin:0}.case-cta h2 em{font-family:Georgia,serif;font-weight:400}.case-cta a{border-bottom:1px solid var(--paper);font:11px var(--mono);padding-bottom:8px;white-space:nowrap}.case-switcher{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}.case-switcher a{padding:5vw 8vw;font:11px var(--mono);text-transform:uppercase;transition:background .25s,color .25s}.case-switcher a:last-child{text-align:right;border-left:1px solid var(--line)}.case-switcher a:hover{background:var(--acid);color:var(--paper)}.case-switcher small{display:block;color:var(--orange);margin-bottom:15px}.case-footer{display:flex;justify-content:space-between;align-items:center;padding:24px 8vw;border-top:1px solid var(--line);font:11px var(--mono);text-transform:uppercase}.case-footer a:hover,.case-cta a:hover{color:var(--acid)}
+    @media(max-width:700px){.case-topbar{padding:0 7vw}.case-topbar .desktop-nav,.case-topbar .availability{display:none}.case-back{display:block}.case-hero{padding:22vw 7vw 12vw}.case-kicker{margin-bottom:35px;font-size:9px}.case-hero h1{font-size:23vw}.case-hero-image{margin-top:18vw;aspect-ratio:1/1.15}.case-info,.case-story{display:block;padding:18vw 7vw}.case-intro{font-size:10vw;margin-bottom:16vw}.case-details{gap:25px 15px}.case-details dd{font-size:12px}.case-process{margin-top:15vw}.case-process h3{font-size:17px}.case-gallery{display:block;padding:7vw}.case-gallery img{min-height:0;aspect-ratio:1/1.1}.case-gallery img:last-child{margin:12px 0 0}.case-cta{display:block;padding:18vw 7vw}.case-cta h2{font-size:19vw;margin-bottom:14vw}.case-switcher a{padding:10vw 7vw;font-size:9px}.case-footer{padding:22px 7vw;font-size:8px}.case-footer span{display:none}}
+  </style>
+  <link rel="stylesheet" href="polished-theme.css?v=6" />
+<link rel="canonical" href="https://jirafs.github.io/Portfolio-Jiraf/cases/orbit.html">
+<meta property="og:title" content="Orbit Workspace — кейс Jiraf">
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://jirafs.github.io/Portfolio-Jiraf/cases/orbit.html">
+<meta property="og:image" content="https://jirafs.github.io/Portfolio-Jiraf/demos/screens/orbit-desktop.jpg">
+<link rel="stylesheet" href="portfolio-projects.css?v=2">
+<link rel="stylesheet" href="fonts/fonts.css?v=1">
+<meta property="og:description" content="Приложение для команды: задачи, канбан-доска, чек-листы, сроки и аналитика из общего набора данных."><meta property="og:locale" content="ru_RU"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Orbit Workspace — кейс Jiraf"><meta name="twitter:description" content="Приложение для команды: задачи, канбан-доска, чек-листы, сроки и аналитика из общего набора данных."><meta name="twitter:image" content="https://jirafs.github.io/Portfolio-Jiraf/demos/screens/orbit-desktop.jpg"></head>
+<body>
+  <div class="site-shell case-page" data-project="orbit">
+    <header class="topbar case-topbar">
+      <a class="brand" href="index.html#top" aria-label="На главную">JIRAF<span>.</span></a>
+      <a class="case-back" href="index.html#work">← Все проекты</a>
+      <a class="case-back" href="pedagog.html">Педагогический сайт</a>
+      <a class="availability" href="index.html#contact"><span class="pulse"></span> Открыт к проектам</a>
+    </header>
+    <a class="case-skip" href="cases/orbit.html#case-main">К содержимому кейса</a><main id="case-main">
+      <section class="case-hero">
+        <div class="case-kicker"><span id="case-index">04 / 04</span><span id="case-category">Управление проектами</span></div>
+        <h1 id="case-title">Orbit Workspace</h1>
+        <a class="case-demo-link" id="case-demo" href="demos/orbit/index.html">Открыть интерактивное демо ↗</a>
+        <div class="case-hero-image"><img id="case-image" src="demos/screens/orbit-desktop.jpg" alt="Orbit Workspace: главный экран" width="1536" height="1024" decoding="async"></div>
+      </section>
+      <section class="case-info">
+        <p class="case-intro" id="case-intro">Приложение для команды: задачи, канбан-доска, чек-листы, сроки и аналитика из общего набора данных.</p>
+        <dl class="case-details">
+          <div><dt>Задача</dt><dd id="case-task">Спроектировать связанное приложение с несколькими сущностями и согласованным состоянием на пяти экранах.</dd></div>
+          <div><dt>Результат</dt><dd id="case-result">Создание, редактирование и удаление задач, перенос между статусами, расчёт показателей, импорт и экспорт пространства.</dd></div>
+          <div><dt>Год</dt><dd id="case-year">2026</dd></div>
+          <div><dt>Технологии</dt><dd id="case-role">HTML · CSS · JavaScript · DOM API · Web Storage</dd></div><div><dt>Сложность демо</dt><dd id="case-level">04 · Сложный · 5 разделов</dd></div>
+        </dl>
+      </section>
+      <section class="case-walkthrough"><div><p class="eyebrow">ЧТО ПОПРОБОВАТЬ</p><h2>Пройдите короткий сценарий.</h2><a class="case-demo-link" id="case-start" href="demos/orbit/board.html">Попробовать в демо ↗</a></div><p id="case-try">1. Создайте задачу, назначьте исполнителя и добавьте пункты чек-листа.
+
+2. Отметьте пункт и смените статус на доске: мышью, через селектор карточки или форму.
+
+3. Откройте аналитику: показатели пересчитаются по текущим задачам.
+
+4. В «Пространстве» экспортируйте JSON. Его можно импортировать обратно после подтверждения.</p></section>
+      <section class="case-story">
+        <h2 id="case-statement">Orbit Workspace: решения и поведение</h2>
+        <div class="case-process">
+          <article><span>01 / Направление</span><h3>Смысл</h3><p id="case-direction">Спроектировать связанное приложение с несколькими сущностями и согласованным состоянием на пяти экранах.</p></article>
+          <article><span>02 / Система</span><h3>Архитектура</h3><p id="case-system">Отдельная модель данных с валидацией, вычисляемая аналитика, журнал действий и синхронизация вкладок через storage events.</p></article>
+          <article><span>03 / Запуск</span><h3>Результат</h3><p id="case-launch">Создание, редактирование и удаление задач, перенос между статусами, расчёт показателей, импорт и экспорт пространства.</p></article>
+          <article><span>04 / После</span><h3>В развитие</h3><p id="case-next-step">Серверная база, аккаунты, права доступа и совместная работа в реальном времени.</p></article>
+        </div>
+      </section>
+      <section class="case-functions"><div><p class="eyebrow">ПРОВЕРЬТЕ В ДЕМО</p><h2>Что действительно<br>работает.</h2></div><p id="case-functions">✓ CRUD задач и канбан с перетаскиванием
+✓ Исполнители, приоритеты, сроки и чек-листы
+✓ Поиск и пять совместимых фильтров
+✓ Аналитика по текущим задачам
+✓ Создание проектов и участников
+✓ Проверяемый импорт и экспорт JSON</p><p class="case-boundary" id="case-boundary">Сложное клиентское демо. Данные хранятся локально; серверная синхронизация, авторизация и права доступа не реализованы.</p></section>
+      <section class="case-gallery real-screens" aria-label="Реальные экраны проекта"><figure><a id="case-screen-one-link" href="demos/orbit/board.html"><img id="case-gallery-one" src="demos/screens/orbit-detail.jpg" alt="Orbit Workspace: Канбан-доска" loading="lazy" width="1425" height="891" decoding="async"></a><figcaption id="case-screen-one-label">Канбан-доска</figcaption></figure><figure class="mobile-screen"><a id="case-screen-two-link" href="demos/orbit/board.html"><img id="case-gallery-two" src="demos/screens/orbit-mobile.jpg" alt="Orbit Workspace: Редактирование задачи на телефоне" loading="lazy" width="375" height="812" decoding="async"></a><figcaption id="case-screen-two-label">Редактирование задачи на телефоне</figcaption></figure></section>
+      <section class="case-cta"><h2>Есть идея?<br><em>Обсудим.</em></h2><a href="index.html#contact">Начать разговор ↗</a></section>
+      <nav class="case-switcher" aria-label="Навигация по проектам">
+        <a id="case-prev" href="cases/pulse.html"><small>Предыдущий</small>Pulse Merch</a>
+        <a id="case-next" href="cases/kosmetica.html"><small>Следующий</small>Kosmetica</a>
+      </nav>
+    </main>
+    <footer class="case-footer"><a href="index.html#work">← Вернуться к проектам</a><span>Jiraf / Selected work</span><a href="index.html#contact">Обсудить проект ↗</a></footer>
+  </div>
+  <script src="script.js?v=6"></script>
+</body>
+</html>

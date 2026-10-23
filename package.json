@@ -1,0 +1,16 @@
+{
+  "name": "jiraf-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio and four browser-local demos for GitHub Pages",
+  "scripts": {
+    "test": "node scripts/check.cjs",
+    "format": "prettier --write script.js demos/orbit/*.js demos/orbit/app.css demos/fitness/app.js demos/kosmetica/app.js demos/pulse/*.js tests/orbit*.cjs tests/pulse*.cjs tests/cases.cjs scripts/*.cjs portfolio-projects.css",
+    "build:cases": "node scripts/build-cases.cjs",
+    "optimize:images": "node scripts/optimize-images.cjs"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "sharp": "0.35.5"
+  }
+}

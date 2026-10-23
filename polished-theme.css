@@ -93,6 +93,7 @@ body:not(.teacher-site) .hero-image-wrap::before {
 }
 
 body:not(.teacher-site) .hero-image-wrap img {
+  height: auto;
   filter: saturate(0.7) contrast(1.05);
 }
 
@@ -572,6 +573,7 @@ body.teacher-site .container {
   body:not(.teacher-site) .hero h1 {font-size: clamp(42px, 13vw, 72px); line-height: 1.03;}
   body:not(.teacher-site) .circle-link {margin: 24px 0; width: 100px; height: 100px;}
   body:not(.teacher-site) .hero-image-wrap {max-height: 280px;}
+  body:not(.teacher-site) .hero-image-wrap img {max-height: 280px;}
 }
 
 .case-demo-link{display:inline-block;padding:16px 24px;background:var(--acid);color:var(--paper);border-radius:8px;font-weight:700;margin-bottom:24px}.case-info{align-items:start}.case-info>.case-demo-link{grid-column:1/-1;justify-self:start}

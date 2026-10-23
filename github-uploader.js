@@ -2015,7 +2015,7 @@
     link.href = fileViewUrl(file, url, extension);
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent = type === 'documents' ? file.title || file.name : `${file.name} (${formatSize(file.size)})`;
+    link.textContent = type === 'documents' ? file.title || file.name : `${file.title || file.name} (${formatSize(file.size)})`;
     content.append(link);
 
     if (type === 'documents') {

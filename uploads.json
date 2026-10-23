@@ -4,13 +4,72 @@
     "name": "SERTIFICATED.pdf",
     "path": "uploads/certificates/1791453937719-fb27bb68-85f2-439c-9e26-ae973411f263-SERTIFICATED.pdf",
     "size": 697265,
-    "sha": "5cc75bb9c3cdb7181e32cf6190eb5cfc7cabe9e2"
+    "sha": "5cc75bb9c3cdb7181e32cf6190eb5cfc7cabe9e2",
+    "title": "Медиа-компетенции: от текста до телеэфира — 18 часов"
   },
   {
     "type": "documents",
-    "name": "METREC_09.02.11_React_чистый_доработан.docx",
-    "path": "uploads/documents/1791456154706-aa4fea60-55d9-40dd-a5eb-1e0c87dee113-METREC_09.02.11_React_чистый_доработан.docx",
-    "size": 353442,
-    "sha": "8374439d21eff8e569b8e9fe82ea6e2d5354f497"
+    "name": "react-methodical-guide-2026.docx",
+    "path": "uploads/documents/react-methodical-guide-2026.docx",
+    "size": 366235,
+    "sha": "8858458ac53bc0cb302356bf4f01b3aabba981ee",
+    "title": "Разработка веб-приложений на базе библиотеки React",
+    "description": "Методическое пособие для специальности 09.02.11: организация курса, лекционные, практические и лабораторные занятия. Редакция из педагогического портфолио 2026 года.",
+    "category": "methodical",
+    "subject": "Разработка веб-приложений на React",
+    "group": "",
+    "publishedAt": "2026-10-23T07:15:46.588339+00:00"
+  },
+  {
+    "type": "documents",
+    "name": "xml-lesson-plan-2026.docx",
+    "path": "uploads/documents/xml-lesson-plan-2026.docx",
+    "size": 38906,
+    "sha": "43cc275a365b28cac94646e43147030b02933389",
+    "title": "XML: технологическая карта открытого занятия",
+    "description": "Лабораторная работа № 10 «Разработка Web-приложения с помощью XML». Цели, компетенции, этапы 60-минутного занятия и практическая работа в парах.",
+    "category": "lesson",
+    "subject": "МДК.09.01 Проектирование и разработка веб-приложений",
+    "group": "3ИСИП-623",
+    "publishedAt": "2026-10-23T07:15:46.588339+00:00"
+  },
+  {
+    "type": "documents",
+    "name": "xml-open-lesson-2026.pptx",
+    "path": "uploads/documents/xml-open-lesson-2026.pptx",
+    "size": 81442,
+    "sha": "c66d2434e0b4ca2ce83ff2ebfb05f6806140aa22",
+    "title": "XML: презентация открытого урока",
+    "description": "13 слайдов: структура XML, загрузка через fetch, DOMParser, вывод данных, типичные ошибки и практический кейс.",
+    "category": "lesson",
+    "subject": "МДК.09.01 Проектирование и разработка веб-приложений",
+    "group": "3ИСИП-623",
+    "publishedAt": "2026-10-23T07:15:46.588339+00:00"
+  },
+  {
+    "type": "documents",
+    "name": "operating-systems-test-bank-2026.docx",
+    "path": "uploads/documents/operating-systems-test-bank-2026.docx",
+    "size": 52770,
+    "sha": "505eb58bffaa9e7731959e5b9e4203eb9bbcad2d",
+    "title": "Операционные системы и среды: банк тестовых заданий",
+    "description": "Методический банк из 95 заданий по 19 темам. Содержит эталоны ответов и материалы для преподавателя.",
+    "category": "test",
+    "subject": "ОП.01 Операционные системы и среды",
+    "group": "",
+    "publishedAt": "2026-10-23T07:15:46.588339+00:00"
+  },
+  {
+    "type": "certificates",
+    "name": "altadm-edu-certificate-2025.png",
+    "path": "uploads/certificates/altadm-edu-certificate-2025.png",
+    "size": 682197,
+    "sha": "573ece5145470c0af20adebd35a0dceb35f9475d",
+    "title": "ALTADM-EDU: администрирование ОС «Альт»",
+    "description": "",
+    "category": "other",
+    "subject": "",
+    "group": "",
+    "publishedAt": "2026-10-23T07:15:46.588339+00:00"
   }
 ]

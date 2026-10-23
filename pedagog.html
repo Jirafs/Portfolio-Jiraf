@@ -196,7 +196,7 @@
   <link rel="stylesheet" href="upload-center.css?v=18" />
   <link rel="stylesheet" href="pedagog-design.css?v=17" />
   <link rel="stylesheet" href="polished-theme.css?v=4" />
-<link rel="stylesheet" href="teaching-evidence.css?v=1">
+<link rel="stylesheet" href="teaching-evidence.css?v=2">
 </head>
 <body class="teacher-site">
   <a class="skip-link" href="#main-content">Перейти к содержимому</a>
@@ -347,10 +347,10 @@
           <h3>Учебный календарь</h3>
           <ul class="schedule-list" aria-label="Ключевые даты">
             <li class="schedule-item">
-              <time datetime="2026-10">Октябрь 2026</time>
+              <span class="schedule-date">По объявлению</span>
               <div>
                 <strong>Открытый урок</strong>
-                <span>Тема: обеспечение безопасности веб-приложений — в подготовке</span>
+                <span>Дата следующего открытого занятия будет опубликована в объявлениях.</span>
               </div>
             </li>
             <li class="schedule-item">
@@ -383,6 +383,10 @@
         <h2>Методическая копилка</h2>
         <p class="section-desc">Материалы проведённого открытого занятия по XML, пособие по React и банк заданий по операционным системам.</p>
       </div>
+      <article class="card lesson-feature">
+        <button type="button" class="lesson-feature-image" data-gallery-open="2" aria-label="Рассмотреть кадр открытого урока по XML" aria-haspopup="dialog"><img src="assets/lesson-xml-2026/lesson-xml-teacher-thumb.webp" alt="Объяснение практического кейса у интерактивной панели" width="800" height="450" loading="lazy" decoding="async"></button>
+        <div><p class="evidence-label">21 мая 2026 · Лабораторная работа № 10</p><h3>От структуры данных к веб-приложению</h3><p>Создание XML, загрузка данных через JavaScript и вывод результата на страницу. Материалы занятия и кадры практической работы собраны ниже.</p><div class="evidence-links"><a href="#photo-gallery">Посмотреть кадры занятия ↓</a><a href="uploads/documents/react-methodical-guide-2026.docx" download>Пособие по React · DOCX</a></div></div>
+      </article>
       <div class="grid grid-2">
         <article class="card">
           <h3>Открытый урок</h3>
@@ -743,7 +747,7 @@
       <div class="faq-list">
         <details class="faq-item">
           <summary>Как связаться с преподавателем?</summary>
-          <p>Напишите на hello@jiraf-project.ru или подготовьте письмо через форму внизу страницы. Отправка выполняется в вашей почтовой программе.</p>
+          <p>Напишите на <a href="mailto:hello@jiraf-project.ru">hello@jiraf-project.ru</a> или на вторую рабочую почту <a href="mailto:dnmikhajlov@fa.ru">dnmikhajlov@fa.ru</a>. В форме внизу страницы можно выбрать адрес для письма.</p>
         </details>
         <details class="faq-item">
           <summary>Где найти методические материалы?</summary>
@@ -769,37 +773,13 @@
     </section>
 
     <section id="gallery">
-      <div class="section-head">
-        <div class="section-kicker">Раздел 8</div>
-        <h2>Фотогалерея</h2>
-        <p class="section-desc">Фотографии с учебного процесса и профессиональной деятельности.</p>
-      </div>
+      <div class="section-head"><div class="section-kicker">Раздел 8</div><h2>Открытый урок в кадрах</h2><p class="section-desc">Кадры из видеозаписи занятия «Разработка Web-приложения с помощью XML», 21 мая 2026 года. Нажмите на фото, чтобы рассмотреть его целиком.</p></div>
       <div class="gallery" id="photo-gallery">
-        <figure class="photo-card">
-          <button type="button" class="photo-trigger" data-gallery-index="0" aria-label="Открыть: Портрет преподавателя">
-            <img src="daniil-photo.jpg" alt="Михайлов Даниил Николаевич" style="object-position:center top;" loading="lazy" width="640" height="640" decoding="async">
-          </button>
-          <figcaption><b>Портрет преподавателя</b><span>Михайлов Даниил Николаевич</span></figcaption>
-        </figure>
-        <figure class="photo-card">
-          <button type="button" class="photo-trigger" data-gallery-index="1" aria-label="Открыть: Работа с группой">
-            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=85" alt="Работа с группой на занятии" loading="lazy" />
-          </button>
-          <figcaption><b>Работа с группой</b><span>Интерактивные методы обучения</span></figcaption>
-        </figure>
-        <figure class="photo-card">
-          <button type="button" class="photo-trigger" data-gallery-index="2" aria-label="Открыть: Совещание преподавателей">
-            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=85" alt="Совещание преподавателей" loading="lazy" />
-          </button>
-          <figcaption><b>Совещание преподавателей</b><span>Обсуждение методических вопросов</span></figcaption>
-        </figure>
-        <figure class="photo-card">
-          <button type="button" class="photo-trigger" data-gallery-index="3" aria-label="Открыть: Компьютерный класс">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=85" alt="Компьютерный класс" loading="lazy" />
-          </button>
-          <figcaption><b>Компьютерный класс</b><span>Оборудованная учебная аудитория</span></figcaption>
-        </figure>
-      </div>
+        <figure class="photo-card"><button type="button" class="photo-trigger" data-gallery-index="0" aria-label="Открыть: Работа с группой" aria-haspopup="dialog"><img src="assets/lesson-xml-2026/lesson-group-work-thumb.webp" data-full="assets/lesson-xml-2026/lesson-group-work.webp" alt="Работа с группой: кадр открытого урока по XML" width="800" height="450" loading="lazy" decoding="async"><span class="photo-zoom" aria-hidden="true">Рассмотреть ↗</span></button><figcaption><b>Работа с группой</b><span>Практическая работа в парах за ноутбуками. Открытый урок, 21 мая 2026 года.</span></figcaption></figure>
+        <figure class="photo-card"><button type="button" class="photo-trigger" data-gallery-index="1" aria-label="Открыть: Компьютерный класс" aria-haspopup="dialog"><img src="assets/lesson-xml-2026/lesson-computer-class-thumb.webp" data-full="assets/lesson-xml-2026/lesson-computer-class.webp" alt="Компьютерный класс: кадр открытого урока по XML" width="800" height="450" loading="lazy" decoding="async"><span class="photo-zoom" aria-hidden="true">Рассмотреть ↗</span></button><figcaption><b>Компьютерный класс</b><span>Рабочие места и оборудование аудитории во время занятия.</span></figcaption></figure>
+        <figure class="photo-card"><button type="button" class="photo-trigger" data-gallery-index="2" aria-label="Открыть: Объяснение темы XML" aria-haspopup="dialog"><img src="assets/lesson-xml-2026/lesson-xml-teacher-thumb.webp" data-full="assets/lesson-xml-2026/lesson-xml-teacher.webp" alt="Объяснение темы XML: кадр открытого урока по XML" width="800" height="450" loading="lazy" decoding="async"><span class="photo-zoom" aria-hidden="true">Рассмотреть ↗</span></button><figcaption><b>Объяснение темы XML</b><span>Разбор практического кейса у интерактивной панели.</span></figcaption></figure>
+        <figure class="photo-card"><button type="button" class="photo-trigger" data-gallery-index="3" aria-label="Открыть: Обсуждение открытого занятия" aria-haspopup="dialog"><img src="assets/lesson-xml-2026/lesson-discussion-thumb.webp" data-full="assets/lesson-xml-2026/lesson-discussion.webp" alt="Обсуждение открытого занятия: кадр открытого урока по XML" width="800" height="450" loading="lazy" decoding="async"><span class="photo-zoom" aria-hidden="true">Рассмотреть ↗</span></button><figcaption><b>Обсуждение открытого занятия</b><span>Обсуждение проведённого урока с коллегами.</span></figcaption></figure>
+      </div><p class="gallery-keyboard-hint">В просмотрщике: ← и → — сменить кадр, Escape — закрыть.</p>
     </section>
 
     <section id="feedback">
@@ -812,12 +792,13 @@
         <article class="card">
           <h3>Написать преподавателю</h3>
           <p>Форма подготовит письмо в вашей почтовой программе. Проверьте адрес и отправьте письмо самостоятельно.</p>
-          <p><a href="mailto:hello@jiraf-project.ru">hello@jiraf-project.ru</a></p>
+          <dl class="contact-email-list"><div><dt>Основная почта</dt><dd><a href="mailto:hello@jiraf-project.ru">hello@jiraf-project.ru</a></dd></div><div><dt>Вторая рабочая почта</dt><dd><a href="mailto:dnmikhajlov@fa.ru">dnmikhajlov@fa.ru</a></dd></div></dl>
           <p>Если почтовая программа не настроена, скопируйте адрес и текст сообщения в свою почту.</p>
         </article>
         <article class="card">
           <h3>Оставить сообщение</h3>
           <form id="contact-form">
+            <div class="field"><label for="recipient">Куда направить письмо</label><select id="recipient" name="recipient"><option value="hello@jiraf-project.ru">Основная — hello@jiraf-project.ru</option><option value="dnmikhajlov@fa.ru">Вторая рабочая — dnmikhajlov@fa.ru</option></select></div>
             <div class="field">
               <label for="name">Ваше имя</label>
               <input id="name" name="name" type="text" required minlength="2" />
@@ -845,22 +826,21 @@
     <div class="loading-spinner" aria-label="Загрузка"></div>
   </div>
 
-  <div id="gallery-lightbox" class="gallery-lightbox" hidden>
+  <dialog id="gallery-lightbox" class="gallery-lightbox" aria-labelledby="lightbox-caption-title" aria-describedby="lightbox-caption-text">
     <div class="gallery-lightbox-backdrop" data-lightbox-close></div>
-    <div class="gallery-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption-title">
-      <button type="button" class="gallery-lightbox-close" data-lightbox-close aria-label="Закрыть">×</button>
+    <div class="gallery-lightbox-dialog">
+      <button type="button" class="gallery-lightbox-close" data-lightbox-close aria-label="Закрыть фото">×</button>
       <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" aria-label="Предыдущее фото">‹</button>
       <figure class="gallery-lightbox-figure">
-        <img id="lightbox-image" src="" alt="" />
-        <figcaption class="gallery-lightbox-caption">
-          <strong id="lightbox-caption-title"></strong>
-          <span id="lightbox-caption-text"></span>
-        </figcaption>
+        <img id="lightbox-image" alt="">
+        <figcaption class="gallery-lightbox-caption"><strong id="lightbox-caption-title"></strong><span id="lightbox-caption-text"></span></figcaption>
+        <p id="lightbox-status" role="status"></p>
+        <a id="lightbox-original" href="assets/lesson-xml-2026/lesson-group-work.webp" target="_blank" rel="noopener noreferrer">Открыть фото в полном размере ↗</a>
       </figure>
       <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" aria-label="Следующее фото">›</button>
       <p class="gallery-lightbox-counter" id="lightbox-counter" aria-live="polite"></p>
     </div>
-  </div>
+  </dialog>
 
   <script>
     const accessibilityStatus = document.getElementById('accessibility-status');
@@ -961,75 +941,15 @@
       const name = String(data.get('name') || '').trim();
       const message = String(data.get('message') || '').trim();
       if (name.length < 2 || message.length < 8) return;
+      const recipient = String(data.get('recipient'));
+      if (!['hello@jiraf-project.ru', 'dnmikhajlov@fa.ru'].includes(recipient)) return;
       const subject = encodeURIComponent('Вопрос с педагогического сайта');
       const body = encodeURIComponent(`Имя: ${name}\n\n${message}`);
-      window.location.href = `mailto:hello@jiraf-project.ru?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
     });
 
-    const lightbox = document.getElementById('gallery-lightbox');
-    const lightboxImage = document.getElementById('lightbox-image');
-    const lightboxTitle = document.getElementById('lightbox-caption-title');
-    const lightboxText = document.getElementById('lightbox-caption-text');
-    const lightboxCounter = document.getElementById('lightbox-counter');
-    const galleryItems = [...document.querySelectorAll('#photo-gallery .photo-card')].map((card) => {
-      const img = card.querySelector('img');
-      const title = card.querySelector('figcaption b')?.textContent?.trim() || '';
-      const text = card.querySelector('figcaption span')?.textContent?.trim() || '';
-      return {
-        src: img?.currentSrc || img?.src || '',
-        alt: img?.alt || title,
-        title,
-        text,
-        trigger: card.querySelector('.photo-trigger')
-      };
-    });
-    let lightboxIndex = 0;
-    let lastFocused = null;
-
-    function renderLightbox(index) {
-      if (!galleryItems.length) return;
-      lightboxIndex = (index + galleryItems.length) % galleryItems.length;
-      const item = galleryItems[lightboxIndex];
-      lightboxImage.src = item.src;
-      lightboxImage.alt = item.alt;
-      lightboxTitle.textContent = item.title;
-      lightboxText.textContent = item.text;
-      lightboxCounter.textContent = `${lightboxIndex + 1} / ${galleryItems.length}`;
-    }
-
-    function openLightbox(index) {
-      if (!lightbox || !galleryItems.length) return;
-      lastFocused = document.activeElement;
-      renderLightbox(index);
-      lightbox.hidden = false;
-      document.body.classList.add('lightbox-open');
-      lightbox.querySelector('.gallery-lightbox-close')?.focus();
-    }
-
-    function closeLightbox() {
-      if (!lightbox || lightbox.hidden) return;
-      lightbox.hidden = true;
-      document.body.classList.remove('lightbox-open');
-      lastFocused?.focus?.();
-    }
-
-    galleryItems.forEach((item, index) => {
-      item.trigger?.addEventListener('click', () => openLightbox(index));
-    });
-
-    lightbox?.querySelectorAll('[data-lightbox-close]').forEach((el) => {
-      el.addEventListener('click', closeLightbox);
-    });
-    lightbox?.querySelector('.gallery-lightbox-prev')?.addEventListener('click', () => renderLightbox(lightboxIndex - 1));
-    lightbox?.querySelector('.gallery-lightbox-next')?.addEventListener('click', () => renderLightbox(lightboxIndex + 1));
-
-    document.addEventListener('keydown', (event) => {
-      if (!lightbox || lightbox.hidden) return;
-      if (event.key === 'Escape') closeLightbox();
-      if (event.key === 'ArrowLeft') renderLightbox(lightboxIndex - 1);
-      if (event.key === 'ArrowRight') renderLightbox(lightboxIndex + 1);
-    });
   </script>
+  <script src="teaching-gallery.js?v=1"></script>
   <script src="github-upload-config.js?v=3" onerror="console.error('Ошибка загрузки github-upload-config.js')"></script>
   <script src="material-editor.js?v=16"></script>
   <script src="material-actions.js?v=1"></script>

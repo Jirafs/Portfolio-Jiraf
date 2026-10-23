@@ -19,6 +19,7 @@ const esc = (v) =>
   );
 const links = [
   ["index", "Все дисциплины"],
+  ["catalog", "Поиск материалов"],
   ...courses.map((c) => [
     c.id,
     c.id === "operating-systems"
@@ -46,11 +47,11 @@ function layout(id, title, description, body) {
   if (id === "index")
     body = body.replace(
       '<div class="actions">',
-      '<div class="actions"><a class="button secondary" href="os-quiz.html">Проверить знания по ОС →</a>',
+      '<div class="actions"><a class="button" href="catalog.html">Найти учебный материал →</a><a class="button secondary" href="os-quiz.html">Проверить знания по ОС →</a>',
     );
   const canonical =
     "https://jirafs.github.io/Portfolio-Jiraf/learning/" + id + ".html";
-  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} — учебный раздел Jiraf</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${esc(title)} — учебный раздел Jiraf"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${canonical}"><meta property="og:type" content="website"><meta property="og:image" content="https://jirafs.github.io/Portfolio-Jiraf/assets/lesson-xml-2026/lesson-xml-teacher.webp"><link rel="stylesheet" href="learning.css?v=3"></head><body><a class="button skip" href="#main">К содержимому</a><div class="shell"><header class="topbar"><a class="brand" href="../pedagog.html">JIRAF<span> / учебный раздел</span></a><nav aria-label="Учебные разделы">${links.map(([key, label]) => `<a href="${key}.html"${key === id ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav></header><main id="main">${body}</main><footer class="footer"><span>Михайлов Даниил Николаевич · учебные материалы</span><a href="../pedagog.html#methods">Педагогический сайт</a><a href="mailto:dnmikhajlov@fa.ru">dnmikhajlov@fa.ru ↗</a></footer></div></body></html>\n`;
+  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} — учебный раздел Jiraf</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${esc(title)} — учебный раздел Jiraf"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${canonical}"><meta property="og:type" content="website"><meta property="og:image" content="https://jirafs.github.io/Portfolio-Jiraf/assets/lesson-xml-2026/lesson-xml-teacher.webp"><link rel="stylesheet" href="learning.css?v=4"></head><body><a class="button skip" href="#main">К содержимому</a><div class="shell"><header class="topbar"><a class="brand" href="../pedagog.html">JIRAF<span> / учебный раздел</span></a><nav aria-label="Учебные разделы">${links.map(([key, label]) => `<a href="${key}.html"${key === id ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav></header><main id="main">${body}</main><footer class="footer"><span>Михайлов Даниил Николаевич · учебные материалы</span><a href="../pedagog.html#methods">Педагогический сайт</a><a href="mailto:dnmikhajlov@fa.ru">dnmikhajlov@fa.ru ↗</a></footer></div></body></html>\n`;
 }
 const list = (items) =>
   `<ul class="checks">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
@@ -120,6 +121,7 @@ require("./build-os-lessons.cjs").buildLessons({
   list,
   scripts: osScripts,
 });
+require("./build-learning-catalog.cjs").buildCatalog({ out, layout, esc });
 console.log(
   "Built learning hub, three courses, XML practice, OS quiz and five lessons.",
 );

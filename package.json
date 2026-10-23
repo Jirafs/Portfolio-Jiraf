@@ -5,7 +5,7 @@
   "description": "Static portfolio and four browser-local demos for GitHub Pages",
   "scripts": {
     "test": "node scripts/check.cjs",
-    "format": "prettier --write script.js demos/orbit/*.js demos/orbit/app.css demos/fitness/app.js demos/kosmetica/app.js demos/pulse/*.js tests/orbit*.cjs tests/pulse*.cjs tests/cases.cjs scripts/*.cjs portfolio-projects.css teaching-gallery.js teaching-evidence.css learning/*.js learning/learning.css learning/courses.json tests/xml-lab.cjs tests/os-*.cjs",
+    "format": "prettier --write script.js demos/orbit/*.js demos/orbit/app.css demos/fitness/app.js demos/kosmetica/app.js demos/pulse/*.js tests/orbit*.cjs tests/pulse*.cjs tests/cases.cjs scripts/*.cjs portfolio-projects.css teaching-gallery.js teaching-evidence.css learning/*.js learning/learning.css learning/courses.json tests/xml-lab.cjs tests/os-*.cjs tests/learning-catalog.cjs",
     "build:cases": "node scripts/build-cases.cjs",
     "optimize:images": "node scripts/optimize-images.cjs",
     "build:learning": "node scripts/build-learning.cjs"

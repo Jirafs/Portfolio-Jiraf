@@ -148,6 +148,7 @@ const urls = [
   "about.html",
   "pedagog.html",
   "learning/index.html",
+  "learning/catalog.html",
   "learning/react.html",
   "learning/xml.html",
   "learning/operating-systems.html",

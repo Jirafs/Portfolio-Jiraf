@@ -32,7 +32,7 @@ const links = [
 ];
 function layout(id, title, description, body) {
   if (id === "operating-systems") {
-    const topics = `<section class="section" id="topics"><p class="eyebrow">Пять тем / краткое повторение</p><h2>Закрепите основы</h2><p id="topic-progress" role="status"></p><p class="note" id="storage-status" role="status"></p><div class="material-list">${os.topics.map((t) => `<article id="topic-${t.id}" class="topic-card"><h3>${esc(t.title)}</h3><p>${esc(t.text)}</p><button class="secondary" type="button" data-topic-toggle="${t.id}" aria-pressed="false" hidden>Отметить тему пройденной</button></article>`).join("")}</div><p class="note">Краткое повторение подготовлено по темам банка заданий. Полные материалы доступны ниже.</p><p id="quiz-history"></p><div class="actions"><a class="button" href="os-quiz.html">Пройти тест по ОС →</a><button id="reset-progress" class="secondary" type="button" hidden>Сбросить прогресс ОС</button></div></section>`;
+    const topics = `<section class="section" id="topics"><p class="eyebrow">Пять тем / краткое повторение</p><h2>Закрепите основы</h2><p id="topic-progress" role="status"></p><p class="note" id="storage-status" role="status"></p><div class="material-list">${os.topics.map((t) => `<article id="topic-${t.id}" class="topic-card"><h3>${esc(t.title)}</h3><p>${esc(t.text)}</p><p><a class="button secondary" href="os-lesson-${t.id}.html">Изучить занятие →</a></p><button class="secondary" type="button" data-topic-toggle="${t.id}" aria-pressed="false" hidden>Отметить тему пройденной</button></article>`).join("")}</div><p class="note">Краткое повторение подготовлено по темам банка заданий. Полные материалы доступны ниже.</p><p id="quiz-history"></p><div class="actions"><a class="button" href="os-quiz.html">Пройти тест по ОС →</a><button id="reset-progress" class="secondary" type="button" hidden>Сбросить прогресс ОС</button></div></section>`;
     body = body.replace(
       '<section class="section" id="materials">',
       topics + '<section class="section" id="materials">',
@@ -50,7 +50,7 @@ function layout(id, title, description, body) {
     );
   const canonical =
     "https://jirafs.github.io/Portfolio-Jiraf/learning/" + id + ".html";
-  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} — учебный раздел Jiraf</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${esc(title)} — учебный раздел Jiraf"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${canonical}"><meta property="og:type" content="website"><meta property="og:image" content="https://jirafs.github.io/Portfolio-Jiraf/assets/lesson-xml-2026/lesson-xml-teacher.webp"><link rel="stylesheet" href="learning.css?v=2"></head><body><a class="button skip" href="#main">К содержимому</a><div class="shell"><header class="topbar"><a class="brand" href="../pedagog.html">JIRAF<span> / учебный раздел</span></a><nav aria-label="Учебные разделы">${links.map(([key, label]) => `<a href="${key}.html"${key === id ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav></header><main id="main">${body}</main><footer class="footer"><span>Михайлов Даниил Николаевич · учебные материалы</span><a href="../pedagog.html#methods">Педагогический сайт</a><a href="mailto:dnmikhajlov@fa.ru">dnmikhajlov@fa.ru ↗</a></footer></div></body></html>\n`;
+  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} — учебный раздел Jiraf</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${esc(title)} — учебный раздел Jiraf"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${canonical}"><meta property="og:type" content="website"><meta property="og:image" content="https://jirafs.github.io/Portfolio-Jiraf/assets/lesson-xml-2026/lesson-xml-teacher.webp"><link rel="stylesheet" href="learning.css?v=3"></head><body><a class="button skip" href="#main">К содержимому</a><div class="shell"><header class="topbar"><a class="brand" href="../pedagog.html">JIRAF<span> / учебный раздел</span></a><nav aria-label="Учебные разделы">${links.map(([key, label]) => `<a href="${key}.html"${key === id ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav></header><main id="main">${body}</main><footer class="footer"><span>Михайлов Даниил Николаевич · учебные материалы</span><a href="../pedagog.html#methods">Педагогический сайт</a><a href="mailto:dnmikhajlov@fa.ru">dnmikhajlov@fa.ru ↗</a></footer></div></body></html>\n`;
 }
 const list = (items) =>
   `<ul class="checks">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
@@ -110,7 +110,16 @@ fs.writeFileSync(
     fs.readFileSync(path.join(out, "os-quiz-body.html"), "utf8") +
       resetDialog +
       osScripts +
-      '<script src="os-quiz.js?v=1"></script>',
+      '<script src="os-quiz.js?v=2"></script>',
   ),
 );
-console.log("Built learning hub, three courses, XML practice and OS quiz.");
+require("./build-os-lessons.cjs").buildLessons({
+  out,
+  layout,
+  esc,
+  list,
+  scripts: osScripts,
+});
+console.log(
+  "Built learning hub, three courses, XML practice, OS quiz and five lessons.",
+);

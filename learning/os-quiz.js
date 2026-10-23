@@ -74,7 +74,7 @@
         );
       article.append(el("p", q.explanation));
       const link = el("a", "Повторить тему →");
-      link.href = `operating-systems.html#topic-${q.topic}`;
+      link.href = `os-lesson-${q.topic}.html#theory`;
       article.append(
         link,
         el(

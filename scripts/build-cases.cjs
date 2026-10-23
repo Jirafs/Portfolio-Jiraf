@@ -153,6 +153,9 @@ const urls = [
   "learning/operating-systems.html",
   "learning/xml-lab.html",
   "learning/os-quiz.html",
+  ...require("../learning/os-lessons.json").map(
+    (l) => `learning/os-lesson-${l.id}.html`,
+  ),
   ...keys.map((key) => `cases/${key}.html`),
 ];
 fs.writeFileSync(

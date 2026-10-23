@@ -550,6 +550,126 @@ summary {
 .quiz-summary {
   margin-bottom: 24px;
 }
+
+.lesson-hero {
+  padding-bottom: 34px;
+}
+.lesson-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+.lesson-sidebar {
+  position: sticky;
+  top: 24px;
+  padding: 22px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.lesson-nav {
+  display: grid;
+  gap: 8px;
+}
+.lesson-nav a {
+  display: flex;
+  gap: 12px;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+.lesson-nav span {
+  font: 12px var(--mono);
+  color: var(--muted);
+  padding-top: 3px;
+}
+.lesson-nav a[aria-current] {
+  color: var(--green);
+}
+.lesson-content {
+  min-width: 0;
+}
+.lesson-content p,
+.lesson-content li,
+.source-links a {
+  overflow-wrap: anywhere;
+}
+.lesson-content h2 {
+  font-size: clamp(26px, 3vw, 35px);
+  overflow-wrap: anywhere;
+}
+.lesson-goal h2 {
+  margin-bottom: 12px;
+}
+.lesson-goal p {
+  margin-bottom: 0;
+}
+.lesson-contents {
+  gap: 8px 20px;
+  padding: 18px 0;
+}
+.lesson-contents a {
+  color: var(--muted);
+  text-decoration: underline;
+}
+.lesson-content .section {
+  scroll-margin-top: 24px;
+}
+.lesson-steps {
+  padding-left: 24px;
+}
+.lesson-steps li {
+  padding: 12px 0 12px 8px;
+  border-bottom: 1px solid var(--line);
+}
+.lesson-steps li::marker {
+  color: var(--green);
+  font-family: var(--mono);
+}
+.lesson-self-check details {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.lesson-self-check details p {
+  color: var(--muted);
+}
+.lesson-pagination {
+  justify-content: space-between;
+}
+.lesson-pagination a {
+  max-width: 100%;
+}
+.source-links {
+  padding-left: 20px;
+}
+.source-links li {
+  margin: 12px 0;
+}
+.source-links a {
+  color: var(--green);
+}
+@media (max-width: 850px) {
+  .lesson-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .lesson-sidebar {
+    position: static;
+  }
+  .lesson-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 20px;
+  }
+}
+@media (max-width: 500px) {
+  .lesson-nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lesson-pagination a {
+    width: 100%;
+  }
+}
 .quiz-summary p:first-child {
   margin-top: 0;
 }

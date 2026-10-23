@@ -152,6 +152,7 @@ const urls = [
   "learning/xml.html",
   "learning/operating-systems.html",
   "learning/xml-lab.html",
+  "learning/os-quiz.html",
   ...keys.map((key) => `cases/${key}.html`),
 ];
 fs.writeFileSync(

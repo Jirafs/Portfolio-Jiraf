@@ -14,6 +14,7 @@ for (const file of files) {
   assert.equal(sha, file.sha, file.name + ': Git blob identity');
 }
 const csv = fs.readFileSync(path.join(root,'uploads/documents/attestation-yearly-summary-2026.csv'),'utf8');
+assert.ok(!csv.includes('\r\r'), 'CSV must not contain doubled carriage returns');
 assert.match(csv,/2024\/2025;99;97;97;97\.98;97\.98/);
 assert.match(csv,/2025\/2026;107;103;107;96\.26;100(?:\.0)?/);
 assert.equal(csv.trim().split(/\r?\n/).length, 3);

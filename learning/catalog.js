@@ -74,6 +74,8 @@
   );
   share.addEventListener("click", async () => {
     const currentRevision = revision;
+    status.textContent = "";
+    fallback.hidden = true;
     const url = new URL(location.href);
     url.search = M.toSearch(values());
     url.hash = "";

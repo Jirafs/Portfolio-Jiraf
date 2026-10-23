@@ -147,6 +147,11 @@ const urls = [
   "",
   "about.html",
   "pedagog.html",
+  "learning/index.html",
+  "learning/react.html",
+  "learning/xml.html",
+  "learning/operating-systems.html",
+  "learning/xml-lab.html",
   ...keys.map((key) => `cases/${key}.html`),
 ];
 fs.writeFileSync(

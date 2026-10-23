@@ -17,4 +17,6 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build:cases
+      - run: npm run build:learning
       - run: git diff --exit-code -- cases sitemap.xml robots.txt
+      - run: git diff --exit-code -- learning/*.html

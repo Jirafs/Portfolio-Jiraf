@@ -238,3 +238,6 @@ dialog.gallery-lightbox::backdrop {
     font-size: 16px;
   }
 }
+
+.teacher-site .learning-entry { margin-bottom: 24px; border-color: var(--brand); }
+.teacher-site .learning-entry h3 { margin-top: 12px; }

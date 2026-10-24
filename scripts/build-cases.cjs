@@ -146,6 +146,7 @@ for (const [key, project] of Object.entries(ctx.projects)) {
 const urls = [
   "",
   "about.html",
+  "employers.html",
   "pedagog.html",
   "learning/index.html",
   "learning/catalog.html",

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Orbit Workspace — серверная версия</title>
+    <meta
+      name="description"
+      content="Серверная версия Orbit: аккаунты, SQLite, задачи и роли участников. Исходники и локальный запуск."
+    />
+    <link rel="stylesheet" href="fullstack.css?v=1" />
+  </head>
+  <body>
+    <a class="skip" href="#main">К содержимому</a>
+    <header class="topbar">
+      <a
+        class="brand"
+        href="https://jirafs.github.io/Portfolio-Jiraf/employers.html"
+        >ORBIT<span> / Workspace</span></a
+      ><span class="server-label">Серверная версия</span>
+    </header>
+    <main id="main">
+      <p
+        id="message"
+        class="message"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></p>
+      <section id="launch" class="launch" aria-labelledby="launch-title">
+        <p class="kicker">Python · SQLite · HTTP API</p>
+        <h1 id="launch-title">Одна доска.<br />Настоящие аккаунты.</h1>
+        <p class="lead">
+          Сервер хранит задачи и проверяет права участников. Войдите в локально
+          запущенное приложение, создайте задачу и пригласите другого
+          пользователя.
+        </p>
+        <div class="features">
+          <article>
+            <h2>Аккаунты</h2>
+            <p>
+              Вход и выход, сессии, хеширование паролей. У каждого нового
+              аккаунта — своё пространство.
+            </p>
+          </article>
+          <article>
+            <h2>Три роли</h2>
+            <p>
+              Владелец управляет участниками, редактор меняет задачи,
+              наблюдатель читает доску.
+            </p>
+          </article>
+          <article>
+            <h2>Общие данные</h2>
+            <p>
+              SQLite сохраняет задачи между запусками. Конфликт устаревшей
+              правки не затирает свежую версию.
+            </p>
+          </article>
+        </div>
+        <section class="launch-guide" aria-labelledby="guide-title">
+          <h2 id="guide-title">Запустить у себя</h2>
+          <p>
+            GitHub Pages показывает эту страницу, но не исполняет Python. Для
+            работы с аккаунтами нужен локальный сервер. Требуется Python 3.10
+            или новее; внешние пакеты не нужны.
+          </p>
+          <pre><code>git clone https://github.com/Jirafs/Portfolio-Jiraf.git
+cd Portfolio-Jiraf
+python demos/orbit/server/main.py</code></pre>
+          <p>
+            Откройте <code>http://127.0.0.1:8787</code>. Создайте тестовый
+            аккаунт, затем добавьте задачу. Для проверки ролей создайте второй
+            аккаунт в другом браузере и добавьте его email в участники первого
+            пространства.
+          </p>
+          <p class="muted">
+            Это локальный учебный сервер. Внешний хостинг, HTTPS, восстановление
+            пароля и почтовые приглашения ещё не подключены.
+          </p>
+          <div class="actions">
+            <a
+              class="button"
+              href="https://github.com/Jirafs/Portfolio-Jiraf/tree/main/demos/orbit/server"
+              >Исходники и инструкция ↗</a
+            ><a
+              class="button secondary"
+              href="https://jirafs.github.io/Portfolio-Jiraf/demos/orbit/board.html"
+              >Открыть клиентское демо ↗</a
+            >
+          </div>
+        </section>
+      </section>
+      <section id="auth" class="auth-panel" aria-labelledby="auth-title" hidden>
+        <p class="kicker">Ваше рабочее пространство</p>
+        <h1 id="auth-title">Войти в Orbit</h1>
+        <form id="auth-form">
+          <label
+            >Действие<select id="auth-mode">
+              <option value="login">Войти</option>
+              <option value="register">Создать аккаунт</option>
+            </select></label
+          ><label id="name-label" hidden
+            >Имя<input
+              id="auth-name"
+              autocomplete="name"
+              maxlength="80" /></label
+          ><label
+            >Email<input
+              id="auth-email"
+              type="email"
+              autocomplete="username"
+              required
+              maxlength="200" /></label
+          ><label
+            >Пароль<input
+              id="auth-password"
+              type="password"
+              autocomplete="current-password"
+              minlength="12"
+              maxlength="128"
+              required
+              aria-describedby="password-hint"
+          /></label>
+          <p id="password-hint" class="muted">
+            От 12 до 128 символов. Для проверки демо используйте отдельный
+            тестовый пароль.
+          </p>
+          <button type="submit">Войти</button>
+        </form>
+      </section>
+      <section id="workspace" hidden aria-labelledby="workspace-title">
+        <div class="workspace-heading">
+          <div>
+            <p class="kicker" id="account-name"></p>
+            <h1 id="workspace-title">Рабочее пространство</h1>
+          </div>
+          <button id="logout" class="secondary">Выйти</button>
+        </div>
+        <div class="workspace-controls">
+          <label>Пространство<select id="workspace-select"></select></label>
+          <p id="role-label"></p>
+          <button id="refresh" class="secondary">Обновить доску</button>
+        </div>
+        <p id="metrics" class="metrics" aria-live="polite"></p>
+        <form id="task-form" class="task-form">
+          <h2>Новая задача</h2>
+          <label
+            >Название<input id="task-title" maxlength="160" required /></label
+          ><label
+            >Описание<textarea
+              id="task-description"
+              maxlength="3000"
+              rows="2"
+            ></textarea></label
+          ><label
+            >Статус<select id="task-status">
+              <option value="backlog">Идеи</option>
+              <option value="ready">К работе</option>
+              <option value="progress">В процессе</option>
+              <option value="done">Готово</option>
+            </select></label
+          ><button type="submit">Создать задачу</button>
+        </form>
+        <div id="board" class="board"></div>
+        <section class="team" aria-labelledby="team-title">
+          <h2 id="team-title">Участники</h2>
+          <ul id="members"></ul>
+          <form id="member-form">
+            <h3>Добавить участника или изменить роль</h3>
+            <p class="muted">
+              Участник должен предварительно создать аккаунт на этом сервере.
+              Письма не отправляются.
+            </p>
+            <label
+              >Email участника<input
+                id="member-email"
+                type="email"
+                required
+                maxlength="200" /></label
+            ><label
+              >Роль<select id="member-role">
+                <option value="viewer">Наблюдатель — только чтение</option>
+                <option value="editor">Редактор — изменение задач</option>
+              </select></label
+            ><button type="submit">Сохранить участника</button>
+          </form>
+        </section>
+      </section>
+    </main>
+    <dialog id="edit-dialog" aria-labelledby="edit-title">
+      <form id="edit-form">
+        <h2 id="edit-title">Изменить задачу</h2>
+        <label>Название<input id="edit-name" required maxlength="160" /></label
+        ><label
+          >Описание<textarea
+            id="edit-description"
+            maxlength="3000"
+            rows="4"
+          ></textarea></label
+        ><label
+          >Статус<select id="edit-status">
+            <option value="backlog">Идеи</option>
+            <option value="ready">К работе</option>
+            <option value="progress">В процессе</option>
+            <option value="done">Готово</option>
+          </select></label
+        >
+        <p id="edit-error" role="alert"></p>
+        <div class="actions">
+          <button type="submit">Сохранить</button
+          ><button type="button" id="edit-cancel" class="secondary">
+            Отмена</button
+          ><button type="button" id="task-delete" class="danger">
+            Удалить
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <script src="fullstack.js?v=1"></script>
+  </body>
+</html>

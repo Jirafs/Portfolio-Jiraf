@@ -16,6 +16,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s demos/orbit/server -p "test_*.py" -v
       - run: npm run build:cases
       - run: npm run build:learning
       - run: git diff --exit-code -- cases sitemap.xml robots.txt

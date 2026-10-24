@@ -147,6 +147,7 @@ const urls = [
   "",
   "about.html",
   "employers.html",
+  "demos/orbit/fullstack.html",
   "pedagog.html",
   "learning/index.html",
   "learning/catalog.html",

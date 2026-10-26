@@ -124,6 +124,22 @@ class APITest(unittest.TestCase):
             self.assertEqual(self.request('/api/login', 'POST', {'email': 'unknown@example.test', 'password': 'invalid-password-123'})[0], 401)
         self.assertEqual(self.request('/api/login', 'POST', {'email': 'unknown@example.test', 'password': 'invalid-password-123'})[0], 429)
 
+    def test_out_of_range_identifiers_return_json_errors(self):
+        owner, workspace = self.register()
+        task = self.task(owner, workspace)
+        oversized = 2**63
+        for value in (oversized, True, 0, -1):
+            self.assertEqual(self.request('/api/tasks', 'POST', {
+                'workspace': value, 'title': 'Нельзя сохранить', 'description': '', 'status': 'ready'
+            }, owner)[0], 400)
+        self.assertEqual(self.request(f'/api/workspaces/{oversized}', cookie=owner)[0], 400)
+        self.assertEqual(self.request(f'/api/tasks/{oversized}', 'DELETE', {'version': 1}, owner)[0], 400)
+        for path in ('/api/workspaces/', '/api/tasks/'):
+            method, payload = ('GET', None) if 'workspaces' in path else ('DELETE', {'version': 1})
+            self.assertEqual(self.request(path + '9' * 5000, method, payload, owner)[0], 400)
+        self.assertEqual(self.request(f"/api/tasks/{task['id']}", 'DELETE', {'version': oversized}, owner)[0], 400)
+        self.assertEqual(self.request(f'/api/workspaces/{workspace}', cookie=owner)[1]['tasks'][0]['id'], task['id'])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

@@ -16,6 +16,7 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parent.parent
 PASSWORD_ROUNDS = 300_000
 STATUSES = {'backlog', 'ready', 'progress', 'done'}
+MAX_ID = 2**63 - 1  # SQLite INTEGER range
 
 
 class APIError(Exception):
@@ -116,9 +117,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def integer(self, body, key):
         value = body.get(key)
-        if type(value) is not int or value < 1:
+        if type(value) is not int or not 1 <= value <= MAX_ID:
             raise APIError(400, f'Некорректное поле «{key}».')
         return value
+
+    def path_id(self, value):
+        # Reject before int(): very long URL numbers can exceed Python's digit limit.
+        if len(value) > 19:
+            raise APIError(400, 'Некорректный идентификатор.')
+        return self.integer({'id': int(value)}, 'id')
 
     def limit_auth(self):
         now = time.time()
@@ -175,7 +182,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(200, {'user': user, 'workspaces': workspaces})
             workspace_match = re.fullmatch(r'/api/workspaces/(\d+)', path)
             if workspace_match and self.command == 'GET':
-                workspace = int(workspace_match[1])
+                workspace = self.path_id(workspace_match[1])
                 role = self.role(db, user['id'], workspace)
                 tasks = [dict(r) for r in db.execute('SELECT id,title,description,status,version FROM tasks WHERE workspace_id=? ORDER BY id DESC', (workspace,))]
                 members = [dict(r) for r in db.execute('SELECT u.name,u.email,m.role FROM memberships m JOIN users u ON u.id=m.user_id WHERE m.workspace_id=? ORDER BY u.id', (workspace,))]
@@ -199,7 +206,8 @@ class Handler(BaseHTTPRequestHandler):
             task_match = re.fullmatch(r'/api/tasks/(\d+)', path)
             if (path == '/api/tasks' and self.command == 'POST') or (task_match and self.command in ('PATCH', 'DELETE')):
                 if task_match:
-                    task = db.execute('SELECT * FROM tasks WHERE id=?', (int(task_match[1]),)).fetchone()
+                    task_id = self.path_id(task_match[1])
+                    task = db.execute('SELECT * FROM tasks WHERE id=?', (task_id,)).fetchone()
                     if task is None:
                         raise APIError(404, 'Задача не найдена.')
                     workspace = task['workspace_id']

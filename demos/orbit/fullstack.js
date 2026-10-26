@@ -55,7 +55,16 @@
   }
   function showAuth() {
     generation++;
-    session = state = null;
+    session = state = workspace = editing = null;
+    $("#edit-dialog").close();
+    ["#auth-form", "#task-form", "#member-form", "#edit-form"].forEach(
+      (selector) => $(selector).reset(),
+    );
+    $("#board").replaceChildren();
+    $("#members").replaceChildren();
+    $("#workspace-select").replaceChildren();
+    $("#account-name").textContent = "";
+    $("#metrics").textContent = "";
     $("#workspace").hidden = true;
     $("#launch").hidden = true;
     $("#auth").hidden = false;
@@ -77,8 +86,10 @@
         $("#edit-dialog").close();
         showAuth();
         message(text);
-      } else if (errorTarget) $(errorTarget).textContent = text;
-      else message(text);
+      } else if (errorTarget) {
+        $(errorTarget).textContent = text;
+        $("#edit-reload").hidden = error.status !== 409;
+      } else message(text);
     } finally {
       pending = false;
       document
@@ -149,6 +160,7 @@
     $("#edit-description").value = task.description;
     $("#edit-status").value = task.status;
     $("#edit-error").textContent = "";
+    $("#edit-reload").hidden = true;
     $("#edit-dialog").showModal();
     $("#edit-name").focus();
   }
@@ -214,6 +226,31 @@
     });
   });
   $("#edit-cancel").addEventListener("click", () => $("#edit-dialog").close());
+  $("#edit-reload").addEventListener("click", () => {
+    if (
+      !confirm(
+        "Загрузить актуальную версию? Несохранённый текст в этой форме будет заменён.",
+      )
+    )
+      return;
+    run(async () => {
+      const id = editing.id;
+      await loadWorkspace();
+      const current = state.tasks.find((task) => task.id === id);
+      if (!current || state.role === "viewer") {
+        $("#edit-dialog").close();
+        message(
+          current
+            ? "У вас больше нет права редактировать задачи."
+            : "Задача уже удалена другим участником.",
+        );
+        return;
+      }
+      openEdit(current);
+      $("#edit-error").textContent =
+        "Актуальная версия загружена. Проверьте её перед сохранением.";
+    }, "#edit-error");
+  });
   $("#edit-form").addEventListener("submit", (event) => {
     event.preventDefault();
     run(async () => {
@@ -228,14 +265,20 @@
       message("Изменения сохранены.");
     }, "#edit-error");
   });
-  $("#task-delete").addEventListener("click", () =>
+  $("#task-delete").addEventListener("click", () => {
+    if (
+      !confirm(
+        `Удалить задачу «${editing.title}»? Это действие нельзя отменить.`,
+      )
+    )
+      return;
     run(async () => {
       await api(`tasks/${editing.id}`, "DELETE", { version: editing.version });
       $("#edit-dialog").close();
       await loadWorkspace();
       message("Задача удалена.");
-    }, "#edit-error"),
-  );
+    }, "#edit-error");
+  });
   $("#member-form").addEventListener("submit", (event) => {
     event.preventDefault();
     run(async () => {

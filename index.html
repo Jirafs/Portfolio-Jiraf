@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Портфолио Даниила Михайлова (Jiraf) — веб-разработчика, программиста и дизайнера цифровых продуктов." />
-  <title>Даниил Михайлов (Jiraf)</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦒</text></svg>">
+  <title>Jiraf Project — Даниил Михайлов, сайты и веб-сервисы</title>
+  <link rel="icon" href="assets/jp-logo.png">
   <link rel="stylesheet" href="styles.css?v=2" />
   <link rel="stylesheet" href="redesign.css" />
   <link rel="stylesheet" href="dark-theme.css" />
@@ -23,19 +23,19 @@
 <link rel="stylesheet" href="portfolio-projects.css?v=2">
 <link rel="stylesheet" href="fonts/fonts.css?v=1">
 <link rel="stylesheet" href="employers.css?v=1">
+<link rel="stylesheet" href="client-home.css?v=1">
 </head>
-<body>
+<body class="client-home">
   <div class="site-shell">
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="На главную">JIRAF<span>.</span></a>
+      <a class="brand client-brand" href="#top" aria-label="Jiraf Project — на главную"><img src="assets/jp-logo.png" alt="" width="44" height="44"><span class="client-wordmark">JIRAF<small>PROJECT</small></span></a>
       <nav class="desktop-nav" aria-label="Основная навигация">
         <a href="#work">Работы</a>
-        <a href="employers.html">Работодателям</a>
+        <a href="#services">Услуги</a>
         <a href="about.html">Обо мне</a>
-        <a href="pedagog.html">Педагогический сайт</a>
         <a href="#contact">Контакты</a>
       </nav>
-      <a class="availability" href="#contact"><span class="pulse"></span> Открыт к проектам</a>
+      <a class="availability" href="#contact"><span class="pulse"></span> Обсудить проект ↗</a>
       <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span></button>
     </header>
 
@@ -56,32 +56,30 @@
         </div>
       </section>
 
-      <section class="ticker" aria-label="Специализация"><div class="ticker-track">BRAND WORLDS <span>✳</span> DIGITAL PRODUCTS <span>✳</span> VISUAL STORIES <span>✳</span> BRAND WORLDS <span>✳</span> DIGITAL PRODUCTS <span>✳</span> VISUAL STORIES <span>✳</span></div></section>
+      <section class="ticker" aria-label="Специализация"><div class="ticker-track">САЙТЫ <span>✳</span> ВЕБ-СЕРВИСЫ <span>✳</span> ИНТЕРФЕЙСЫ <span>✳</span> САЙТЫ <span>✳</span> ВЕБ-СЕРВИСЫ <span>✳</span> ИНТЕРФЕЙСЫ <span>✳</span></div></section>
 
       <section class="work section-pad" id="work">
         <div class="section-heading reveal"><p class="eyebrow"><span>02</span> Мои проекты</p><p class="section-note">Интерактивные демо<br>и решения</p></div>
 <div class="work-intro"><h2>От первого сайта<br>до сложного приложения.</h2><p>Четыре учебных проекта с разной сложностью. Каждый можно открыть и проверить в работе.</p></div><div class="project-grid showcase-grid"><article class="project showcase-card reveal"><a class="project-image" href="demos/kosmetica/index.html" aria-label="Открыть демо Kosmetica"><img src="demos/screens/kosmetica-desktop.jpg" alt="Реальный экран Kosmetica" loading="lazy" decoding="async" width="1425" height="891"><span class="project-index">01 / 04</span></a><div class="showcase-content"><div class="showcase-top"><span class="level-tag level-kosmetica">01 · Базовый</span><span>4 страницы</span></div><h3>Kosmetica</h3><p>Структура сайта, адаптивная вёрстка и форма записи.</p><div class="showcase-links"><a class="showcase-demo" href="demos/kosmetica/index.html">Открыть сайт ↗</a><a href="cases/kosmetica.html">Разбор проекта →</a></div></div></article><article class="project showcase-card reveal"><a class="project-image" href="demos/fitness/index.html" aria-label="Открыть демо FitClub Pro"><img src="demos/screens/fitness-desktop.jpg" alt="Реальный экран FitClub Pro" loading="lazy" decoding="async" width="1425" height="891"><span class="project-index">02 / 04</span></a><div class="showcase-content"><div class="showcase-top"><span class="level-tag level-fitness">02 · Средний</span><span>5 страниц</span></div><h3>FitClub Pro</h3><p>Фильтры расписания и личный план между страницами.</p><div class="showcase-links"><a class="showcase-demo" href="demos/fitness/index.html">Открыть сайт ↗</a><a href="cases/fitness.html">Разбор проекта →</a></div></div></article><article class="project showcase-card reveal"><a class="project-image" href="demos/pulse/index.html" aria-label="Открыть демо Pulse Merch"><img src="demos/screens/pulse-desktop.jpg" alt="Реальный экран Pulse Merch" loading="lazy" decoding="async" width="1425" height="891"><span class="project-index">03 / 04</span></a><div class="showcase-content"><div class="showcase-top"><span class="level-tag level-pulse">03 · Продвинутый</span><span>7 страниц</span></div><h3>Pulse Merch</h3><p>Каталог, размеры, корзина, промокод и оформление.</p><div class="showcase-links"><a class="showcase-demo" href="demos/pulse/index.html">Открыть сайт ↗</a><a href="cases/pulse.html">Разбор проекта →</a></div></div></article><article class="project showcase-card reveal"><a class="project-image" href="demos/orbit/index.html" aria-label="Открыть демо Orbit Workspace"><img src="demos/screens/orbit-desktop.jpg" alt="Реальный экран Orbit Workspace" loading="lazy" decoding="async" width="1425" height="891"><span class="project-index">04 / 04</span></a><div class="showcase-content"><div class="showcase-top"><span class="level-tag level-orbit">04 · Сложный</span><span>5 разделов</span></div><h3>Orbit Workspace</h3><p>Канбан, модель данных, аналитика и импорт пространства.</p><div class="showcase-links"><a class="showcase-demo" href="demos/orbit/index.html">Открыть сайт ↗</a><a href="cases/orbit.html">Разбор проекта →</a></div></div></article></div>
       </section>
 
-      <section class="hire-home" aria-labelledby="hire-home-title">
-        <div><p class="hire-kicker">Открыт к работе в команде</p><h2 id="hire-home-title">Ищете разработчика?</h2><p>React, JavaScript, PHP и Python. Реальные проекты, технический разбор кода и два резюме для frontend и fullstack.</p></div>
-        <a class="hire-button" href="employers.html">Для работодателя ↗</a>
+      <section class="personal-project section-pad" id="meetsync" aria-labelledby="meetsync-title">
+        <div class="section-heading"><p class="eyebrow"><span>03</span> Собственный продукт</p><p class="section-note">Идея → приложение</p></div>
+        <div class="meetsync-layout"><div><p class="project-state">Личный проект / Android-бета</p><h2 id="meetsync-title">MeetSync.<br><em>Общее время</em><br>для встречи.</h2><p class="client-lead">Приложение для согласования доступности группы и планирования встреч.</p><dl class="meetsync-facts"><div><dt>Задача</dt><dd>Собрать дни и время, удобные участникам.</dd></div><div><dt>Работа над проектом</dt><dd>Сценарии, интерфейс и логика приложения.</dd></div><div><dt>Статус</dt><dd>Тестовая Android-версия. Проект развивается.</dd></div></dl><a class="client-link" href="https://github.com/Jirafs/MeetSync-downloads" target="_blank" rel="noopener noreferrer">Описание и тестовые сборки ↗</a><p class="client-note">Перед установкой прочитайте инструкции и ограничения беты.</p></div><figure class="meetsync-figure"><div class="meet-visual"><div class="meet-top"><span>MEETSYNC</span><span>ИДЕЯ ПРОЕКТА</span></div><p>Когда удобно<br><em>всем?</em></p><div class="meet-days" aria-hidden="true"><span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><i></i><i class="available"></i><i></i><i class="available"></i><i></i><i class="available"></i><i class="available"></i><i></i><i></i><i class="available"></i><i></i><i class="available"></i><i class="available"></i><i></i><i></i></div><div class="meet-bottom">От отдельных планов — к общему.</div></div><figcaption>Схема идеи проекта. Не скриншот приложения.</figcaption></figure></div>
       </section>
+      <section class="client-services section-pad" id="services" aria-labelledby="services-title"><div class="section-heading"><p class="eyebrow"><span>04</span> Услуги</p><p class="section-note">От задачи к решению</p></div><h2 id="services-title">Что можем<br><em>создать вместе.</em></h2><div class="client-service-list"><article><span class="client-num">01</span><div><h3>Сайты и лендинги</h3><p>Персональный сайт, презентация бизнеса или сайт с каталогом. Структура, адаптивная вёрстка и понятная навигация.</p><small>СТРУКТУРА / ДИЗАЙН / РАЗРАБОТКА</small></div><a href="#contact" aria-label="Обсудить сайт">↗</a></article><article><span class="client-num">02</span><div><h3>Веб-сервисы и приложения</h3><p>Инструменты для рабочих процессов: запись, управление данными, личные кабинеты и интеграции. Функции и объём определяем под задачу.</p><small>СЦЕНАРИИ / ЛОГИКА / ДАННЫЕ</small></div><a href="#contact" aria-label="Обсудить веб-сервис">↗</a></article><article><span class="client-num">03</span><div><h3>Дизайн интерфейсов</h3><p>Интерфейсы сайтов и приложений: структура экранов, визуальная система и проработка основных пользовательских сценариев.</p><small>UI / UX / АДАПТИВНЫЕ МАКЕТЫ</small></div><a href="#contact" aria-label="Обсудить дизайн">↗</a></article></div><p class="client-pricing">Стоимость и сроки согласуем после обсуждения задачи, функций и этапов.</p></section>
+      <section class="client-process section-pad" aria-labelledby="process-title"><div class="section-heading"><p class="eyebrow"><span>05</span> Как проходит работа</p></div><h2 id="process-title">Прозрачно.<br>По этапам.</h2><ol><li><span>01 / ОБСУЖДАЕМ</span><h3>Понимаем задачу</h3><p>Для кого проект и какую проблему он должен решать.</p></li><li><span>02 / ПЛАНИРУЕМ</span><h3>Фиксируем объём</h3><p>Согласуем функции, этапы, стоимость и сроки.</p></li><li><span>03 / СОЗДАЁМ</span><h3>Дизайн и разработка</h3><p>Прорабатываем решения и обсуждаем результат по ходу работы.</p></li><li><span>04 / ПРОВЕРЯЕМ</span><h3>Готовим к запуску</h3><p>Проверяем основные сценарии и передачу готового проекта.</p></li></ol></section>
       <section class="about section-pad" id="about">
-        <div class="section-heading reveal"><p class="eyebrow"><span>03</span> Немного обо мне</p><p class="section-note">Less noise.<br>More meaning.</p></div>
+        <div class="section-heading reveal"><p class="eyebrow"><span>06</span> Немного обо мне</p><p class="section-note">Less noise.<br>More meaning.</p></div>
         <div class="about-layout"><div class="about-statement reveal"><p>Я верю, что хороший дизайн — это не украшение, а <em>ясный ответ</em> на важный вопрос.</p><div class="signature">Jiraf</div></div><div class="about-details reveal delay-1"><p>Занимаюсь веб-разработкой и преподаванием. Соединяю интерфейс, серверную логику и базы данных в понятные инструменты для пользователей.</p><div class="service-list"><div><span>01</span> Интерфейсы и адаптивная вёрстка</div><div><span>02</span> Сайты и цифровые продукты</div><div><span>03</span> API и базы данных</div></div></div></div>
         <div class="knowledge reveal"><p class="knowledge-title">Что я знаю</p><div class="knowledge-grid"><span>PHP</span><span>Python</span><span>React</span><span>Figma</span><span>UX/UI</span><span>Web development</span><span>C++</span><span>Java</span></div></div>
-        <div class="teacher-cta reveal" style="margin-top: 6vw; text-align: center; padding: 4vw 0; border-top: 1px solid rgba(241,238,232,.35);">
-          <p style="font: 11px var(--mono); text-transform: uppercase; color: var(--orange); margin: 0 0 20px;">🎓 Преподавательская деятельность</p>
-          <h2 style="font-size: clamp(24px, 4vw, 48px); line-height: 1.1; margin: 0 0 24px;">Посмотрите мой<br><em>педагогический сайт</em></h2>
-          <a href="pedagog.html" style="display: inline-block; padding: 16px 24px; background: var(--acid); color: #101812; text-decoration: none; font: 600 12px var(--mono); text-transform: uppercase; border-radius: 4px; transition: all .3s ease;">Перейти к педагогическому сайту ↗</a>
-        </div>
       </section>
 
-      <section class="contact section-pad" id="contact"><div class="contact-inner reveal"><p class="eyebrow"><span>04</span> Есть идея?</p><h2>Давайте<br><em>обсудим.</em></h2><a class="email-link" href="mailto:hello@jiraf-project.ru">hello@jiraf-project.ru <span>↗</span></a><div class="contact-bottom"><span>Москва / работаю по всему миру</span><div class="socials"><a href="https://t.me/Camansjiraf" target="_blank" rel="noopener noreferrer">Telegram ↗</a><a href="https://vk.ru/jirafproject" target="_blank" rel="noopener noreferrer">VK ↗</a><a href="https://github.com/Jirafs" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div><div style="margin-top: 4vw; text-align: center;"><a href="pedagog.html" style="display: inline-block; padding: 14px 20px; background: var(--line); color: var(--ink); text-decoration: none; font: 10px var(--mono); text-transform: uppercase; border-radius: 4px; transition: all .3s ease;">🎓 Педагогический сайт</a></div></div></section>
+      <section class="contact section-pad" id="contact"><div class="contact-inner"><p class="eyebrow"><span>07</span> Есть идея?</p><h2>Давайте<br><em>обсудим.</em></h2><div class="client-contact-grid"><div><a class="client-contact-button" href="https://t.me/Camansjiraf" target="_blank" rel="noopener noreferrer">Написать в Telegram ↗</a><p class="client-contact-intro">Расскажите, что хотите создать.<br>Можно начать с короткого описания идеи.</p><a class="client-email" href="mailto:hello@jiraf-project.ru">hello@jiraf-project.ru ↗</a></div><form id="project-brief"><label for="brief-kind">Что планируете создать?</label><select id="brief-kind"><option>Сайт или лендинг</option><option>Веб-сервис или приложение</option><option>Дизайн интерфейса</option><option>Пока только идея</option></select><label for="brief-idea">Идея и задача</label><textarea id="brief-idea" rows="3" placeholder="Для кого проект и какую задачу он решает?" maxlength="2000" required></textarea><label for="brief-deadline">Желаемый срок, если есть</label><input id="brief-deadline" placeholder="Например, запуск в декабре" maxlength="120"><button type="submit">Скопировать описание проекта ↗</button><p class="client-form-note">Форма не отправляет и не сохраняет данные. Скопируйте описание и пришлите его в Telegram.</p><p id="brief-status" role="status" aria-live="polite"></p><textarea id="brief-fallback" aria-label="Готовый текст для копирования" hidden readonly></textarea></form></div><div class="contact-bottom"><span>Москва / работаю удалённо</span><div class="socials"><a href="https://t.me/Camansjiraf" target="_blank" rel="noopener noreferrer">Telegram ↗</a><a href="https://vk.ru/jirafproject" target="_blank" rel="noopener noreferrer">VK ↗</a><a href="https://github.com/Jirafs" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></div></section>
     </main>
-    <footer><span>© <span id="year"></span> Jiraf</span><span>Designed with intent</span><a href="#top">Наверх ↑</a></footer>
+    <footer class="client-footer"><span>© <span id="year"></span> Jiraf Project</span><div><a href="employers.html">Работодателям ↗</a><a href="pedagog.html">Педагогический сайт ↗</a></div><a href="#top">Наверх ↑</a></footer>
   </div>
   <script src="script.js?v=6"></script>
+  <script src="client-brief.js?v=1"></script>
 </body>
 </html>

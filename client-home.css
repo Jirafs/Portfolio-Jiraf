@@ -5,3 +5,6 @@
 @media(prefers-reduced-motion:reduce){.client-home .meet-visual{transform:none}.client-home .ticker-track{animation:none}}
 
 .client-home .client-services-intro{max-width:760px;margin:-15px 0 45px;font-size:16px;line-height:1.8;color:#b5c0bc}@media(max-width:700px){.client-home .client-services-intro{font-size:14px;margin:-10px 0 30px}}
+
+.client-home .hero h1{font-size:clamp(48px,6.4vw,100px)}
+@media(max-width:700px){.client-home .hero h1{font-size:15.5vw}}

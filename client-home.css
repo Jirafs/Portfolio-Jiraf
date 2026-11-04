@@ -8,3 +8,5 @@
 
 .client-home .hero h1{font-size:clamp(48px,6.4vw,100px)}
 @media(max-width:700px){.client-home .hero h1{font-size:15.5vw}}
+
+@media(max-width:700px){.client-home #project-brief :is(input,textarea,select){font-size:16px}}

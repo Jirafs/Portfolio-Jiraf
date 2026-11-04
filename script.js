@@ -320,17 +320,30 @@ if (achievementList) {
   }
 }
 
+function setMenuOpen(open) {
+  menuButton?.setAttribute("aria-expanded", String(open));
+  menuButton?.setAttribute(
+    "aria-label",
+    open ? "Закрыть меню" : "Открыть меню",
+  );
+  nav?.classList.toggle("nav-open", open);
+}
 menuButton?.addEventListener("click", () => {
-  const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-  menuButton.setAttribute("aria-expanded", String(!isOpen));
-  nav.classList.toggle("nav-open", !isOpen);
+  setMenuOpen(menuButton.getAttribute("aria-expanded") !== "true");
 });
-
+function closeMenuOnEscape(event) {
+  if (
+    event.key !== "Escape" ||
+    menuButton?.getAttribute("aria-expanded") !== "true"
+  )
+    return;
+  setMenuOpen(false);
+  menuButton.focus();
+}
+menuButton?.addEventListener("keydown", closeMenuOnEscape);
+nav?.addEventListener("keydown", closeMenuOnEscape);
 nav?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    menuButton?.setAttribute("aria-expanded", "false");
-    nav.classList.remove("nav-open");
-  });
+  link.addEventListener("click", () => setMenuOpen(false));
 });
 
 const observer = new IntersectionObserver(

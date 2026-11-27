@@ -1,6 +1,25 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Структура XML</title><link rel="stylesheet" href="student.css?v=4"></head>
-<body><main><nav><a href="./">Все практикумы</a></nav><header><p>КИПФИН · Веб-разработка</p><h1>Структура XML</h1><p>Добавьте второй элемент book с названием. Затем измените один закрывающий тег и проверьте, как меняется результат.</p><p data-progress-for="xml"></p><p data-storage-note>Отметки хранятся в этом браузере.</p></header><article><label for="source">XML-документ</label><textarea id="source" rows="8" spellcheck="false">&lt;catalog&gt;
+<body><main><nav><a href="./">Все практикумы</a></nav><header><p>КИПФИН · Веб-разработка</p><h1>Структура XML</h1><p>Добавьте второй элемент book с названием. Затем измените один закрывающий тег и проверьте, как меняется результат.</p><p data-progress-for="xml"></p><p data-storage-note>Отметки хранятся в этом браузере.</p></header>
+<section class="assignment" aria-label="Учётная запись" data-account-panel hidden>
+  <p role="status">Подключение к сервису аккаунтов…</p>
+  <button type="button" id="practice-logout" hidden>Выйти</button>
+  <form id="practice-login" hidden>
+    <h2>Вход</h2>
+    <label>Электронная почта <input name="email" type="email" required autocomplete="email"></label>
+    <label>Пароль <input name="password" type="password" required autocomplete="current-password"></label>
+    <button type="submit">Войти</button>
+  </form>
+  <form id="practice-register" hidden>
+    <h2>Регистрация студента</h2>
+    <label>Имя и фамилия <input name="name" required minlength="2" maxlength="100" autocomplete="name"></label>
+    <label>Учебная группа <input name="group" required maxlength="40"></label>
+    <label>Электронная почта <input name="email" type="email" required autocomplete="email"></label>
+    <label>Пароль <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+  <div id="practice-teacher" hidden></div>
+</section><article><label for="source">XML-документ</label><textarea id="source" rows="8" spellcheck="false">&lt;catalog&gt;
   &lt;book&gt;&lt;title&gt;Основы веб-разработки&lt;/title&gt;&lt;/book&gt;
 &lt;/catalog&gt;</textarea><button id="run">Проверить документ</button><pre id="result" aria-live="polite"></pre></article><article class="assignment" data-original-task="xml-0" aria-labelledby="assignment-title">
   <h2 id="assignment-title">Подготовьте каталог для импорта</h2>
@@ -68,4 +87,4 @@
   <ul aria-live="polite" hidden></ul>
   <details><summary>Подсказка</summary><p>Вторую запись добавьте внутри prices. Десятичную часть отделяйте точкой.</p></details>
 </article>
-</main><script src="xml.js?v=4" defer></script><script src="practice-tasks.js?v=2" defer></script><script src="progress.js?v=1" defer></script></body></html>
+</main><script src="xml.js?v=4" defer></script><script src="practice-tasks.js?v=2" defer></script><script src="progress.js?v=2" defer></script><script type="module" src="accounts.js?v=2"></script></body></html>

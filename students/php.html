@@ -5,12 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Практикум PHP</title>
   <link rel="stylesheet" href="student.css?v=4">
-  <script src="progress.js?v=1" defer></script>
+  <script src="progress.js?v=2" defer></script>
   <script src="practice-tasks.js?v=2" defer></script>
 </head>
 <body><main>
 <nav><a href="./">Все практикумы</a></nav>
 <header><h1>Практикум PHP</h1><p>Массивы, ветвления и функции</p><p>Автопроверка сверяет код с требованиями заготовки.</p><p data-progress-for="php"></p></header>
+<section class="assignment" aria-label="Учётная запись" data-account-panel hidden>
+  <p role="status">Подключение к сервису аккаунтов…</p>
+  <button type="button" id="practice-logout" hidden>Выйти</button>
+  <form id="practice-login" hidden>
+    <h2>Вход</h2>
+    <label>Электронная почта <input name="email" type="email" required autocomplete="email"></label>
+    <label>Пароль <input name="password" type="password" required autocomplete="current-password"></label>
+    <button type="submit">Войти</button>
+  </form>
+  <form id="practice-register" hidden>
+    <h2>Регистрация студента</h2>
+    <label>Имя и фамилия <input name="name" required minlength="2" maxlength="100" autocomplete="name"></label>
+    <label>Учебная группа <input name="group" required maxlength="40"></label>
+    <label>Электронная почта <input name="email" type="email" required autocomplete="email"></label>
+    <label>Пароль <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+  <div id="practice-teacher" hidden></div>
+</section>
 <article class="assignment" data-task="php-1" aria-labelledby="php-1-title">
   <p>Начальный уровень</p>
   <h2 id="php-1-title">Прочитайте поле массива</h2>
@@ -43,4 +62,4 @@
   <ul aria-live="polite" hidden></ul>
   <details><summary>Подсказка</summary><p>Вложите array_filter в array_values. Предикат удобно записать стрелочной функцией.</p></details>
 </article>
-</main></body></html>
+</main><script type="module" src="accounts.js?v=2"></script></body></html>

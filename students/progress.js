@@ -1,6 +1,11 @@
 const studentProgress = (() => {
-  const storageKey = 'portfolio-student-practice-v1';
+  const guestKey = 'portfolio-student-practice-v1';
+  let storageKey = guestKey;
   const totals = { layout: 5, javascript: 5, xml: 5, html: 3, react: 3, php: 3 };
+  function persist() {
+    localStorage.setItem(storageKey, JSON.stringify([...completed]));
+  }
+
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -38,17 +43,30 @@ const studentProgress = (() => {
   });
   render();
   return {
+    useAccount(userId) {
+      storageKey = userId ? guestKey + ':' + userId : guestKey;
+      completed = load();
+      render();
+    },
+    ids() { return [...completed]; },
+    merge(ids) {
+      for (const id of ids) completed.add(id);
+      try { persist(); } catch {}
+      render();
+    },
     complete(id) {
       if (!id) return;
+      const initial = !completed.has(id);
       completed.add(id);
       try {
         for (const other of load()) completed.add(other);
-        localStorage.setItem(storageKey, JSON.stringify([...completed]));
+        persist();
       } catch {
         const note = document.querySelector('[data-storage-note]');
         if (note) note.textContent = 'Хранилище браузера недоступно. После обновления отметки могут пропасть.';
       }
       render();
+      if (initial) window.dispatchEvent(new CustomEvent('practice-completed', { detail: id }));
     },
   };
 })();

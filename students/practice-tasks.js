@@ -17,7 +17,58 @@ function xmlChild(node, name) {
   return [...(node?.children || [])].find(child => child.tagName === name);
 }
 
+function htmlDocument(code) {
+  return new DOMParser().parseFromString(code, 'text/html');
+}
+
 const taskChecks = {
+  'html-1'(code) {
+    const page = htmlDocument(code);
+    return [['Заголовок в шапке', !!page.querySelector('header h1')?.textContent.trim()], ['Ссылка на #content', !!page.querySelector('header a[href="#content"]')?.textContent.trim()]];
+  },
+  'html-2'(code) {
+    const form = htmlDocument(code).querySelector('form');
+    const input = form?.querySelector('input[type="email"][required]');
+    return [['Обязательное поле email', !!input], ['Связанная подпись', !!input?.id && [...form.querySelectorAll('label')].some(label => label.htmlFor === input.id && label.textContent.trim())], ['Кнопка отправки', !!form?.querySelector('button[type="submit"]')?.textContent.trim()]];
+  },
+  'html-3'(code) {
+    const table = htmlDocument(code).querySelector('table');
+    const rows = [...(table?.tBodies[0]?.rows || [])];
+    return [['У таблицы есть название', !!table?.caption?.textContent.trim()], ['Два заголовка колонок', table?.tHead?.querySelectorAll('th[scope="col"]').length === 2], ['Две строки с заголовком и данными', rows.length === 2 && rows.every(row => row.cells.length === 2 && row.cells[0].matches('th[scope="row"]') && row.cells[1].matches('td'))]];
+  },
+  'react-1'(code) {
+    return [['Пропс title передан как выражение JSX', /return\s*\(?\s*<h2>\s*\{\s*title\s*\}\s*<\/h2>/.test(code)]];
+  },
+  'react-2'(code) {
+    return [['Состояние count начинается с нуля', /\[\s*count\s*,\s*setCount\s*\]\s*=\s*useState\s*\(\s*0\s*\)/.test(code)], ['Обновление использует предыдущее значение', /setCount\s*\(\s*\(?(\w+)\)?\s*=>\s*\1\s*\+\s*1\s*\)/.test(code)]];
+  },
+  'react-3'(code) {
+    return [['Отбираются активные курсы', /courses\s*\.\s*filter\s*\(\s*course\s*=>\s*course\.active\s*\)/.test(code)], ['Список создаётся через map', /\.\s*map\s*\(\s*course\s*=>\s*<li\b/.test(code)], ['У списка правильные ключ и подпись', /<li\s+key=\{\s*course\.id\s*\}>\s*\{\s*course\.title\s*\}\s*<\/li>/.test(code)]];
+  },
+  'php-1'(code) {
+    return [['Выводится поле title', /^\s*echo\s+\$course\s*\[\s*(['"])title\1\s*\]\s*;\s*$/.test(code)]];
+  },
+  'php-2'(code) {
+    const match = code.match(/^\s*return\s+\$score\s*([<>=]+)\s*75\s*\?\s*(['"])(.*?)\2\s*:\s*(['"])(.*?)\4\s*;\s*$/);
+    return [['Ровно 75 баллов засчитывается', match?.[1] === '>='], ['Верные результаты обеих веток', match?.[3] === 'зачёт' && match?.[5] === 'пока нет']];
+  },
+  'php-3'(code) {
+    return [['Объявлена функция с параметром и типом результата array', /function\s+passedScores\s*\(\s*array\s+\$scores\s*\)\s*:\s*array/.test(code)], ['Отбираются баллы от 75', /array_filter\s*\(\s*\$scores\s*,\s*fn\s*\(\s*\$score\s*\)\s*=>\s*\$score\s*>=\s*75/.test(code)], ['Результат переиндексируется', /return\s+array_values\s*\(\s*array_filter\s*\(/.test(code)]];
+  },
+  'layout-4'(code) {
+    const rule = cssRule(code, '.dashboard');
+    return [['Контейнер Grid', rule?.display === 'grid'], ['Меню 200 px и гибкая колонка', rule?.gridTemplateColumns === '200px 1fr'], ['Промежуток 24 px', rule?.gap === '24px']];
+  },
+  'javascript-4'(code) {
+    const result = code.match(/^\s*projects\s*\.\s*(\w+)\s*\(\s*project\s*=>\s*project\.subject\s*===\s*(['"])XML\2\s*\)\s*;?\s*$/);
+    return [['Возвращается первый проект XML', result?.[1] === 'find']];
+  },
+  'xml-4'(code) {
+    const root = xmlRoot(code);
+    const products = [...(root?.children || [])];
+    return [['Две записи product', root?.tagName === 'prices' && products.length === 2 && products.every(product => product.tagName === 'product')], ['Валюта RUB', products.length === 2 && products.every(product => product.getAttribute('currency') === 'RUB')], ['Положительные значения цены', products.length === 2 && products.every(product => /^\d+(?:\.\d+)?$/.test(product.textContent.trim()) && Number(product.textContent) > 0)]];
+  },
+
   'layout-1'(code) {
     const rule = cssRule(code, '.product');
     return [['Отступ 16 px', rule?.padding === '16px'], ['Скругление 8 px', rule?.borderRadius === '8px']];
@@ -76,5 +127,6 @@ for (const task of document.querySelectorAll('[data-task]')) {
       return item;
     }));
     results.hidden = false;
+    if (checks.length && checks.every(([, passed]) => passed)) studentProgress.complete(task.dataset.task);
   });
 }

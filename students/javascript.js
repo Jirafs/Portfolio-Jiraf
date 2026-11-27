@@ -20,6 +20,7 @@ function checkAssignment(code) {
 document.querySelector('#check-solution').addEventListener('click', () => {
   const input = document.querySelector('#solution');
   const checks = checkAssignment(input.value);
+  if (checks.length && checks.every(([, passed]) => passed)) studentProgress.complete("javascript-0");
   const list = document.querySelector('#checks');
   list.replaceChildren(...checks.map(([label, passed]) => {
     const item = document.createElement('li');

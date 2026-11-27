@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Практикум PHP</title>
+  <link rel="stylesheet" href="student.css?v=4">
+  <script src="progress.js?v=1" defer></script>
+  <script src="practice-tasks.js?v=2" defer></script>
+</head>
+<body><main>
+<nav><a href="./">Все практикумы</a></nav>
+<header><h1>Практикум PHP</h1><p>Массивы, ветвления и функции</p><p>Автопроверка сверяет код с требованиями заготовки.</p><p data-progress-for="php"></p></header>
+<article class="assignment" data-task="php-1" aria-labelledby="php-1-title">
+  <p>Начальный уровень</p>
+  <h2 id="php-1-title">Прочитайте поле массива</h2>
+  <p>В заготовке выведите поле title ассоциативного массива $course.</p>
+  <label for="php-1-solution">Ваше решение</label>
+  <textarea id="php-1-solution" rows="8" maxlength="10000" spellcheck="false">echo ____;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Используйте $course с ключом title в квадратных скобках.</p></details>
+</article>
+<article class="assignment" data-task="php-2" aria-labelledby="php-2-title">
+  <p>Средний уровень</p>
+  <h2 id="php-2-title">Зачёт по баллам</h2>
+  <p>Допишите выражение: при $score от 75 включительно верните «зачёт», иначе «пока нет». Используйте тернарный оператор.</p>
+  <label for="php-2-solution">Ваше решение</label>
+  <textarea id="php-2-solution" rows="8" maxlength="10000" spellcheck="false">return $score ____ 75 ? ____ : ____;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Условие сравнения — >= 75. Текстовые значения заключите в кавычки.</p></details>
+</article>
+<article class="assignment" data-task="php-3" aria-labelledby="php-3-title">
+  <p>Продвинутый уровень</p>
+  <h2 id="php-3-title">Функция отбора результатов</h2>
+  <p>Заполните тело passedScores. Отберите из $scores значения от 75 включительно через array_filter, затем переиндексируйте результат через array_values.</p>
+  <label for="php-3-solution">Ваше решение</label>
+  <textarea id="php-3-solution" rows="8" maxlength="10000" spellcheck="false">function passedScores(array $scores): array {
+    return ____;
+}</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Вложите array_filter в array_values. Предикат удобно записать стрелочной функцией.</p></details>
+</article>
+</main></body></html>

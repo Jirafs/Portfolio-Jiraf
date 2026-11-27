@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Практикум React</title>
+  <link rel="stylesheet" href="student.css?v=4">
+  <script src="progress.js?v=1" defer></script>
+  <script src="practice-tasks.js?v=2" defer></script>
+</head>
+<body><main>
+<nav><a href="./">Все практикумы</a></nav>
+<header><h1>Практикум React</h1><p>Компоненты, состояние и списки</p><p>Автопроверка сверяет код с требованиями заготовки.</p><p data-progress-for="react"></p></header>
+<article class="assignment" data-task="react-1" aria-labelledby="react-1-title">
+  <p>Начальный уровень</p>
+  <h2 id="react-1-title">Карточка курса</h2>
+  <p>Допишите JSX компонента CourseCard. Выведите пропс title внутри h2.</p>
+  <label for="react-1-solution">Ваше решение</label>
+  <textarea id="react-1-solution" rows="8" maxlength="10000" spellcheck="false">function CourseCard({ title }) {
+  return &lt;h2&gt;____&lt;/h2&gt;;
+}</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>В JSX выражение оборачивается фигурными скобками.</p></details>
+</article>
+<article class="assignment" data-task="react-2" aria-labelledby="react-2-title">
+  <p>Средний уровень</p>
+  <h2 id="react-2-title">Счётчик на useState</h2>
+  <p>Вставьте две строки в заготовку: состояние count со стартом 0 и обновление count на единицу через функцию.</p>
+  <label for="react-2-solution">Ваше решение</label>
+  <textarea id="react-2-solution" rows="8" maxlength="10000" spellcheck="false">const [count, setCount] = ____;
+setCount(____);</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Вызовите useState(0). В setCount передайте функцию от предыдущего значения.</p></details>
+</article>
+<article class="assignment" data-task="react-3" aria-labelledby="react-3-title">
+  <p>Продвинутый уровень</p>
+  <h2 id="react-3-title">Список доступных курсов</h2>
+  <p>Допишите выражение. Из courses отберите курсы с active, затем отобразите их в li. Используйте course.id как key, а course.title как подпись.</p>
+  <label for="react-3-solution">Ваше решение</label>
+  <textarea id="react-3-solution" rows="8" maxlength="10000" spellcheck="false">courses.____(course =&gt; course.active)
+  .____(course =&gt; &lt;li key={____}&gt;{____}&lt;/li&gt;);</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Сначала filter, затем map. Для key используйте стабильный id.</p></details>
+</article>
+</main></body></html>

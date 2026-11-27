@@ -42,3 +42,4 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); bor
 .demo span { min-width: 0; overflow-wrap: anywhere; padding: .75rem; background: var(--control); border: 1px solid var(--line); border-radius: .4rem; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .assignment{margin-top:1.25rem}#checks:empty{display:none}
+.task-status { color: var(--muted); } .task-status[data-completed="true"] { color: var(--accent); font-weight: 650; }

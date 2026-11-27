@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Практикум HTML</title>
+  <link rel="stylesheet" href="student.css?v=4">
+  <script src="progress.js?v=1" defer></script>
+  <script src="practice-tasks.js?v=2" defer></script>
+</head>
+<body><main>
+<nav><a href="./">Все практикумы</a></nav>
+<header><h1>Практикум HTML</h1><p>Разметка страниц и доступность</p><p data-progress-for="html"></p></header>
+<article class="assignment" data-task="html-1" aria-labelledby="html-1-title">
+  <p>Начальный уровень</p>
+  <h2 id="html-1-title">Семантическая шапка</h2>
+  <p>Создайте header с заголовком h1 и ссылкой на раздел #content.</p>
+  <label for="html-1-solution">Ваше решение</label>
+  <textarea id="html-1-solution" rows="8" maxlength="10000" spellcheck="false">&lt;header&gt;
+&lt;/header&gt;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Вложите h1 и a в header.</p></details>
+</article>
+<article class="assignment" data-task="html-2" aria-labelledby="html-2-title">
+  <p>Средний уровень</p>
+  <h2 id="html-2-title">Доступная форма</h2>
+  <p>Создайте form с полем type="email", обязательным для заполнения. Свяжите его с label через for и добавьте кнопку отправки.</p>
+  <label for="html-2-solution">Ваше решение</label>
+  <textarea id="html-2-solution" rows="8" maxlength="10000" spellcheck="false">&lt;form&gt;
+&lt;/form&gt;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>У поля должен быть id, совпадающий со значением for у label.</p></details>
+</article>
+<article class="assignment" data-task="html-3" aria-labelledby="html-3-title">
+  <p>Продвинутый уровень</p>
+  <h2 id="html-3-title">Таблица расписания</h2>
+  <p>Создайте таблицу с caption, двумя заголовками колонок в thead, двумя строками данных в tbody и заголовком строки в каждой строке.</p>
+  <label for="html-3-solution">Ваше решение</label>
+  <textarea id="html-3-solution" rows="8" maxlength="10000" spellcheck="false">&lt;table&gt;
+&lt;/table&gt;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Используйте th со scope="col" для колонок и scope="row" для строк.</p></details>
+</article>
+</main></body></html>

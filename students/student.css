@@ -41,3 +41,4 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); bor
 .demo { max-width: 100%; display: grid; gap: .5rem; }
 .demo span { min-width: 0; overflow-wrap: anywhere; padding: .75rem; background: var(--control); border: 1px solid var(--line); border-radius: .4rem; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.assignment{margin-top:1.25rem}#checks:empty{display:none}

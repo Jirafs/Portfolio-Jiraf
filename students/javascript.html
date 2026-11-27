@@ -1,6 +1,16 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JavaScript и массивы</title><link rel="stylesheet" href="student.css?v=2"></head>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JavaScript и массивы</title><link rel="stylesheet" href="student.css?v=3"></head>
 <body><main><nav><a href="./">Все практикумы</a></nav><header><p>КИПФИН · Веб-разработка</p><h1>JavaScript и массивы</h1><p>Выберите дисциплину и минимальный балл. Предскажите, какие проекты пройдут фильтр, затем сравните с результатом.</p></header><article><label>Направление <select id="subject"><option value="">Все</option><option>Вёрстка</option><option>JavaScript</option><option>XML</option></select></label><label>Минимальный балл <input id="score" type="number" min="0" max="100" value="75"></label><button id="run">Применить фильтр</button><pre id="result" aria-live="polite"></pre><details><summary>Посмотреть условие фильтра</summary><pre>projects.filter(project =&gt;
   (!subject || project.subject === subject) &amp;&amp;
   project.score &gt;= minimum
-)</pre></details></article></main><script src="javascript.js" defer></script></body></html>
+)</pre></details></article><article class="assignment" aria-labelledby="assignment-title">
+  <h2 id="assignment-title">Подготовьте список успешно сданных проектов</h2>
+  <p>Заполните три строки кода. Отберите оценки от 75 баллов, извлеките названия и отсортируйте их по алфавиту. Введите названия методов JavaScript и условие отбора, как показано в заготовке.</p>
+  <label for="solution">Ваше решение</label>
+  <textarea id="solution" rows="8" maxlength="10000" spellcheck="false">projects.____(project =&gt; project.score ____ 75)
+  .____(project =&gt; project.name)
+  .____();</textarea>
+  <button type="button" id="check-solution">Проверить решение</button>
+  <ul id="checks" aria-live="polite"></ul>
+  <details><summary>Подсказка</summary><p>Сначала отфильтруйте массив, затем преобразуйте его элементы и отсортируйте названия.</p></details>
+</article></main><script src="javascript.js?v=3" defer></script></body></html>

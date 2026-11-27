@@ -1,3 +1,20 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Адаптивная вёрстка</title><link rel="stylesheet" href="student.css?v=2"></head>
-<body><main><nav><a href="./">Все практикумы</a></nav><header><p>КИПФИН · Веб-разработка</p><h1>Адаптивная вёрстка</h1><p>Измените ширину области и минимальную ширину карточки. Определите, при какой ширине сетка перестраивается.</p></header><article><label>Ширина области <input id="width" type="range" min="240" max="850" value="650"></label><label>Минимум карточки <input id="minimum" type="range" min="110" max="260" value="160"></label><output id="sizes" aria-live="polite"></output><div id="cards" class="demo"><span>HTML</span><span>CSS</span><span>JavaScript</span></div></article></main><script src="layout.js" defer></script></body></html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Адаптивная вёрстка</title><link rel="stylesheet" href="student.css?v=3"></head>
+<body><main><nav><a href="./">Все практикумы</a></nav><header><p>КИПФИН · Веб-разработка</p><h1>Адаптивная вёрстка</h1><p>Измените ширину области и минимальную ширину карточки. Определите, при какой ширине сетка перестраивается.</p></header><article><label>Ширина области <input id="width" type="range" min="240" max="850" value="650"></label><label>Минимум карточки <input id="minimum" type="range" min="110" max="260" value="160"></label><output id="sizes" aria-live="polite"></output><div id="cards" class="demo"><span>HTML</span><span>CSS</span><span>JavaScript</span></div></article><article class="assignment" aria-labelledby="assignment-title">
+  <h2 id="assignment-title">Сверстайте сетку каталога</h2>
+  <p>В поле напишите CSS для .catalog. Требования: две колонки одинаковой ширины, промежуток 16 px. Для экранов до 480 px используйте одну колонку.</p>
+  <label for="solution">Ваше решение</label>
+  <textarea id="solution" rows="8" maxlength="10000" spellcheck="false">.catalog {
+  display: grid;
+  /* Добавьте колонки и промежуток */
+}
+
+@media (max-width: 480px) {
+  .catalog {
+    /* Одна колонка */
+  }
+}</textarea>
+  <button type="button" id="check-solution">Проверить решение</button>
+  <ul id="checks" aria-live="polite"></ul>
+  <details><summary>Подсказка</summary><p>Используйте grid-template-columns и gap. Для двух равных колонок подойдёт 1fr 1fr.</p></details>
+</article></main><script src="layout.js?v=3" defer></script></body></html>

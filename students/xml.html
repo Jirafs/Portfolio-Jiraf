@@ -1,5 +1,17 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Структура XML</title><link rel="stylesheet" href="student.css?v=2"></head>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Структура XML</title><link rel="stylesheet" href="student.css?v=3"></head>
 <body><main><nav><a href="./">Все практикумы</a></nav><header><p>КИПФИН · Веб-разработка</p><h1>Структура XML</h1><p>Добавьте второй элемент book с названием. Затем измените один закрывающий тег и проверьте, как меняется результат.</p></header><article><label for="source">XML-документ</label><textarea id="source" rows="8" spellcheck="false">&lt;catalog&gt;
   &lt;book&gt;&lt;title&gt;Основы веб-разработки&lt;/title&gt;&lt;/book&gt;
-&lt;/catalog&gt;</textarea><button id="run">Проверить документ</button><pre id="result" aria-live="polite"></pre></article></main><script src="xml.js" defer></script></body></html>
+&lt;/catalog&gt;</textarea><button id="run">Проверить документ</button><pre id="result" aria-live="polite"></pre></article><article class="assignment" aria-labelledby="assignment-title">
+  <h2 id="assignment-title">Подготовьте каталог для импорта</h2>
+  <p>Создайте каталог с двумя книгами. Корневой элемент — catalog. У каждой книги должен быть уникальный id и непустые элементы title и author.</p>
+  <label for="solution">Ваше решение</label>
+  <textarea id="solution" rows="8" maxlength="10000" spellcheck="false">&lt;catalog&gt;
+  &lt;book id="web-1"&gt;
+    &lt;title&gt;Основы веб-разработки&lt;/title&gt;
+  &lt;/book&gt;
+&lt;/catalog&gt;</textarea>
+  <button type="button" id="check-solution">Проверить решение</button>
+  <ul id="checks" aria-live="polite"></ul>
+  <details><summary>Подсказка</summary><p>Добавьте автора первой книги, затем создайте вторую запись с новым id.</p></details>
+</article></main><script src="xml.js?v=3" defer></script></body></html>

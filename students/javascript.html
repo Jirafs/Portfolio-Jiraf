@@ -13,4 +13,35 @@
   <button type="button" id="check-solution">Проверить решение</button>
   <ul id="checks" aria-live="polite"></ul>
   <details><summary>Подсказка</summary><p>Сначала отфильтруйте массив, затем преобразуйте его элементы и отсортируйте названия.</p></details>
-</article></main><script src="javascript.js?v=3" defer></script></body></html>
+</article><article class="assignment" data-task="javascript-1" aria-labelledby="javascript-1-title">
+  <p>Начальный уровень</p>
+  <h2 id="javascript-1-title">Названия учебных проектов</h2>
+  <p>Допишите выражение, которое создаёт массив названий. Замените пропуск названием метода.</p>
+  <label for="javascript-1-solution">Ваше решение</label>
+  <textarea id="javascript-1-solution" rows="8" maxlength="10000" spellcheck="false">projects.____(project =&gt; project.name);</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Нужен метод, который преобразует каждый элемент.</p></details>
+</article>
+<article class="assignment" data-task="javascript-2" aria-labelledby="javascript-2-title">
+  <p>Средний уровень</p>
+  <h2 id="javascript-2-title">Проверка минимального балла</h2>
+  <p>Верните true, если хотя бы один проект набрал не менее 90 баллов. Допишите метод и оператор сравнения.</p>
+  <label for="javascript-2-solution">Ваше решение</label>
+  <textarea id="javascript-2-solution" rows="8" maxlength="10000" spellcheck="false">projects.____(project =&gt; project.score ____ 90);</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Для проверки хотя бы одного элемента используйте some.</p></details>
+</article>
+<article class="assignment" data-task="javascript-3" aria-labelledby="javascript-3-title">
+  <p>Продвинутый уровень</p>
+  <h2 id="javascript-3-title">Сумма баллов по дисциплине</h2>
+  <p>Допишите цепочку. Отберите проекты с дисциплиной XML, затем сложите их баллы через накопитель. Начните сумму с нуля. Заполните пропуски в заготовке.</p>
+  <label for="javascript-3-solution">Ваше решение</label>
+  <textarea id="javascript-3-solution" rows="8" maxlength="10000" spellcheck="false">projects.____(project =&gt; project.subject === "____")
+  .____((sum, project) =&gt; sum ____ project.score, ____);</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Используйте filter и reduce. На пустом массиве сумма должна равняться нулю.</p></details>
+</article>
+</main><script src="javascript.js?v=3" defer></script><script src="practice-tasks.js?v=1" defer></script></body></html>

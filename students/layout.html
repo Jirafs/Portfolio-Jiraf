@@ -17,4 +17,45 @@
   <button type="button" id="check-solution">Проверить решение</button>
   <ul id="checks" aria-live="polite"></ul>
   <details><summary>Подсказка</summary><p>Используйте grid-template-columns и gap. Для двух равных колонок подойдёт 1fr 1fr.</p></details>
-</article></main><script src="layout.js?v=3" defer></script></body></html>
+</article><article class="assignment" data-task="layout-1" aria-labelledby="layout-1-title">
+  <p>Начальный уровень</p>
+  <h2 id="layout-1-title">Карточка товара</h2>
+  <p>Оформите .product: внутренний отступ 16 px и скругление 8 px.</p>
+  <label for="layout-1-solution">Ваше решение</label>
+  <textarea id="layout-1-solution" rows="8" maxlength="10000" spellcheck="false">.product {
+
+}</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Используйте padding и border-radius.</p></details>
+</article>
+<article class="assignment" data-task="layout-2" aria-labelledby="layout-2-title">
+  <p>Средний уровень</p>
+  <h2 id="layout-2-title">Панель действий</h2>
+  <p>Расположите элементы .toolbar в строку с помощью Flexbox. Разведите их по краям, выровняйте по центру поперечной оси и включите перенос.</p>
+  <label for="layout-2-solution">Ваше решение</label>
+  <textarea id="layout-2-solution" rows="8" maxlength="10000" spellcheck="false">.toolbar {
+
+}</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Проверьте justify-content, align-items и flex-wrap.</p></details>
+</article>
+<article class="assignment" data-task="layout-3" aria-labelledby="layout-3-title">
+  <p>Продвинутый уровень</p>
+  <h2 id="layout-3-title">Карточка курса с CSS Grid</h2>
+  <p>Разметьте .course: заголовок занимает первую строку целиком, меню и содержимое делят вторую, подвал занимает третью целиком. Назовите области header, menu, content, footer. На экранах до 600 px расположите области в одну колонку в том же порядке.</p>
+  <label for="layout-3-solution">Ваше решение</label>
+  <textarea id="layout-3-solution" rows="8" maxlength="10000" spellcheck="false">.course {
+  display: grid;
+}
+
+@media (max-width: 600px) {
+  .course {
+  }
+}</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Укажите grid-template-areas и grid-template-columns. Для широкого экрана подойдут 1fr 2fr.</p></details>
+</article>
+</main><script src="layout.js?v=3" defer></script><script src="practice-tasks.js?v=1" defer></script></body></html>

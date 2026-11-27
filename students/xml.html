@@ -14,4 +14,46 @@
   <button type="button" id="check-solution">Проверить решение</button>
   <ul id="checks" aria-live="polite"></ul>
   <details><summary>Подсказка</summary><p>Добавьте автора первой книги, затем создайте вторую запись с новым id.</p></details>
-</article></main><script src="xml.js?v=3" defer></script></body></html>
+</article><article class="assignment" data-task="xml-1" aria-labelledby="xml-1-title">
+  <p>Начальный уровень</p>
+  <h2 id="xml-1-title">Карточка курса</h2>
+  <p>Создайте элемент course с непустым названием в title и укажите язык записи атрибутом lang со значением ru.</p>
+  <label for="xml-1-solution">Ваше решение</label>
+  <textarea id="xml-1-solution" rows="8" maxlength="10000" spellcheck="false">&lt;course&gt;
+  &lt;title&gt;&lt;/title&gt;
+&lt;/course&gt;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Добавьте lang в открывающий тег course.</p></details>
+</article>
+<article class="assignment" data-task="xml-2" aria-labelledby="xml-2-title">
+  <p>Средний уровень</p>
+  <h2 id="xml-2-title">Расписание занятий</h2>
+  <p>Заполните расписание из двух элементов lesson. У каждого задайте время start в формате ЧЧ:ММ от 00:00 до 23:59 и непустую аудиторию в room. Время начала должно различаться.</p>
+  <label for="xml-2-solution">Ваше решение</label>
+  <textarea id="xml-2-solution" rows="8" maxlength="10000" spellcheck="false">&lt;schedule&gt;
+  &lt;lesson start=""&gt;&lt;room&gt;&lt;/room&gt;&lt;/lesson&gt;
+  &lt;lesson start=""&gt;&lt;room&gt;&lt;/room&gt;&lt;/lesson&gt;
+&lt;/schedule&gt;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Укажите время атрибутом, например start="09:30".</p></details>
+</article>
+<article class="assignment" data-task="xml-3" aria-labelledby="xml-3-title">
+  <p>Продвинутый уровень</p>
+  <h2 id="xml-3-title">Связи в электронном каталоге</h2>
+  <p>В library создайте разделы authors и books. В authors должны быть две записи author с разными непустыми id. В books должны быть две записи book с непустыми title. Атрибут authorId каждой книги должен ссылаться на существующего автора.</p>
+  <label for="xml-3-solution">Ваше решение</label>
+  <textarea id="xml-3-solution" rows="8" maxlength="10000" spellcheck="false">&lt;library&gt;
+  &lt;authors&gt;
+    &lt;author id="a1"/&gt;
+  &lt;/authors&gt;
+  &lt;books&gt;
+    &lt;book authorId=""&gt;&lt;title&gt;XML&lt;/title&gt;&lt;/book&gt;
+  &lt;/books&gt;
+&lt;/library&gt;</textarea>
+  <button type="button" data-check-task>Проверить решение</button>
+  <ul aria-live="polite" hidden></ul>
+  <details><summary>Подсказка</summary><p>Значение authorId книги должно точно совпасть с id одного из авторов.</p></details>
+</article>
+</main><script src="xml.js?v=3" defer></script><script src="practice-tasks.js?v=1" defer></script></body></html>
